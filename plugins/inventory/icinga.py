@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=consider-using-f-string,super-with-arguments,attribute-defined-outside-init,too-many-instance-attributes
 
-
 from urllib.parse import urlparse
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import SSLError, RequestException
@@ -82,6 +81,8 @@ DOCUMENTATION = '''
         type: bool
         default: false
       filters:
+        description:
+          - Add filters to limit the resulting inventory to certain hosts.
         suboptions:
           name:
             description:
