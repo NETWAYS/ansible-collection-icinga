@@ -202,7 +202,7 @@ args:
 file:
   description: Path to the file that will contain the object.
   returned: success
-  type: bool
+  type: str
   sample: features-available/api.conf
 name:
   description: The name of the ApiListener object.
