@@ -49,6 +49,7 @@ options:
       - A dictionary containing custom variables that are specific to this command.
     required: false
     type: dict
+    default: {}
   timeout:
     description:
       - The command timeout in seconds. Defaults to 1m.
@@ -59,6 +60,19 @@ options:
       - A dictionary of command arguments.
     required: false
     type: dict
+  imports:
+    description:
+      - List of imports for the CheckCommand.
+    required: false
+    type: list
+    elements: str
+    default: []
+  template:
+    description:
+      - Whether the CheckCommand is a template.
+    required: false
+    type: bool
+    default: false
 '''
 
 EXAMPLES = '''
