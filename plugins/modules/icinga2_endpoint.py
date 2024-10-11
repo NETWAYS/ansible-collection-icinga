@@ -31,7 +31,7 @@ options:
   file:
     description:
       - Path to the file in which the object will be defined.
-    required: true
+    required: false
     default: zones.conf
     type: str
   host:
