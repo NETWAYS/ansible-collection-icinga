@@ -1,12 +1,11 @@
 ---
 
 - name: feature livestatus LivestatusListener object
-  icinga2_object:
-    name: livestatus
-    type: LivestatusListener
-    file: features-available/livestatus.conf
-    args: "{{ icinga2_dict_features.livestatus }}"
-  register: result
-
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+  ansible.builtin.set_fact:
+    icinga2_objects: "{{ icinga2_objects + objects }}"
+  vars:
+    objects:
+      - name: livestatus
+        type: LivestatusListener
+        file: features-available/livestatus.conf
+        args: "{{ icinga2_dict_features.livestatus }}"

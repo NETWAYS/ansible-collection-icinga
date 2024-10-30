@@ -1,12 +1,12 @@
 ---
 
 - name: Feature compatlog CompatLogger object
-  netways.icinga.icinga2_object:
-    name: compatlog
-    type: CompatLogger
-    file: features-available/compatlog.conf
-    args: "{{ icinga2_dict_features.compatlog }}"
+  ansible.builtin.set_fact:
+    icinga2_objects: "{{ icinga2_objects + objects }}"
+  vars:
+    objects:
+      - name: compatlog
+        type: CompatLogger
+        file: features-available/compatlog.conf
+        args: "{{ icinga2_dict_features.compatlog }}"
   register: result
-
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"

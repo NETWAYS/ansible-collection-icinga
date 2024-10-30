@@ -1,0 +1,22 @@
+major_changes:
+  - |
+    The performance of the action plugin :code:`icinga2_object` has been greatly improved.
+    Instead of writing individual objects to files and later merging them,
+    they are instead now merged in memory on a per destination basis.
+    This means that configuration files no longer have to be assembled after the fact.
+
+    This also drops the :code:`order` parameter previously used to define the order in which
+    objects are written if they belong to the same destination file.
+    The new behavior only changes the order in the files but does not change the end result.
+
+    A performance gain of up to 80% has been seen in testing.
+
+known_issues:
+  - |
+    With the changes in :code:`icinga2_object` arises a problem.
+    The prior directory structure within :code:`icinga2_fragments_path` (default: :code:`/var/tmp/icinga/`) does not fit the new approach for writing configuration files.
+    Some paths that would become directories before are now treated as files.
+    If the old directory structure is present on a remote host, deployment with the new method will most likely fail due to this.
+
+    If the execution of :code:`icinga2_object` fails, deleting :code:`icinga2_fragments_path` should fix the problem.
+    This, however, is a manual step that needs to be done.

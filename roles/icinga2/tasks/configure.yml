@@ -50,14 +50,14 @@
     #  - my_own_config.d
     #- item.split('/')[0] in icinga2_local_config or item.split('/')[0] == 'zones.d'
 
-- name: collect config fragments
+- name: collect config fragments (icinga2_fragments_path)
   find:
     path: "{{ icinga2_fragments_path }}"
     recurse: yes
     file_type: file
   register: result_frag
 
-- name: cleanup config files
+- name: cleanup config files (icinga2_fragments_path)
   file:
     state: absent
     dest: "{{ item.path }}"
@@ -68,32 +68,76 @@
     - item.path not in icinga2_local_objects
     - item.path not in _icinga2_custom_conf_paths
 
-- name: collect empty config dirs
-  shell: >-
-    find {{ icinga2_fragments_path }} -mindepth 1 -type d -empty
-  register: _empty_result
-  check_mode: false
-  changed_when: _empty_result.stdout_lines |length > 0
+- name: Remove empty config dirs (icinga2_fragments_path)
+  ansible.builtin.command:
+    cmd: "find {{ icinga2_fragments_path }} -mindepth 2 -type d -empty -print -exec rmdir {} +"
+  register: _removed_dirs
+  until: _removed_dirs.stdout_lines | length == 0
+  retries: 100
+  delay: 0
+  changed_when: _removed_dirs.attempts > 1
 
-- name: remove empty config dirs
-  file:
+- name: Collect config files (icinga2_config_path)
+  vars:
+    _icinga2_config_directories: "{{
+      (icinga2_config_directories | select('match', '^conf.d/.*')) +
+      (icinga2_config_directories | select('match', '^zones.d/.*')) +
+      ((icinga2_config_directories | select('match', '^' + [icinga2_confd, '.*'] | path_join)) if icinga2_confd is string else [])
+    }}"
+  ansible.builtin.find:
+    paths: "{{ _icinga2_config_directories | netways.icinga.prefix(prefix=icinga2_config_path + '/') }}"
+    recurse: true
+    file_type: file
+    pattern: "*.conf"
+  register: result
+
+- name: Cleanup config files (icinga2_config_path)
+  loop: "{{ result.files | map(attribute='path') }}"
+  vars:
+    _icinga2_sys_config_fragment_path: "{{ item | regex_replace('^' + icinga2_config_path + '(.*)$', icinga2_fragments_path + '\\1') }}"
+  when:
+    - _icinga2_sys_config_fragment_path not in icinga2_local_objects
+    - _icinga2_sys_config_fragment_path not in _icinga2_custom_conf_paths
+  ansible.builtin.file:
     state: absent
-    path: "{{ item }}"
-  loop: "{{ _empty_result.stdout_lines }}"
+    dest: "{{ item }}"
+
+- name: Remove empty config dirs (icinga2_config_path) # noqa: command-instead-of-shell
+  vars:
+    _icinga2_config_directories: "{{
+      (
+        (icinga2_config_directories | select('match', '^conf.d/.*')) +
+        (icinga2_config_directories | select('match', '^zones.d/.*')) +
+        ((icinga2_config_directories | select('match', '^' + [icinga2_confd, '.*'] | path_join)) if icinga2_confd is string else [])
+      ) | netways.icinga.prefix(prefix=icinga2_config_path + '/') | join(' ')
+    }}"
+  ansible.builtin.shell:
+    cmd: |
+      for path in {{ _icinga2_config_directories }}
+      do
+        if [ -d "$path" ]; then
+          find "$path" -mindepth 1 -type d -empty -print -exec rmdir {} +
+        fi
+      done
+  register: _removed_dirs
+  until: _removed_dirs.stdout_lines | length == 0
+  retries: 100
+  delay: 0
+  changed_when: _removed_dirs.attempts > 1
 
 - name: collect config files
   find:
     path: "{{ icinga2_fragments_path }}"
     recurse: yes
-    file_type: directory
+    file_type: file
     pattern: '*.conf'
   register: result
 
 - name: assemble config files
-  ansible.builtin.assemble:
+  ansible.builtin.copy:
     src: "{{ item.path }}"
-    dest: "{{ item.path |regex_replace('^'+icinga2_fragments_path, '/etc/icinga2') }}"
-    delimiter: ' '
+    remote_src: true
+    dest: "{{ item.path | regex_replace('^'+icinga2_fragments_path, icinga2_config_path) }}"
     owner: "{{ icinga2_user }}"
     group: "{{ icinga2_group }}"
     mode: 0644
@@ -110,12 +154,4 @@
   loop: "{{ icinga2_features }}"
   loop_control:
     label: "{{ item.name }}"
-  notify: check-and-reload-icinga2-service
-
-- name: remove empty config files
-  ansible.builtin.file:
-    state: absent
-    path: "{{ item |regex_replace('^'+icinga2_fragments_path, '/etc/icinga2') }}"
-  when: item.split('/')[icinga2_fragments_path.split('/')|length] == 'conf.d' or item.split('/')[icinga2_fragments_path.split('/')|length] == 'zones.d'
-  loop: "{{ _empty_result.stdout_lines }}"
   notify: check-and-reload-icinga2-service

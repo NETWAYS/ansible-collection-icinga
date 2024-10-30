@@ -5,15 +5,14 @@
     icinga2_import_schema: "{{ icinga2_dict_features.idopgsql.import_schema| default(False) }}"
 
 - name: feature idopgsql IdoPgsqlConnection object
-  icinga2_object:
-    name: ido-pgsql
-    type: IdoPgsqlConnection
-    file: features-available/ido-pgsql.conf
-    args: "{{ icinga2_dict_features.idopgsql }}"
-  register: result
-
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+  ansible.builtin.set_fact:
+    icinga2_objects: "{{ icinga2_objects + objects }}"
+  vars:
+    objects:
+      - name: ido-pgsql
+        type: IdoPgsqlConnection
+        file: features-available/ido-pgsql.conf
+        args: "{{ icinga2_dict_features.idopgsql }}"
 
 - name: install on {{ ansible_os_family }}
   include_tasks: "features/idopgsql/install_on_{{ ansible_os_family }}.yml"
