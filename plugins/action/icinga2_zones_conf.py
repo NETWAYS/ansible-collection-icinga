@@ -57,16 +57,26 @@ def get_sub_hierarchy(hierarchy, name, groups, parent=None):
 
 
 
-def get_best_host_attr(inventory, name):
+def get_best_endpoint_attrs(inventory, name, host_options=list(), port_variable=None):
+    # Return inventory hostname and port 5665 by default
+    attrs = dict()
+    attrs["host"] = name
+    attrs["port"] = "5665"
+
     for host_option in [
-        "ansible_fqdn",
-        "ansible_hostname",
+        #"ansible_fqdn",
+        "ansible_host",
         "inventory_hostname",
     ]:
         if host_option in inventory["hostvars"][name]:
-            return inventory["hostvars"][name][host_option]
-    # Return inventory hostname by default
-    return name
+            attrs["host"] = inventory["hostvars"][name][host_option]
+            break
+
+    # WIP
+    if port_variable in inventory["hostvars"][name]:
+        attrs["port"] = inventory["hostvars"][name][port_variable]
+
+    return attrs
 
 
 
@@ -86,16 +96,17 @@ def get_endpoints_from_zones(zones, name, inventory):
             endpoint = dict()
             endpoint["name"] = endpoint_name
 
-            # If own parent
-            if zone["name"] == own_parent_zone_name:
+            if (
                 # If connection to own parent
-                endpoint["host"] = get_best_host_attr(inventory, endpoint_name)
-            elif zone["name"] == own_zone_name and endpoint_name != name:
+                (zone["name"] == own_parent_zone_name) or
+
                 # If connection to HA partner
-                endpoint["host"] = get_best_host_attr(inventory, endpoint_name)
-            elif "parent" in zone and zone["parent"] == own_zone_name:
+                (zone["name"] == own_zone_name and endpoint_name != name) or
+
                 # If connection to direct children
-                endpoint["host"] = get_best_host_attr(inventory, endpoint_name)
+                ("parent" in zone and zone["parent"] == own_zone_name)
+            ):
+                endpoint.update(get_best_endpoint_attrs(inventory, endpoint_name))
 
             endpoints.append(endpoint)
 
@@ -151,7 +162,8 @@ class ActionModule(ActionBase):
         #)
 
         #### Variables needed for processing
-        hierarchy                  = merge_hash(module_args.pop("hierarchy", False), dict())
+        hierarchy                  = merge_hash(module_args.pop("hierarchy", dict()), dict())
+        global_zones               = module_args.pop("global_zones", list())
         ansible_inventory_hostname = task_vars["inventory_hostname"]
         ansible_groups             = task_vars["groups"]
         ansible_host_groups        = list(task_vars["group_names"])
@@ -170,6 +182,14 @@ class ActionModule(ActionBase):
 
         # Get all endpoints for each known zone
         icinga2_endpoints = get_endpoints_from_zones(icinga2_zones, ansible_inventory_hostname, task_vars)
+
+        # Get all global zones
+        for zone in global_zones:
+            zone_object = {
+                "name": zone,
+                "global": True
+            }
+            icinga2_zones.append(zone_object)
 
         # TO BE DONE: Global zones
         # get them from another input instead of hierarchy (e.g. global_zones: ['director-global'])
