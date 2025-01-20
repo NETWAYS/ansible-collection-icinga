@@ -63,7 +63,7 @@ def get_best_endpoint_attrs(inventory, name, host_options=list(), port_variable=
     attrs["host"] = name
     attrs["port"] = "5665"
 
-    for host_option in [
+    for host_option in host_options + [
         #"ansible_fqdn",
         "ansible_host",
         "inventory_hostname",
@@ -80,7 +80,7 @@ def get_best_endpoint_attrs(inventory, name, host_options=list(), port_variable=
 
 
 
-def get_endpoints_from_zones(zones, name, inventory):
+def get_endpoints_from_zones(zones, name, inventory, upper_host_options=list(), middle_host_options=list(), lower_host_options=list(), port_variable=None):
     # Return emtpy list if no zones are given
     if not zones:
         return list()
@@ -96,17 +96,26 @@ def get_endpoints_from_zones(zones, name, inventory):
             endpoint = dict()
             endpoint["name"] = endpoint_name
 
-            if (
-                # If connection to own parent
-                (zone["name"] == own_parent_zone_name) or
+            # If connection to own parent
+            if zone["name"] == own_parent_zone_name:
+                host_attributes = get_best_endpoint_attrs(inventory, endpoint_name, upper_host_options, port_variable)
 
-                # If connection to HA partner
-                (zone["name"] == own_zone_name and endpoint_name != name) or
+            # If connection to HA partner
+            elif zone["name"] == own_zone_name and endpoint_name != name:
+                host_attributes = get_best_endpoint_attrs(inventory, endpoint_name, middle_host_options, port_variable)
 
-                # If connection to direct children
-                ("parent" in zone and zone["parent"] == own_zone_name)
-            ):
-                endpoint.update(get_best_endpoint_attrs(inventory, endpoint_name))
+            # If connection to direct children
+            elif "parent" in zone and zone["parent"] == own_zone_name:
+                host_attributes = get_best_endpoint_attrs(inventory, endpoint_name, lower_host_options, port_variable)
+                print("HIER", endpoint_name, name)
+                print(host_attributes)
+
+            # If no direct connection needed
+            else:
+                host_attributes = None
+
+            if host_attributes:
+                endpoint.update(host_attributes)
 
             endpoints.append(endpoint)
 
@@ -164,6 +173,20 @@ class ActionModule(ActionBase):
         #### Variables needed for processing
         hierarchy                  = merge_hash(module_args.pop("hierarchy", dict()), dict())
         global_zones               = module_args.pop("global_zones", list())
+
+        # Get connection variables for host attribute
+        upper_host_variables     = module_args.pop("upper", list())
+        if isinstance(upper_host_variables, str):
+            upper_host_variables = [upper_host_variables]
+
+        middle_host_variables    = module_args.pop("middle", list())
+        if isinstance(middle_host_variables, str):
+            middle_host_variables = [middle_host_variables]
+
+        lower_host_variables     = module_args.pop("lower", list())
+        if isinstance(lower_host_variables, str):
+            lower_host_variables = [lower_host_variables]
+
         ansible_inventory_hostname = task_vars["inventory_hostname"]
         ansible_groups             = task_vars["groups"]
         ansible_host_groups        = list(task_vars["group_names"])
@@ -181,7 +204,14 @@ class ActionModule(ActionBase):
         icinga2_zones = get_zones_from_hierarchy(sub_hierarchy, ansible_groups)
 
         # Get all endpoints for each known zone
-        icinga2_endpoints = get_endpoints_from_zones(icinga2_zones, ansible_inventory_hostname, task_vars)
+        icinga2_endpoints = get_endpoints_from_zones(
+            icinga2_zones,
+            ansible_inventory_hostname,
+            task_vars,
+            upper_host_options=upper_host_variables,
+            middle_host_options=middle_host_variables,
+            lower_host_options=lower_host_variables
+        )
 
         # Get all global zones
         for zone in global_zones:
