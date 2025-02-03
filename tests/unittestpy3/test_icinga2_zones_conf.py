@@ -14,6 +14,8 @@ from ansible.parsing.yaml.objects import AnsibleSequence, AnsibleMapping
 #from icinga2_zones_conf import ActionModule
 from icinga2_zones_conf import get_sub_hierarchy
 from icinga2_zones_conf import get_best_endpoint_attrs
+from icinga2_zones_conf import get_zones_from_hierarchy
+from icinga2_zones_conf import get_endpoints_from_zones
 
 
 class TestActionPlugin(unittest.TestCase):
@@ -96,8 +98,252 @@ class TestActionPlugin(unittest.TestCase):
             self.assertEqual(get_best_endpoint_attrs(test_inventory, name, host_options, port_variable), expected)
 
 
+    def test_get_zones_from_hierarchy(self):
+        test_cases = [
+            # Hierarchy, ansible groups, expected
+            (
+                # Hierarchy
+                {"master": None},
+                # Ansible Groups
+                {"master": ["master1"]},
+                # Expected list of zones
+                [{"name": "master", "endpoints": ["master1"]}]
+            ),
+            (
+                {"master": None},
+                {"master": ["master1", "master2"]},
+                [{"name": "master", "endpoints": ["master1", "master2"]}]
+            ),
+            (
+                {"inventory-name-master": None},
+                {},
+                [{"name": "inventory-name-master", "endpoints": ["inventory-name-master"]}]
+            ),
+            (
+                {},
+                {"master": ["master1", "master2"], "eu": ["eu1", "eu2"], "us": ["us1", "us2"]},
+                []
+            ),
+            (
+                {"master": {"eu": None, "us": None}},
+                {"master": ["master1", "master2"], "eu": ["eu1", "eu2"], "us": ["us1", "us2"]},
+                [
+                    {
+                        "name": "master",
+                        "endpoints": [
+                            "master1",
+                            "master2"
+                        ]
+                    },
+                    {
+                        "name": "eu",
+                        "parent": "master",
+                        "endpoints": [
+                            "eu1",
+                            "eu2"
+                        ]
+                    },
+                    {
+                        "name": "us",
+                        "parent": "master",
+                        "endpoints": [
+                            "us1",
+                            "us2"
+                        ]
+                    }
+                ]
+            ),
+            (
+                {"master": {"eu": {"germany": {"berlin": None}}}},
+                {"master": ["master1", "master2"], "eu": ["eu1", "eu2"], "germany": ["ger1", "ger2"], "berlin": ["ber1"]},
+                [
+                    {
+                        "name": "master",
+                        "endpoints": [
+                            "master1",
+                            "master2"
+                        ]
+                    },
+                    {
+                        "name": "eu",
+                        "parent": "master",
+                        "endpoints": [
+                            "eu1",
+                            "eu2"
+                        ]
+                    },
+                    {
+                        "name": "germany",
+                        "parent": "eu",
+                        "endpoints": [
+                            "ger1",
+                            "ger2"
+                        ]
+                    },
+                    {
+                        "name": "berlin",
+                        "parent": "germany",
+                        "endpoints": [
+                            "ber1"
+                        ]
+                    }
+                ]
+            ),
+        ]
 
-## WIP
-#def test_get_best_endpoint_attrs(inventory, name, host_options=list(), port_variable=None)
-#def test_get_endpoints_from_zones(zones, name, inventory, upper_host_options=list(), middle_host_options=list(), lower_host_options=list(), port_variable=None)
-#def test_get_zones_from_hierarchy(hierarchy, groups, parent=None)
+        for hierarchy, groups, expected in test_cases:
+            self.assertEqual(get_zones_from_hierarchy(hierarchy, groups), expected, "foo: " + str(get_zones_from_hierarchy(hierarchy, groups)))
+
+
+#def get_endpoints_from_zones(zones, name, inventory, upper_host_options=list(), middle_host_options=list(), lower_host_options=list(), port_variable=None):
+    def test_get_endpoints_from_zones(self):
+        test_inventory = {
+            "hostvars": {
+                "master1": {
+                    "possible_port": "6556",
+                },
+                "master2": {
+                    "possible_port": "6557",
+                },
+                "eu1": {
+                },
+                "ger1": {
+                }
+            }
+        }
+        test_cases = [
+            # Parameter dict, expected
+            (
+                {
+                    "zones": [],
+                    "name": "master1",
+                },
+                []
+            ),
+            (
+                {
+                    "zones": [
+                        {
+                            "name": "master",
+                            "endpoints": [
+                                "master1"
+                            ]
+                        },
+                        {
+                            "name": "eu",
+                            "endpoints": [
+                                "eu1"
+                            ],
+                            "parent": "master"
+                        },
+                        {
+                            "name": "germany",
+                            "endpoints": [
+                                "ger1"
+                            ],
+                            "parent": "eu"
+                        }
+                    ],
+                    "name": "master1",
+                },
+                [{"name": "master1"}, {"host": "eu1", "name": "eu1", "port": "5665"}, {"name": "ger1"}]
+            ),
+            (
+                {
+                    "zones": [
+                        {
+                            "name": "master",
+                            "endpoints": [
+                                "master1"
+                            ]
+                        },
+                        {
+                            "name": "eu",
+                            "endpoints": [
+                                "eu1"
+                            ],
+                            "parent": "master"
+                        },
+                        {
+                            "name": "germany",
+                            "endpoints": [
+                                "ger1"
+                            ],
+                            "parent": "eu"
+                        }
+                    ],
+                    "name": "eu1",
+                },
+                [
+                    {"host": "master1", "name": "master1", "port": "5665"},
+                    {"name": "eu1"},
+                    {"host": "ger1", "name": "ger1", "port": "5665"}
+                ]
+            ),
+            (
+                {
+                    "zones": [
+                        {
+                            "name": "master",
+                            "endpoints": [
+                                "master1"
+                            ]
+                        },
+                        {
+                            "name": "eu",
+                            "endpoints": [
+                                "eu1"
+                            ],
+                            "parent": "master"
+                        },
+                        {
+                            "name": "germany",
+                            "endpoints": [
+                                "ger1"
+                            ],
+                            "parent": "eu"
+                        }
+                    ],
+                    "name": "ger1",
+                },
+                [
+                    {"name": "master1"},
+                    {"host": "eu1", "name": "eu1", "port": "5665"},
+                    {"name": "ger1"}
+                ]
+            ),
+            (
+                {
+                    "zones": [{"name": "master", "endpoints": ["master1", "master2"]}],
+                    "name": "master1",
+                },
+                [{"name": "master1"}, {"host": "master2", "name": "master2", "port": "5665"}]
+            ),
+            (
+                {
+                    "zones": [{"name": "master", "endpoints": ["master1", "master2"]}],
+                    "name": "master2",
+                },
+                [{"host": "master1", "name": "master1", "port": "5665"}, {"name": "master2"}, ]
+            ),
+            (
+                {
+                    "zones": [{"name": "master", "endpoints": ["master1", "master2"]}],
+                    "name": "master1",
+                    "port_variable": "possible_port",
+                },
+                [{"name": "master1"}, {"host": "master2", "name": "master2", "port": "6557"}]
+            ),
+            (
+                {
+                    "zones": [{"name": "master", "endpoints": ["master1", "master2"]}],
+                    "name": "master2",
+                    "port_variable": "possible_port",
+                },
+                [{"host": "master1", "name": "master1", "port": "6556"}, {"name": "master2"}, ]
+            ),
+        ]
+
+        for parameters, expected in test_cases:
+            self.assertEqual(get_endpoints_from_zones(inventory=test_inventory, **parameters), expected)
+            #self.assertEqual(get_endpoints_from_zones(zones, name, inventory, upper_host_options=list(), middle_host_options=list(), lower_host_options=list(), port_variable=None), expected)
