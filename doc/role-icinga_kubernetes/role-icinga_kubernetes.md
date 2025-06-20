@@ -77,5 +77,5 @@ This example installs Icinga Kubernetes and connects it to a **remote** MySQL da
         kubeconfig: ~/.kube/config
 
   roles:
-    - role: icinga.icinga.icinga_kubernetes
+    - role: netways.icinga.icinga_kubernetes
 ```
