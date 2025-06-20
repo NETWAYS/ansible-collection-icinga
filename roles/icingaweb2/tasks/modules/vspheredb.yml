@@ -1,0 +1,63 @@
+---
+- name: Module vSphereDB | Ensure config directory
+  ansible.builtin.file:
+    state: directory
+    dest: "{{ icingaweb2_modules_config_dir }}/vspheredb"
+    owner: "{{ icingaweb2_httpd_user }}"
+    group: "{{ icingaweb2_group }}"
+    mode: "2770"
+
+- name: Module vSphereDB | Manage config files
+  ansible.builtin.include_tasks: manage_module_config.yml
+  loop: "{{ _files }}"
+  loop_control:
+    loop_var: _file
+  when: vars['icingaweb2_modules'][_module][_file] is defined
+  vars:
+    _module: "{{ item.key }}"
+    _files:
+      - config
+
+- name: Module vSphereDB | Check for pending migrations
+  ansible.builtin.shell:
+    cmd: icingacli vspheredb migration pending
+  register: _pending
+  changed_when: _pending.rc|int == 0
+  failed_when: _pending.stdout|length > 0
+  when: vars['icingaweb2_modules']['vspheredb']['import_schema'] is defined and vars['icingaweb2_modules']['vspheredb']['import_schema'] and vars['icingaweb2_modules']['vspheredb']['config'] is defined
+
+- name: Module vSphereDB | Ensure installation from source is complete
+  when: icingaweb2_modules['vspheredb']['source'] == 'git'
+  block:
+    - name: Module vSphereDB | Ensure service user exists
+      ansible.builtin.user:
+        name: icingavspheredb
+        group: icingaweb2
+        system: true
+        home: /var/lib/icingavspheredb
+        shell: /bin/false
+
+    - name: Module vSphereDB | Ensure service user home exists
+      ansible.builtin.file:
+        state: directory
+        dest: /var/lib/icingavspheredb
+        owner: icingavspheredb
+        group: icingaweb2
+        mode: "0750"
+
+    - name: Module vSphereDB | Ensure service file is installed
+      ansible.builtin.copy:
+        src: "{{ icingaweb2_config.global.module_path }}/vspheredb/contrib/systemd/icinga-vspheredb.service"
+        dest: "/etc/systemd/system/icinga-vspheredb.service"
+        remote_src: true
+        mode: "0644"
+
+    - name: Module vSphereDB | Ensure socket file is copied
+      ansible.builtin.copy:
+        src: icinga-vspheredb.conf
+        dest: /etc/tmpfiles.d/icinga-vspheredb.conf
+        mode: 0644
+
+    - name: Module vSphereDB | Ensure socket file is installed
+      ansible.builtin.command: systemd-tmpfiles --create /etc/tmpfiles.d/icinga-vspheredb.conf
+
