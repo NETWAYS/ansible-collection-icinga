@@ -56,7 +56,7 @@ This play installs Icinga Kubernetes with on the same host as its connected MySQ
     icinga_kubernetes_database_type: mysql  # needed by the schema import
 
   roles:
-    - role: icinga.icinga.icinga_kubernetes
+    - role: netways.icinga.icinga_kubernetes
 ```
 
 This example installs Icinga Kubernetes and connects it to a **remote** MySQL database. It also imports the schema into the database and set a custom kubeconfig path.
