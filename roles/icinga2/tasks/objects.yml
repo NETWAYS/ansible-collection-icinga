@@ -1,49 +1,56 @@
 ---
-- name: collect all config objects for myself (from all inventory hosts)
-  set_fact:
-    tmp_objects: "{{ tmp_objects| default([]) + lookup('list', hostvars[item]['icinga2_objects'][icinga2_config_host]) }}"
-  with_items: "{{ groups['all'] }}"
+- name: objects | Collect all config objects for myself (from all inventory hosts)
   when: hostvars[item]['icinga2_objects'][icinga2_config_host] is defined
+  ansible.builtin.set_fact:
+    __icinga2_tmp_objects: "{{ __icinga2_tmp_objects | default([]) + lookup('list', hostvars[item]['icinga2_objects'][icinga2_config_host]) }}"
+  with_items: "{{ groups['all'] }}"
 
-- name: collect all config objects for myself (from myself if list)
-  set_fact:
-    tmp_objects: "{{ tmp_objects | default([]) + lookup('list', hostvars[inventory_hostname]['icinga2_objects']) }}"
+- name: objects | Collect all config objects for myself (from myself if list)
   when:
     - hostvars[inventory_hostname]['icinga2_objects'] is defined
     - hostvars[inventory_hostname]['icinga2_objects'] is iterable
     - hostvars[inventory_hostname]['icinga2_objects'] is not string
     - hostvars[inventory_hostname]['icinga2_objects'] is not mapping
+  ansible.builtin.set_fact:
+    __icinga2_tmp_objects: "{{ __icinga2_tmp_objects | default([]) + lookup('list', hostvars[inventory_hostname]['icinga2_objects']) }}"
 
-- name: collect all config objects in play vars
-  set_fact:
-    tmp_objects: "{{ tmp_objects| default([]) + lookup('list', icinga2_objects) }}"
+- name: objects | Collect all config objects in play vars
+  ansible.builtin.set_fact:
+    __icinga2_tmp_objects: "{{ __icinga2_tmp_objects | default([]) + lookup('list', icinga2_objects) }}"
   when:
     - icinga2_objects is defined
     - icinga2_objects is iterable
     - icinga2_objects is not string
     - icinga2_objects is not mapping
 
-- icinga2_object:
+- name: objects | Convert collected objects to API Object
+  when: __icinga2_tmp_objects is defined
+  icinga.icinga.icinga2_object:
     args: "{{ item }}"
-  with_items: "{{ tmp_objects }}"
-  when: tmp_objects is defined
-  register: result
+  with_items: "{{ __icinga2_tmp_objects }}"
+  register: __icinga2_objects_converted
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [item.dest] }}"
-  with_items: "{{ result.results }}"
-  when: result.results is defined
+- name: objects | Prepare configs as API objects
+  when: __icinga2_objects_converted.results is defined
+  ansible.builtin.set_fact:
+    __icinga2_local_objects: "{{ __icinga2_local_objects | default([]) + [item.dest] }}"
+  with_items: "{{ __icinga2_objects_converted.results }}"
 
-- name: prepare custom config
+- name: objects | Prepare custom config
   when: icinga2_custom_config is defined and icinga2_custom_config|length > 0
   block:
-    - name: construct _icinga2_custom_conf_paths
-      set_fact:
-        _icinga2_custom_conf_paths: "{{ _icinga2_custom_conf_paths + [ icinga2_fragments_path + '/' + item.path + '/' + item.order|default('20')|string + '_' + (item.name | replace('/', '_'))] }}"
+    - name: objects | Construct _icinga2_custom_conf_paths
+      ansible.builtin.set_fact:
+        _icinga2_custom_conf_paths: >-
+          {{ _icinga2_custom_conf_paths
+          + [ icinga2_fragments_path + '/' + item.path + '/' + item.order|default('20') | string
+            + '_' + (item.name | replace('/', '_'))
+            ]
+          }}
       loop: "{{ icinga2_custom_config }}"
 
-    - name: prepare custom config paths
-      file:
+    - name: objects | Prepare custom config paths
+      ansible.builtin.file:
         state: directory
         owner: root
         group: root
@@ -51,11 +58,11 @@
         path: "{{ icinga2_fragments_path }}/{{ item.path }}/"
       loop: "{{ icinga2_custom_config }}"
 
-    - name: add custom config to assemble
+    - name: objects | Add custom config to assemble
       ansible.builtin.copy:
         owner: root
         group: root
         mode: 0644
         src: "files/{{ item.name }}"
-        dest: "{{ icinga2_fragments_path }}/{{ item.path }}/{{ item.order|default('20')|string }}_{{ item.name | replace('/', '_') }}"
+        dest: "{{ icinga2_fragments_path }}/{{ item.path }}/{{ item.order | default('20') | string }}_{{ item.name | replace('/', '_') }}"
       loop: "{{ icinga2_custom_config }}"

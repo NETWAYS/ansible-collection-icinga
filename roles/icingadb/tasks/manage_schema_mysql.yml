@@ -3,7 +3,7 @@
   block:
     - name: Build mysql command
       ansible.builtin.set_fact:
-        mysqlcmd: >-
+        __icingadb_cmd: >-
           mysql {% if icingadb_database_host | default('localhost') != 'localhost'  %} -h "{{ icingadb_database_host }}" {%- endif %}
           {% if icingadb_database_port is defined %} -P {{ icingadb_database_port }} {%- endif %}
           {% if icingadb_database_ca is defined %} --ssl-ca "{{ icingadb_database_ca }}" {%- endif %}
@@ -15,7 +15,7 @@
 
     - name: MySQL check for IcingaDB schema
       ansible.builtin.shell: >
-        {{ mysqlcmd }}
+        {{ __icingadb_cmd }}
         -Ns -e "select version from icingadb_schema"
       failed_when: false
       changed_when: false
@@ -24,7 +24,7 @@
 
     - name: MySQL import IcingaDB schema
       ansible.builtin.shell: >
-        {{ mysqlcmd }}
+        {{ __icingadb_cmd }}
         < {{ icingadb_database_schema }}
       when: _db_schema.rc != 0
       check_mode: false

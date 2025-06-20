@@ -1,22 +1,22 @@
 ---
-- name: populate features (icinga2_dict_features)
-  set_fact:
-    icinga2_dict_features: "{{ icinga2_dict_features|default({}) | combine({ item.name: item }) }}"
+- name: configure | Populate features (__icinga2_dict_features)
+  ansible.builtin.set_fact:
+    __icinga2_dict_features: "{{ __icinga2_dict_features | default({}) | combine({item.name: item}) }}"
   with_items: "{{ icinga2_features }}"
 
-- name: main config file {{ icinga2_config_path + '/icinga2.conf' }}
-  template:
+- name: configure | Main config file {{ icinga2_config_path + '/icinga2.conf' }}
+  ansible.builtin.template:
     src: icinga2.conf.j2
     dest: "{{ icinga2_config_path + '/icinga2.conf' }}"
     owner: "{{ icinga2_user }}"
     group: "{{ icinga2_group }}"
   notify: check-and-reload-icinga2-service
 
-- name: merge defaults and user specified constants (set_fact icinga2_combined_constants)
-  set_fact:
-    icinga2_combined_constants: "{{ icinga2_default_constants | combine(icinga2_constants) }}"
+- name: configure | Merge defaults and user specified constants (set_fact __icinga2_combined_constants)
+  ansible.builtin.set_fact:
+    __icinga2_combined_constants: "{{ __icinga2_default_constants | combine(icinga2_constants) }}"
 
-- name: set constants in {{ icinga2_config_path + '/constants.conf' }}
+- name: configure | Set constants in {{ icinga2_config_path + '/constants.conf' }}
   ansible.builtin.template:
     src: constants.conf.j2
     dest: "{{ icinga2_config_path + '/constants.conf' }}"
@@ -24,18 +24,18 @@
     group: "{{ icinga2_group }}"
   notify: check-and-reload-icinga2-service
 
-- name: features
-  include_tasks: features.yml
+- name: configure | Features
+  ansible.builtin.include_tasks: features.yml
 
-- name: objects
-  include_tasks: objects.yml
+- name: configure | Objects
+  ansible.builtin.include_tasks: objects.yml
 
-- name: ensure monitoring config directories
+- name: configure | Ensure monitoring config directories
   ansible.builtin.file:
     path: "{{ icinga2_config_path }}/{{ item }}"
     state: directory
-    owner: "{{ item.owner | default(icinga2_user) }}"
-    group: "{{ item.group | default(icinga2_group) }}"
+    owner: "{{ icinga2_user }}"
+    group: "{{ icinga2_group }}"
   loop: "{{ icinga2_config_directories }}"
   when:
     - icinga2_config_directories is defined
@@ -48,47 +48,47 @@
     #  - my_own_config.d
     #- item.split('/')[0] in icinga2_local_config or item.split('/')[0] == 'zones.d'
 
-- name: collect config fragments
-  find:
+- name: configure | Collect config fragments
+  ansible.builtin.find:
     path: "{{ icinga2_fragments_path }}"
     recurse: yes
     file_type: file
   register: result_frag
 
-- name: cleanup config files
-  file:
+- name: configure | Cleanup config files
+  ansible.builtin.file:
     state: absent
     dest: "{{ item.path }}"
   loop: "{{ result_frag.files }}"
   when:
-    - item.path not in icinga2_local_objects
+    - item.path not in __icinga2_local_objects
     - item.path not in _icinga2_custom_conf_paths
 
-- name: collect empty config dirs
-  shell: >-
+- name: configure | Collect empty config dirs
+  ansible.builtin.shell: >-
     find {{ icinga2_fragments_path }} -mindepth 1 -type d -empty
   register: _empty_result
   check_mode: false
   changed_when: _empty_result.stdout_lines |length > 0
 
-- name: remove empty config dirs
-  file:
+- name: configure | Remove empty config dirs
+  ansible.builtin.file:
     state: absent
     path: "{{ item }}"
   loop: "{{ _empty_result.stdout_lines }}"
 
-- name: collect config files
-  find:
+- name: configure | Collect config files
+  ansible.builtin.find:
     path: "{{ icinga2_fragments_path }}"
     recurse: yes
     file_type: directory
     pattern: '*.conf'
   register: result
 
-- name: assemble config files
+- name: configure | Assemble config files
   ansible.builtin.assemble:
     src: "{{ item.path }}"
-    dest: "{{ item.path |regex_replace('^'+icinga2_fragments_path, '/etc/icinga2') }}"
+    dest: "{{ item.path | regex_replace('^' + icinga2_fragments_path, '/etc/icinga2') }}"
     delimiter: ' '
     owner: "{{ icinga2_user }}"
     group: "{{ icinga2_group }}"
@@ -96,18 +96,18 @@
   loop: "{{ result.files }}"
   notify: check-and-reload-icinga2-service
 
-- name: enable features
-  file:
+- name: configure | Enable features
+  ansible.builtin.file:
     state: "{{ 'link' if (item.state is undefined or item.state != 'absent') else 'absent' }}"
-    path: "{{ '/etc/icinga2/features-enabled/' + icinga2_feature_realname[item.name]|default(item.name) + '.conf' }}"
-    src: "{{ '../features-available/' + icinga2_feature_realname[item.name]|default(item.name) + '.conf' if (item.state is undefined or item.state != 'absent') else omit }}"
+    path: "{{ '/etc/icinga2/features-enabled/' + __icinga2_feature_realname[item.name] | default(item.name) + '.conf' }}"
+    src: "{{ '../features-available/' + __icinga2_feature_realname[item.name] | default(item.name) + '.conf' if (item.state is undefined or item.state != 'absent') else omit }}"
   loop: "{{ icinga2_features }}"
   notify: check-and-reload-icinga2-service
 
-- name: remove empty config files
+- name: configure | Remove empty config files
   ansible.builtin.file:
     state: absent
-    path: "{{ item |regex_replace('^'+icinga2_fragments_path, '/etc/icinga2') }}"
+    path: "{{ item | regex_replace('^' + icinga2_fragments_path, '/etc/icinga2') }}"
   when: item.split('/')[icinga2_fragments_path.split('/')|length] == 'conf.d' or item.split('/')[icinga2_fragments_path.split('/')|length] == 'zones.d'
   loop: "{{ _empty_result.stdout_lines }}"
   notify: check-and-reload-icinga2-service

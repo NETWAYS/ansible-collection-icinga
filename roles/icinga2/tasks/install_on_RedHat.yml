@@ -1,4 +1,4 @@
-- name: Yum - install package icinga2
+- name: install_on_RedHat | Yum - install package icinga2
   ansible.builtin.yum:
     name: "{{ icinga2_packages + icinga2_packages_dependencies }}"
     state: present

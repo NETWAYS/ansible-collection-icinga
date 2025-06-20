@@ -31,6 +31,7 @@
    ```
 
 4. **Create a new changelog:**<br>
+
    Lint the changelogs:<br>
    ```bash
    antsibull-changelog lint
@@ -44,6 +45,7 @@
    Commit your changes to the release branch.
 
 5. **Build and push to Ansible Galaxy:**<br>
+
    Build a release tar ball (verbose shows skipped files):<br>
    ```bash
    ansible-galaxy collection build -vvv

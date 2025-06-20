@@ -1,57 +1,50 @@
 ---
-
-- name: set api feature facts
-  set_fact:
-    icinga2_import_schema: "{{ icinga2_dict_features.idomysql.import_schema| default(False) }}"
-
-- name: feature idomysql IdoMysqlConnection object
-  icinga2_object:
+- name: features | idomysql | IdoMysqlConnection object
+  icinga.icinga.icinga2_object:
     name: ido-mysql
     type: IdoMysqlConnection
     file: features-available/ido-mysql.conf
-    args: "{{ icinga2_dict_features.idomysql }}"
+    args: "{{ __icinga2_dict_features.idomysql }}"
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: features | idomysql | Enhance local object
+  ansible.builtin.set_fact:
+    __icinga2_local_objects: "{{ __icinga2_local_objects | default([]) + [result.dest] }}"
 
-- name: install on {{ ansible_os_family }}
-  include_tasks: "features/idomysql/install_on_{{ ansible_os_family }}.yml"
+- name: features | idomysql | Install on {{ ansible_os_family }}
+  ansible.builtin.include_tasks: "features/idomysql/install_on_{{ ansible_os_family }}.yml"
 
 # Hint: For MySQL the client-side --ssl option is deprecated as of MySQL 5.7.11 and is removed in MySQL 8.0. For client programs, use --ssl-mode instead
 # However, MariaDB currently does not offer a --ssl-mode option, MariaDB enables --ssl automatically with other flags
-- name: MySQL import IDO schema
+- name: features | idomysql | MySQL import IDO schema
+  when: __icinga2_dict_features.idomysql.import_schema | default(False)
   block:
-    - name: build mysql command
-      set_fact:
-        mysqlcmd: >-
-          mysql {% if icinga2_dict_features.idomysql.host| default('localhost') != 'localhost'  %} -h "{{ icinga2_dict_features.idomysql.host }}" {%- endif %}
-          {% if icinga2_dict_features.idomysql.port is defined %} -P "{{ icinga2_dict_features.idomysql.port }}" {%- endif %}
-          {% if icinga2_dict_features.idomysql.ssl_mode is defined %} --ssl-mode "{{ icinga2_dict_features.idomysql.ssl_mode }}" {%- endif %}
-          {% if icinga2_dict_features.idomysql.ssl_ca is defined %} --ssl-ca "{{ icinga2_dict_features.idomysql.ssl_ca }}" {%- endif %}
-          {% if icinga2_dict_features.idomysql.ssl_cert is defined %} --ssl-cert "{{ icinga2_dict_features.idomysql.ssl_cert }}" {%- endif %}
-          {% if icinga2_dict_features.idomysql.ssl_key is defined %} --ssl-key "{{ icinga2_dict_features.idomysql.ssl_key }}" {%- endif %}
-          {% if icinga2_dict_features.idomysql.ssl_cipher is defined %} --ssl-cipher "{{ icinga2_dict_features.idomysql.ssl_cipher }}" {%- endif %}
-          {% if icinga2_dict_features.idomysql.extra_options is defined %} {{ icinga2_dict_features.idomysql.extra_options }} {%- endif %}
-          -u "{{ icinga2_dict_features.idomysql.user | default('icinga2') }}"
-          -p"{{ icinga2_dict_features.idomysql.password }}"
-          "{{ icinga2_dict_features.idomysql.database | default('icinga2') }}"
+    - name: features | idomysql | Build mysql command
+      ansible.builtin.set_fact:
+        __idomysql_cmd: >-
+          mysql {% if __icinga2_dict_features.idomysql.host| default('localhost') != 'localhost'  %} -h "{{ __icinga2_dict_features.idomysql.host }}" {%- endif %}
+          {% if __icinga2_dict_features.idomysql.port is defined %} -P "{{ __icinga2_dict_features.idomysql.port }}" {%- endif %}
+          {% if __icinga2_dict_features.idomysql.ssl_mode is defined %} --ssl-mode "{{ __icinga2_dict_features.idomysql.ssl_mode }}" {%- endif %}
+          {% if __icinga2_dict_features.idomysql.ssl_ca is defined %} --ssl-ca "{{ __icinga2_dict_features.idomysql.ssl_ca }}" {%- endif %}
+          {% if __icinga2_dict_features.idomysql.ssl_cert is defined %} --ssl-cert "{{ __icinga2_dict_features.idomysql.ssl_cert }}" {%- endif %}
+          {% if __icinga2_dict_features.idomysql.ssl_key is defined %} --ssl-key "{{ __icinga2_dict_features.idomysql.ssl_key }}" {%- endif %}
+          {% if __icinga2_dict_features.idomysql.ssl_cipher is defined %} --ssl-cipher "{{ __icinga2_dict_features.idomysql.ssl_cipher }}" {%- endif %}
+          {% if __icinga2_dict_features.idomysql.extra_options is defined %} {{ __icinga2_dict_features.idomysql.extra_options }} {%- endif %}
+          -u "{{ __icinga2_dict_features.idomysql.user | default('icinga2') }}"
+          -p"{{ __icinga2_dict_features.idomysql.password }}"
+          "{{ __icinga2_dict_features.idomysql.database | default('icinga2') }}"
 
-    - name: MySQL check for IDO schema
-      shell: >
-        {{ mysqlcmd }}
+    - name: features | idomysql | MySQL check for IDO schema
+      ansible.builtin.shell: >
+        {{ __idomysql_cmd }}
         -Ns -e "select version from icinga_dbversion"
       failed_when: false
       changed_when: false
       check_mode: false
-      register: db_schema
+      register: __idomysql_db_schema
 
-    - name: MySQL import IDO schema
-      shell: >
-        {{ mysqlcmd }}
+    - name: features | idomysql | MySQL import IDO schema
+      when: __idomysql_db_schema.rc != 0
+      ansible.builtin.shell: >
+        {{ __idomysql_cmd }}
         < /usr/share/icinga2-ido-mysql/schema/mysql.sql
-      when: db_schema.rc != 0
-  when: icinga2_dict_features.idomysql.import_schema| default(False)
-
-- set_fact:
-    args: None

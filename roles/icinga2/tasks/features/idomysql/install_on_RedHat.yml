@@ -1,6 +1,6 @@
 ---
 
-- name: Yum - install package icinga2-ido-mysql
-  yum:
+- name: features | idomysql | install_on_RedHat | Yum - install package icinga2-ido-mysql
+  ansible.builtin.yum:
     name: icinga2-ido-mysql
     state: present

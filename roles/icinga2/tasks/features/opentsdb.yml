@@ -1,12 +1,13 @@
 ---
 
-- name: feature influxdb OpenTsdbWriter object
-  icinga2_object:
+- name: features | opentsdb | OpenTsdbWriter object
+  icinga.icinga.icinga2_object:
     name: opentsdb
     type: OpenTsdbWriter
     file: features-available/opentsdb.conf
-    args: "{{ icinga2_dict_features.opentsdb }}"
+    args: "{{ __icinga2_dict_features.opentsdb }}"
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: features | opentsdb | Enhance local object
+  ansible.builtin.set_fact:
+    __icinga2_local_objects: "{{ __icinga2_local_objects | default([]) + [result.dest] }}"

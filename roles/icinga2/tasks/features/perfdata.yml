@@ -1,12 +1,13 @@
 ---
 
-- name: feature perfdata PerfdataWriter object
-  icinga2_object:
+- name: features | perfdata | PerfdataWriter object
+  icinga.icinga.icinga2_object:
     name: perfdata
     type: PerfdataWriter
     file: features-available/perfdata.conf
-    args: "{{ icinga2_dict_features.perfdata }}"
+    args: "{{ __icinga2_dict_features.perfdata }}"
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: features | perfdata | Enhance local object
+  ansible.builtin.set_fact:
+    __icinga2_local_objects: "{{ __icinga2_local_objects | default([]) + [result.dest] }}"

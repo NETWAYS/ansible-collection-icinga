@@ -1,12 +1,13 @@
 ---
 
-- name: feature syslog SyslogLogger object
-  icinga2_object:
+- name: features | syslog | SyslogLogger object
+  icinga.icinga.icinga2_object:
     name: syslog
     type: SyslogLogger
     file: features-available/syslog.conf
-    args: "{{ icinga2_dict_features.syslog }}"
+    args: "{{ __icinga2_dict_features.syslog }}"
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: features | syslog | Enhance local object
+  ansible.builtin.set_fact:
+    __icinga2_local_objects: "{{ __icinga2_local_objects | default([]) + [result.dest] }}"

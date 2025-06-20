@@ -1,10 +1,10 @@
 ---
-- name: Zypper - install package icinga2
+- name: install_on_Suse | Zypper - install package icinga2
   community.general.zypper:
     name: "{{ icinga2_packages + icinga2_packages_dependencies }}"
     state: present
 
-- name: Zypper - install package icinga2-selinux
+- name: install_on_Suse | Zypper - install package icinga2-selinux
   community.general.zypper:
     name: icinga2-selinux
     state: present

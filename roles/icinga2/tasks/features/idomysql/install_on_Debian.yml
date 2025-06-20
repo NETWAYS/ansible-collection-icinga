@@ -1,15 +1,15 @@
 ---
 
-- name: directory dbconfig-common
-  file:
+- name: features | idomysql | install_on_Debian | Directory dbconfig-common
+  ansible.builtin.file:
     state: directory
     path: /etc/dbconfig-common
     owner: root
     group: root
     mode: 0755
 
-- name: DBconfig for IDO MySQL
-  copy:
+- name: features | idomysql | install_on_Debian | DBconfig for IDO MySQL
+  ansible.builtin.copy:
     dest: /etc/dbconfig-common/icinga2-ido-mysql.conf
     content: |
       dbc_install='false'
@@ -19,7 +19,7 @@
     group: root
     mode: 0600
 
-- name: Apt - install package icinga2-ido-mysql
-  apt:
+- name: features | idomysql | install_on_Debian | Apt - install package icinga2-ido-mysql
+  ansible.builtin.apt:
     name: icinga2-ido-mysql
     state: present

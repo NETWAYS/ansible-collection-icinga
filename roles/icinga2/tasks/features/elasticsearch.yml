@@ -1,12 +1,13 @@
 ---
 
-- name: feature elasticsearch ElasticsearchWriter object
-  icinga2_object:
+- name: features | elasticsearch | ElasticsearchWriter object
+  icinga.icinga.icinga2_object:
     name: elasticsearch
     type: ElasticsearchWriter
     file: features-available/elasticsearch.conf
-    args: "{{ icinga2_dict_features.elasticsearch }}"
+    args: "{{ __icinga2_dict_features.elasticsearch }}"
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: features | elasticsearch | Enhance local object
+  ansible.builtin.set_fact:
+    __icinga2_local_objects: "{{ __icinga2_local_objects | default([]) + [result.dest] }}"

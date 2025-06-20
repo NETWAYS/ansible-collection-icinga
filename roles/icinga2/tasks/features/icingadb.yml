@@ -1,12 +1,12 @@
 ---
-
-- name: feature icingadb IcingaDB object
-  icinga2_object:
+- name: features | icingadb | IcingaDB object
+  icinga.icinga.icinga2_object:
     name: icingadb
     type: IcingaDB
     file: features-available/icingadb.conf
-    args: "{{ icinga2_dict_features.icingadb }}"
+    args: "{{ __icinga2_dict_features.icingadb }}"
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: features | icingadb | Enhance local object
+  ansible.builtin.set_fact:
+    __icinga2_local_objects: "{{ __icinga2_local_objects | default([]) + [result.dest] }}"

@@ -72,7 +72,7 @@ Example if connection and ticket creation should be on the satellite:
 icinga2_features:
   - name: api
     ca_host: icinga-satellite.localdomain
-    ticket_salt: "{{ icinga2_constants.ticket_salt }}"
+    ticket_salt: "{{ icinga2_constants.TicketSalt }}"
   [...]
 icinga2_delegate_host: icinga-satellite.localdomain
 ```
@@ -83,7 +83,7 @@ master host.
 icinga2_features:
   - name: api
     ca_host: icinga-satellite.localdomain
-    ticket_salt: "{{ icinga2_constants.ticket_salt }}"
+    ticket_salt: "{{ icinga2_constants.TicketSalt }}"
   [...]
 icinga2_delegate_host: icinga-master.localdomain
 ```

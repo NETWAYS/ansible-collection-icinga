@@ -1,5 +1,5 @@
 ---
-icinga2_reserved:
+__icinga2_reserved:
   - Acknowledgement
   - ApiBindHost
   - ApiBindPort
@@ -67,12 +67,13 @@ icinga2_reserved:
   - ZonesDir
   - Dictionary
   - ConfigDir
-icinga2_feature_realname:
+__icinga2_feature_realname:
   idomysql: ido-mysql
   ido-mysql: idomysql
   ido-pgsql: idopgsql
   idopgsql: ido-pgsql
-icinga2_object_types:
+# constant defined for the icinga2_object action module
+__icinga2_object_types:
   - ApiListener
   - ApiUser
   - CheckCommand
@@ -108,3 +109,10 @@ icinga2_object_types:
   - User
   - UserGroup
   - Zone
+__icinga2_default_constants:
+  PluginDir: /usr/lib/nagios/plugins/
+  ManubulonPluginDir: /usr/lib/nagios/plugins/
+  PluginContribDir: /usr/lib/nagios/plugins/
+  NodeName: "{{ ansible_fqdn }}"
+  ZoneName: NodeName
+  TicketSalt: ''

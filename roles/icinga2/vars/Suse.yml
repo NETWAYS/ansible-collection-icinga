@@ -2,15 +2,3 @@
 icinga2_packages_dependencies: ["libboost_regex1_66_0"]
 icinga2_user: icinga
 icinga2_group: icinga
-icinga2_config_path: /etc/icinga2
-icinga2_log_path: /var/log/icinga2
-icinga2_ca_path: /var/lib/icinga2/ca
-icinga2_cert_path: /var/lib/icinga2/certs
-icinga2_fragments_path: /var/tmp/icinga
-icinga2_default_constants:
-  PluginDir: /usr/lib/nagios/plugins/
-  ManubulonPluginDir: /usr/lib/nagios/plugins/
-  PluginContribDir: /usr/lib/nagios/plugins/
-  NodeName: "{{ ansible_fqdn }}"
-  ZoneName: NodeName
-  TicketSalt: ''

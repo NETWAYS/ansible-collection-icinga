@@ -3,4 +3,4 @@
  * the other configuration files.
  */
 
-{{ lookup('netways.icinga.icinga2_parser', icinga2_combined_constants| netways.icinga.prefix('const '), constants=icinga2_combined_constants, reserved=icinga2_reserved, indent=0) }}
+{{ lookup('netways.icinga.icinga2_parser', __icinga2_combined_constants| netways.icinga.prefix('const '), constants=__icinga2_combined_constants, reserved=__icinga2_reserved, indent=0) }}

@@ -1,12 +1,13 @@
 ---
 
-- name: feature influxdb InfluxdbWriter object
-  icinga2_object:
+- name: features | influxdb | InfluxdbWriter object
+  icinga.icinga.icinga2_object:
     name: influxdb
     type: InfluxdbWriter
     file: features-available/influxdb.conf
-    args: "{{ icinga2_dict_features.influxdb }}"
+    args: "{{ __icinga2_dict_features.influxdb }}"
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: features | influxdb | Enhance local object
+  ansible.builtin.set_fact:
+    __icinga2_local_objects: "{{ __icinga2_local_objects | default([]) + [result.dest] }}"

@@ -1,6 +1,7 @@
 ---
 
-- gather_facts:
+- name: Gather facts
+  ansible.builtin.gather_facts:
 
 - name: Check supported operatingsystems
   block:
@@ -52,4 +53,4 @@
     unwanted_packages: "{{ icinga_monitoring_plugins_available_packages | map(attribute='pkg_name') | difference(needed_packages | default ([])) }}"
 
 - name: Install
-  include_tasks: "install_on_{{ ansible_os_family }}.yml"
+  ansible.builtin.include_tasks: "install_on_{{ ansible_os_family }}.yml"

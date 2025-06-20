@@ -3,6 +3,7 @@
 Collection to setup and manage components of the Icinga software stack.
 
 ## Documentation and Roles
+
 * [Getting Started](doc/getting-started.md)
 * [Role: netways.icinga.repos](doc/role-repos/role-repos.md)
 * [Role: netways.icinga.icinga2](doc/role-icinga2/role-icinga2.md)
@@ -14,7 +15,6 @@ Collection to setup and manage components of the Icinga software stack.
 * [Role: netways.icinga.monitoring_plugins](doc/role-monitoring_plugins/role-monitoring_plugins.md)
   * [List of Available Check Commands](doc/role-monitoring_plugins/check_command_list.md)
 * [Inventory Plugin: netways.icinga.icinga](doc/plugins/inventory/icinga-inventory-plugin.md)
-
 
 ## Installation
 

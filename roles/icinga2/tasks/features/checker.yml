@@ -1,12 +1,13 @@
 ---
 
-- name: feature checker CheckerComponent object
-  icinga2_object:
+- name: features | checker | CheckerComponent object
+  icinga.icinga.icinga2_object:
     name: checker
     type: CheckerComponent
     file: features-available/checker.conf
-    args: "{{ icinga2_dict_features.checker }}"
+    args: "{{ __icinga2_dict_features.checker }}"
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: features | checker | Enhance local objects
+  ansible.builtin.set_fact:
+    __icinga2_local_objects: "{{ __icinga2_local_objects | default([]) + [result.dest] }}"

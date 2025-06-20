@@ -1,4 +1,4 @@
-- name: Zypper - install package icinga2-ido-mysql
+- name: features | idomysql | install_on_Suse | Zypper - install package icinga2-ido-mysql
   community.general.zypper:
     name: icinga2-ido-mysql
     state: present

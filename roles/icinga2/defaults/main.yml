@@ -1,8 +1,12 @@
 ---
 icinga2_packages: ["icinga2"]
+icinga2_fragments_path: /var/tmp/icinga
+icinga2_config_path: /etc/icinga2
 icinga2_state: started
 icinga2_enabled: true
 icinga2_confd: true
+icinga2_ca_path: /var/lib/icinga2/ca
+icinga2_cert_path: /var/lib/icinga2/certs
 icinga2_plugins:
   - plugins
   - plugins-contrib
@@ -14,6 +18,10 @@ icinga2_features:
   - name: checker
   - name: notification
   - name: mainlog
-icinga2_remote_objects: []
 _icinga2_custom_conf_paths: []
 icinga2_config_host: "{{ ansible_fqdn }}"
+
+icinga2_config_directories:
+  - zones.d/main/commands
+  - zones.d/main/hosts
+  - zones.d/main/services

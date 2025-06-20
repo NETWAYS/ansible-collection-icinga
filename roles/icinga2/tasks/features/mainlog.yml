@@ -1,12 +1,13 @@
 ---
 
-- name: feature mainlog FileLogger object
-  icinga2_object:
+- name: features | mainlog | FileLogger object
+  icinga.icinga.icinga2_object:
     name: main-log
     type: FileLogger
     file: features-available/mainlog.conf
-    args: "{{ icinga2_dict_features.mainlog }}"
+    args: "{{ __icinga2_dict_features.mainlog }}"
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: features | mainlog | Enhance local object
+  ansible.builtin.set_fact:
+    __icinga2_local_objects: "{{ __icinga2_local_objects | default([]) + [result.dest] }}"

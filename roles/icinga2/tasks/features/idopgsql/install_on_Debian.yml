@@ -1,15 +1,14 @@
 ---
-
-- name: directory dbconfig-common
-  file:
+- name: features | idopgsql | install_on_Debian | Directory dbconfig-common
+  ansible.builtin.file:
     state: directory
     path: /etc/dbconfig-common
     owner: root
     group: root
     mode: 0755
 
-- name: DBconfig for IDO PostgreSQL
-  copy:
+- name: features | idopgsql | install_on_Debian | DBconfig for IDO PostgreSQL
+  ansible.builtin.copy:
     dest: /etc/dbconfig-common/icinga2-ido-pgsql.conf
     content: |
       dbc_install='false'
@@ -19,7 +18,7 @@
     group: root
     mode: 0600
 
-- name: Apt - install package icinga2-ido-pgsql
-  apt:
+- name: features | idopgsql | install_on_Debian | Apt - install package icinga2-ido-pgsql
+  ansible.builtin.apt:
     name: icinga2-ido-pgsql
     state: present

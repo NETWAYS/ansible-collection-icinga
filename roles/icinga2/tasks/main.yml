@@ -1,8 +1,9 @@
 ---
-- gather_facts:
+- name: Gather facts
+  ansible.builtin.gather_facts:
 
 - name: Include OS specific vars
-  include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
       files:
@@ -14,11 +15,11 @@
       paths:
         - "{{ role_path }}/vars"
 
-- name: install
-  include_tasks: install.yml
+- name: Install
+  ansible.builtin.include_tasks: install.yml
 
-- name: configure
-  include_tasks: configure.yml
+- name: Configure
+  ansible.builtin.include_tasks: configure.yml
 
-- name: manage service
-  include_tasks: service.yml
+- name: Manage service
+  ansible.builtin.include_tasks: service.yml

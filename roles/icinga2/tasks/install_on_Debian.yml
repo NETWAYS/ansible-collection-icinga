@@ -1,5 +1,5 @@
 ---
-- name: Apt - install package icinga2
+- name: install_on_Debian | Apt - install package icinga2
   ansible.builtin.apt:
     pkg: "{{ icinga2_packages + icinga2_packages_dependencies }}"
     state: present

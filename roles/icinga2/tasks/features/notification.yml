@@ -1,12 +1,13 @@
 ---
 
-- name: feature notification NotificationComponent object
-  icinga2_object:
+- name: features | notification | NotificationComponent object
+  icinga.icinga.icinga2_object:
     name: notification
     type: NotificationComponent
     file: features-available/notification.conf
-    args: "{{ icinga2_dict_features.notification }}"
+    args: "{{ __icinga2_dict_features.notification }}"
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: features | notification | Enhance local object
+  ansible.builtin.set_fact:
+    __icinga2_local_objects: "{{ __icinga2_local_objects | default([]) + [result.dest] }}"

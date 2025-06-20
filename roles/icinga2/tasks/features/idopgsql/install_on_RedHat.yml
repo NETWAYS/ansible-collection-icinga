@@ -1,6 +1,6 @@
 ---
 
-- name: Yum - install package icinga2-ido-pgsql
-  yum:
+- name: features | idopgsql | install_on_RedHat | Yum - install package icinga2-ido-pgsql
+  ansible.builtin.yum:
     name: icinga2-ido-pgsql
     state: present

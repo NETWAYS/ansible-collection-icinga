@@ -1,0 +1,149 @@
+---
+argument_specs:
+  main:
+    short_description: configure or manage Icinga 2 server and agents
+    description:
+      - Role to install, configure or manage Icinga 2 server and agents.
+    author: |
+      - Lennart Betz <lennart.betz@netways.de>
+      - Thilo Wening <thilo.wening@netways.de>
+      - Thomas Widhalm <thomas.widhalm@netways.de>
+    options:
+      icinga2_packages:
+        description: list of packages to be installed
+        type: list
+        elements: str
+        default: ["icinga2"]
+      icinga2_packages_dependencies:
+        description:
+          - list of packages dependancies to be installed in addition to packages
+          - OS Specific
+        type: list
+        elements: str
+      ansible_selinux: # naming is wrong, should be prefixed with the role name, e.g. icinga2_selinux
+        description:
+          - The Icinga 2 role will automatically detect via Ansible facts if SELinux is enabled on the system.
+          - If this is the case the package icinga2-selinux will be automatically installed.
+          - If the package should be installed, even if SELinux is not enabled or somehow wrongly disabled in Ansible use the following variable.
+        type: dict
+        options:
+          status:
+            description: Force installation of package `icinga2-selinux`
+            type: str
+            choices:
+              - enabled
+              - disabled
+      icinga2_fragments_path:
+        description: Base installation folder of all icinga content
+        default: /var/tmp/icinga
+      icinga2_config_path:
+        description: folderpath for icinga configuration
+        default: /etc/icinga2
+      icinga2_user:
+        description: local icinga2 user
+      icinga2_group:
+        description: local group for O(icinga2_user)
+      icinga2_constants:
+        description:
+          - Define constants in **constants.conf**.
+          - usefull to define the O(icinga2_constants.NodeName) and O(icinga2_constants.ZoneName)
+          - usefull to define the salt
+        type: dict
+        options:
+          PluginDir:
+            description: the plugin folderpath
+            default: /usr/lib/nagios/plugins
+          ManubulonPluginDir:
+            description: manabulon plugin folderpath
+            default: /usr/lib/nagios/plugins
+          PluginContribDir:
+            description: contrib plugins folderpath
+            default: /usr/lib/nagios/plugins
+          NodeName:
+            description: >
+              - node name
+              - ex: satellite.localdomain
+            default: ansible_fqdn
+          ZoneName:
+            description: >
+              - NodeName
+              - ex: zone-satellite-d1
+            default: NodeName
+          TicketSalt:
+            description: salt
+            default: ''
+      icinga2_features:
+        description:
+          - List of features and their configuration settings to be set
+          - Each feature has its own attributes
+          - Check L(Documentation Icinga 2 Features,https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#features)
+        type: list
+        elements: dict
+        default: >-
+          - name: checker
+          - name: notification
+          - name: mainlog
+      icinga2_config_host:
+        description: hostname of the configuration
+        default: ansible_fqdn
+      icinga2_confd:
+        description:
+          - If the local **conf.d** directory shouldn't be recursively included then the var O(icinga2_confd) should be set to `false`.
+          - >-
+            Otherwise you can use a directory name to set the include to a different folder
+            than **conf.d**. The folder needs to exist below /etc/icinga2. If it should be created by the role use the variable O(icinga2_config_directories) in addition.
+        type: str
+
+      icinga2_config_directories:
+        description:
+          - List of configuration directories to be created
+          - Those directories are only managed when they are part of `zones.d`, `conf.d` or the variable O(icinga2_confd).
+        type: list
+        elements: str
+        default:
+          - zones.d/main/commands
+          - zones.d/main/hosts
+          - zones.d/main/services
+      icinga2_ca_path:
+        description: CA folderpath, used for the API
+        type: str
+        default: /var/lib/icinga2/ca
+      icinga2_cert_path:
+        description: path for certificate to be used by API
+        type: str
+        default: /var/lib/icinga2/certs
+      icinga2_state:
+        description: expected state of the icinga2 service
+        choices: [ reloaded, restarted, started, stopped ]
+        default: started
+      icinga2_enabled:
+        description: expected status of the icinga2 service
+        type: bool
+        default: true
+      icinga2_plugins:
+        description: list of plugins to be included in the icinga2.conf
+        type: list
+        elements: str
+        default:
+          - plugins
+          - plugins-contrib
+          - windows-plugins
+          - nscp
+      icinga2_purge_features:
+        description: >-
+          Decides whether the unmanaged features should be purged or not. Default: true
+        type: bool
+        default: true
+      icinga2_delegate_host:
+        description: >-
+          The role primarily delegates the ticket creation to the Icinga ca host.
+          If the host is not listed with the same name in Ansible, you can set the name of the host in Ansible with this variable.
+          example: `icinga2_delegate_host: icinga-master`
+        type: str
+      # TODO: change logic to make it more separated since not possible to validate as item.split
+      # icinga2_objects:
+      #   description: >-
+      #     List of objects for which configuration file will generated.
+      #     COMPLEX object, can be either dict containing list of dict (host vars), or list of dict...
+      #   type: list
+      #   elements: dict

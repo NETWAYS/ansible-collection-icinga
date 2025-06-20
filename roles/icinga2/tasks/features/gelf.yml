@@ -1,12 +1,13 @@
 ---
 
-- name: feature influxdb GelfWriter object
-  icinga2_object:
+- name: features | gelf | GelfWriter object
+  icinga.icinga.icinga2_object:
     name: gelf
     type: GelfWriter
     file: features-available/gelf.conf
-    args: "{{ icinga2_dict_features.gelf }}"
+    args: "{{ __icinga2_dict_features.gelf }}"
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: features | gelf | Enhance local object
+  ansible.builtin.set_fact:
+    __icinga2_local_objects: "{{ __icinga2_local_objects | default([]) + [result.dest] }}"
