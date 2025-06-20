@@ -1,4 +1,4 @@
-# Role icinga.icinga.icinga_kubernetes
+# Role netways.icinga.icinga_kubernetes
 
 This role installs and configures the Icinga Kubernetes Daemon. In addition it can also import the schema into the database.
 More information about this package can be found [in the official documentation](https://icinga.com/docs/icinga-for-kubernetes/latest/doc/01-About/).
