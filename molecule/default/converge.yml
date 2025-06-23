@@ -6,6 +6,7 @@
     icingaweb2_modules:
       graphite:
         enabled: true
+        source: package
         custom_template_files:
           - name: test.ini
             src_path: graphite_templates/test.ini
