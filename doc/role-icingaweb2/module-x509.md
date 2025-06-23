@@ -13,7 +13,7 @@ The general module parameter like `enabled` and `source` can be applied here.
 
 The backend database for the module needs to be available and configured at the `icingaweb2_resources` variable.
 
-```
+```yaml
 icingaweb2_modules:
   x509:
     source: package
@@ -29,7 +29,7 @@ To configure SNIs for a IP address, use the dictionary `sni`.
 
 Example:
 
-```
+```yaml
 icingaweb2_modules:
   x509:
     source: package
@@ -49,7 +49,7 @@ icingaweb2_modules:
 To import certificates use the **list** `certificate_files` all files need to be
 available locally beforehand.
 
-```
+```yaml
 icingaweb2_modules:
   x509:
     source: package
@@ -82,7 +82,7 @@ To import the database schema use `database` dictionary with the following varia
 |`ssl_extra_options`|`String`| Extra options for the client authentication. | **n/a** |
 
 
-```
+```yaml
 icingaweb2_modules:
   x509:
     source: package

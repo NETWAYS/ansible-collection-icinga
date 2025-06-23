@@ -1,0 +1,36 @@
+# temporarily disabled, pgsql at the moment is not available for icinga kubernetes
+
+# - name: PgSQL import Kubernetes schema
+#   when: icinga_kubernetes_database_import_schema| default(False)
+#   block:
+#     - name: Build pgsql command
+#       ansible.builtin.set_fact:
+#         _tmp_pgsqlcmd: >-
+#           PGPASSWORD="{{ icinga_kubernetes_database_password }}"
+#           psql
+#           "{% if icinga_kubernetes_database_host %} host="{{ icinga_kubernetes_database_host }}" {%- endif %}
+#           {% if icinga_kubernetes_database_port is defined %} port={{ icinga_kubernetes_database_port }} {%- endif %}
+#           user={{ icinga_kubernetes_database_user | default('kubernetes') }}
+#           dbname={{ icinga_kubernetes_database_name | default('kubernetes') }}
+#           {% if icinga_kubernetes_database_sslmode is defined %} sslmode={{ icinga_kubernetes_database_sslmode }} {%- endif %}
+#           {% if icinga_kubernetes_database_ca is defined %} sslrootcert={{ icinga_kubernetes_database_ca }} {%- endif %}
+#           {% if icinga_kubernetes_database_cert is defined %} sslcert={{ icinga_kubernetes_database_cert }} {%- endif %}
+#           {% if icinga_kubernetes_database_key is defined %} sslkey={{ icinga_kubernetes_database_key }} {%- endif %}
+#           {% if icinga_kubernetes_database_ssl_extra_options is defined %} {{ icinga_kubernetes_database_ssl_extra_options }} {%- endif %}"
+
+#     - name: PgSQL check for Kubernetes schema
+#       ansible.builtin.shell: >
+#         {{ _tmp_pgsqlcmd }}
+#         -w -c "select version from kubernetes_schema"
+#       failed_when: false
+#       changed_when: false
+#       check_mode: false
+#       register: _db_schema
+
+#     - name: PgSQL import Kubernetes schema
+#       ansible.builtin.shell: >
+#         {{ _tmp_pgsqlcmd }}
+#         -w -f {{ icinga_kubernetes_database_schema }}
+#       when: _db_schema.rc != 0
+#       check_mode: false
+#       run_once: true

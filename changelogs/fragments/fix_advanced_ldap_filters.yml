@@ -1,3 +1,0 @@
-bugfixes:
-  - "Fix quoting for ! in templating Issue #208"
-  - "Replaced quote filter from ini template"

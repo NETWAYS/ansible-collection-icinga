@@ -4,7 +4,7 @@ To enable the feature GELF use the following block in the variable `icinga2_feat
 
 **INFO** For detailed information and instructions see the Icinga 2 Docs. [Feature GelfWriter](https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#gelfwriter)
 
-```
+```yaml
 icinga2_features:
   - name: gelf
     host: localhost
@@ -42,4 +42,3 @@ icinga2_features:
 
 * `key_path: string`
   * Path to host key to accompany the cert_path. Requires enable_tls set to true.
-

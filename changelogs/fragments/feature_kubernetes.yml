@@ -1,0 +1,4 @@
+---
+major_changes:
+  - Add a role for the installation and configuration of `Icinga for Kubernetes <https://icinga.com/docs/icinga-for-kubernetes/latest/>`_.
+  - Add tasks to role :code:`icingaweb2` to install and configure `Icinga for Kubernetes Web <https://icinga.com/docs/icinga-kubernetes-web/latest/doc/02-Installation/>`_.

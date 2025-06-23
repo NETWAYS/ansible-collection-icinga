@@ -8,7 +8,7 @@ The general module parameter `enabled` be applied here.
 
 For every config file, create a dictionary with sections as keys and the parameters as values. For all parameters please check the [module documentation](https://icinga.com/docs/icinga-web/latest/doc/03-Configuration/#configuration)
 
-```
+```yaml
 icingaweb2_modules:
   monitoring:
     enabled: true

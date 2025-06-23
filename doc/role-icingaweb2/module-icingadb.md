@@ -8,7 +8,7 @@ The general module parameter like `enabled` and `source` can be applied here.
 
 For every config file, create a dictionary with sections as keys and the parameters as values. For all parameters please check the [module documentation](https://icinga.com/docs/icinga-db-web/latest/doc/01-About/)
 
-```
+```yaml
 icingaweb2_modules:
   icingadb:
     enabled: true
@@ -35,7 +35,7 @@ icingaweb2_modules:
 
 Please use the following parameters to configure TLS connections. The collection won't manage those certificates, ensure those are deployed beforehand. At the redis section add the following:
 
-```
+```yaml
 redis:
   tls: '1'
   ca: /path/to/ca.crt

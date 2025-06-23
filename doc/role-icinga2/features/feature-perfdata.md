@@ -4,7 +4,7 @@ To enable the feature perfdata use the following block in the variable `icinga2_
 
 **INFO** For detailed information and instructions see the Icinga 2 Docs. [Feature PerfdataWriter](https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#perfdatabwriter)
 
-```
+```yaml
 icinga2_features:
   - name: perfdata
     host_perfdata_path: "/var/spool/icinga2/perfdata/host-perfdata"
@@ -39,4 +39,3 @@ icinga2_features:
 
 * `enable_ha: boolean`
   * Enable the high availability functionality. Only valid in a cluster setup. Defaults to false.
-

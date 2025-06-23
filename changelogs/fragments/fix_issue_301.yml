@@ -1,2 +1,0 @@
-bugfixes:
-  - "Certain values within Icinga Web :code:`ini` files got quoted incorrectly using single quotes. They are now quoted properly using double quotes (#301)."

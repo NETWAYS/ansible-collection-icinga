@@ -4,7 +4,7 @@ To enable the feature Elasticsearch use the following block in the variable `ici
 
 **INFO** For detailed information and instructions see the Icinga 2 Docs. [Feature ElasticsearchWriter](https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#elasticsearchwriter)
 
-```
+```yaml
 icinga2_features:
   - name: elasticsearch
     host: localhost
@@ -45,7 +45,7 @@ icinga2_features:
   * Whether to use a TLS stream. Defaults to false. Requires an HTTP proxy.
 
 * `insecure_noverify: boolean`
-  * Disable TLS peer verification. 
+  * Disable TLS peer verification.
 
 * `ca_path: string`
   * Path to CA certificate to validate the remote host. Requires enable_tls set to true.
@@ -58,4 +58,3 @@ icinga2_features:
 
 * `enable_ha: boolean`
   * Whether to send warn, crit, min & max tagged data.
-

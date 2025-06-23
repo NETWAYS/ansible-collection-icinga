@@ -1,4 +1,4 @@
-# {{ ansible_managed }}
+{{ ansible_managed | comment }}
 
 bind {% for host in icingadb_redis_binds %}
 {{ host }}
@@ -227,4 +227,5 @@ rdb-save-incremental-fsync {{ icingadb_redis_rdb_save_incremental_fsync }}
 tls-cert-file {{ icingadb_redis_tls_cert }}
 tls-key-file {{ icingadb_redis_tls_key }}
 tls-ca-cert-file {{ icingadb_redis_tls_ca }}
+tls-auth-clients {{ icingadb_redis_client_certificate }}
 {% endif %}

@@ -14,7 +14,7 @@ All other keys are equal to the object type an can be found in the documentation
 
 #### Example MYSQL:
 
-```
+```yaml
 icinga2_features:
   - name: idomysql
     host: localhost
@@ -30,7 +30,7 @@ icinga2_features:
 
 #### Example PGSQL:
 
-```
+```yaml
 icinga2_features:
   - name: idopgsql
     host: localhost
@@ -67,7 +67,7 @@ icinga2_features:
   * Use SSL. Change to true in case you want to use any of the SSL options.
 
 * `ssl_mode: string`
-  * **Only PgSQL**: Enable SSL connection mode. Value must be set according to the sslmode setting: prefer, require, verify-ca, verify-full, allow, disable. 
+  * **Only PgSQL**: Enable SSL connection mode. Value must be set according to the sslmode setting: prefer, require, verify-ca, verify-full, allow, disable.
 
 * `ssl_key: string`
   * SSL client key file path.
@@ -97,7 +97,7 @@ icinga2_features:
   * Description for the Icinga 2 instance.
 
 * `enable_ha: boolean`
-  * Enable the high availability functionality. Only valid in a cluster setup.  
+  * Enable the high availability functionality. Only valid in a cluster setup.
 
 * `failover_timeout: string`
   * Set the failover timeout in a HA cluster. Must not be lower than 30s. Defaults to 30s

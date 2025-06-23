@@ -4,6 +4,73 @@ Icinga.Icinga Release Notes
 
 .. contents:: Topics
 
+v0.4.0
+======
+
+Release Summary
+---------------
+
+Add some features like Icinga2 feature :code:`CompatLogger` and support for Suse in :code:`monitoring_plugins` role.
+Apart from some features and enhancements this is mostly a bugfix release.
+
+Major Changes
+-------------
+
+- Add an Ansible Inventory Plugin to fetch host information from Icinga 2's API for use as an Ansible Inventory
+- Added Installation of x509 certificate monitoring model
+
+Minor Changes
+-------------
+
+- Add object :code:`CompatLogger` and feature :code:`compatlog`.
+- Add support for Suse in the :code:`monitoring_plugins` role.
+- Add the ability to create additional Icinga Web 2 users - Thanks @losten-git
+- Add variable `icinga_monitoring_plugins_dependency_repos` to allow for later modification by the user if specific other repositories need to be activated instead of `powertools` / `crb`
+- Added support for PostgresQL databases for Icingaweb2 modules that support it
+- Added tests for retention configs
+- Allow for usage of loop variables from :code:`apply_for` within object - Thanks @lucagubler (#344)
+- Change documentation to better reflect the intended usage of the variable 'icinga2_objects' as a host variable vs. as a play variable.
+- Enhance IcingaDB retention configs #200
+- Icingaweb2: fix duplicate task name at kickstart tasks (#244)
+- added pyinilint as ini validator after templates
+- added tests for icingaweb2 ini template
+- changed all references of "vars['icingaweb2_modules']" to "icingaweb2_modules" (#266)
+- ensure backwards compatibility with bool filter (#218)
+- removed localhost condition as default as it could be a localhost connection. (#257)
+
+Bugfixes
+--------
+
+- Added block rescue statement if unsupported os found. (#232)
+- Adjusted the way variables get looked up from `vars['varname']` to `varname` in most places.
+- Certain values within Icinga Web :code:`ini` files got quoted incorrectly using single quotes. They are now quoted properly using double quotes (#301).
+- Changed variable lookups in the form of `vars['variablename']` to `variablename` to avoid explicitly looking up the `vars` key of a play.
+- Fix bug where the port for Icinga Web's own database connection was not set in ``resources.ini``.
+- Fix bug with current beta release of Ansible Core where ``XY is dict`` does not work for dictionary-like variables. Use ``isinstance(XY, dict)`` now instead. This bug is related to the ``prefix`` filter plugin but might arise again with other parts of the code in the future.
+- Fix exposure of secret ``TicketSalt`` inside the API feature. Use constant ``TicketSalt`` as the value for ``ticket_salt`` instead which is an empty string if unchanged by the user.
+- Fix quoting for ! in templating Issue #208
+- Fix templating issue where explicitly quoting integer values for use as strings is necessary in certain versions of e.g. Jinja2 - thanks @sol1-matt
+- Fixed a bug in :code:`monitoring_plugins` where a requested plugin that is **unavailable** would cause a failure even though it is a **known** plugin and should be skipped (#327).
+- Fixed collect of icinga2_objects when icinga2_config_host is not defined (#228)
+- Fixed incorrect failure of x509 variable sanity checks. They now fail as intended instead of due to syntax (#303).
+- Fixed wrong variable being referenced to apply x509 mysql database schema. Use `schema_path_mysql` now (#303).
+- Icinga's packages no longer create '/var/log/icingadb-redis/'. Added tasks that create a log directory based on `icingadb_redis_logfile` (#298).
+- Icinga2: Correctly rename cleanup argument from icinga2_ca_host_port to ca_host_port
+- Icingaweb2: Change order of module state and configuration tasks #225
+- Reintroduce file deleted in previous PR #354 to restore functionality in x509 module - thanks to @lutin-malin #366
+- Replaced quote filter from ini template
+- The Icinga DB config template used two different variables to configure (in)secure TLS communication with the database. It now uses :code:`icingadb_database_tls_insecure` for both the condition and as the actual value (#302).
+- The type of :code:`vars['icinga2_objects']` was wrongly tested for. This should be a list. The type is now `properly checked <https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_tests.html#type-tests>`_ for (#308).
+- When using :code:`icinga2_custom_config` sub directories within the found :code:`files/` directory can now be used to deploy Icinga 2 configuration. This allows users to freely structure their :code:`files/` directory (nested directories) (#309).
+- fixed libboost_regex1_54_0 missing for Suse 12. thanks @dh-roland
+- icingaweb2: run pqslcmd with LANG=C to ensure the output is in english.
+- remove superfluous curly brace (#246)
+
+New Modules
+-----------
+
+- icinga.icinga.icinga2_compatlogger - Creates information for CompatLogger object.
+
 v0.3.4
 ======
 
@@ -42,7 +109,7 @@ v0.3.2
 Release Summary
 ---------------
 
-This is a bugfix release, bringing two QOL features and a fix for the installation process of some of the roles which broke with v0.3.1.
+Bugfix Release
 
 Minor Changes
 -------------

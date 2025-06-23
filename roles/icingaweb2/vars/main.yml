@@ -5,3 +5,4 @@ icingaweb2_module_packages:
   graphite: icinga-graphite-web
   x509: icinga-x509
   businessprocess: icinga-businessprocess
+  kubernetes: icinga-kubernetes-web

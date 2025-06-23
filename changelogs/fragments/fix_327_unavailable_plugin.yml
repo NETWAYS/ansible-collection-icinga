@@ -1,3 +1,0 @@
----
-bugfixes:
-  - Fixed a bug in :code:`monitoring_plugins` where a requested plugin that is **unavailable** would cause a failure even though it is a **known** plugin and should be skipped (#327).

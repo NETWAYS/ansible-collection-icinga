@@ -1,3 +1,0 @@
----
-bugfixes:
-  - Fixed collect of icinga2_objects when icinga2_config_host is not defined (#228)

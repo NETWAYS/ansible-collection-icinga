@@ -1,4 +1,4 @@
-# Role icinga.icinga.icingadb_redis
+# Role netways.icinga.icingadb_redis
 
 This role installs and configures a Redis installation specifically vendored for usage with [IcingaDB](https://icinga.com/docs/icinga-db/latest/doc/01-About/). If you are running an external Redis service or want to use a different Redis installation, you don't need to roll out this role.
 

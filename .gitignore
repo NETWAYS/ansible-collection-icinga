@@ -135,10 +135,16 @@ dmypy.json
 
 # Editors
 .*.sw[op]
-
+.vscode
 
 # PyCharm Editor
 .idea/
 
 # Vagrant
 .vagrant/
+
+# Ansible
+.ansible
+
+# Trunk
+.trunk

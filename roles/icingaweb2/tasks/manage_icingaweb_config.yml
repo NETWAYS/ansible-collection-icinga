@@ -54,6 +54,7 @@
         type: db
         db: "{{ icingaweb2_db['type'] | default('mysql') }}"
         host: "{{ icingaweb2_db['host'] }}"
+        port: "{{ icingaweb2_db['port'] | default(omit) }}"
         dbname: "{{ icingaweb2_db['name'] }}"
         username: "{{ icingaweb2_db['user'] }}"
         password: "{{ icingaweb2_db['password'] }}"

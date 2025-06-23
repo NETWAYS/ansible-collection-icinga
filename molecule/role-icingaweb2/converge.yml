@@ -3,7 +3,7 @@
 - name: Converge
   hosts: all
   collections:
-    - icinga.icinga
+    - netways.icinga
   pre_tasks:
     - ansible.builtin.include_role:
         name: repos

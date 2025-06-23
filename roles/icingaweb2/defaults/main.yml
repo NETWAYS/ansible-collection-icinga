@@ -41,3 +41,4 @@ icingaweb2_config:
   themes:
     default: Icinga
 icingaweb2_cli: icingacli
+icingaweb2_users: []

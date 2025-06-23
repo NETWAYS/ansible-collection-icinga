@@ -1,4 +1,4 @@
-# Role icinga.icinga.icingadb
+# Role netways.icinga.icingadb
 
 This role installs and configures the IcingaDB daemon. In addition it can also import the schema into the database. It is idempotent and works in HA-setups (two Icinga2 instances).
 
@@ -99,7 +99,7 @@ This play installs IcingaDB with on the same host as its connected MysQL databas
     icingadb_database_type: mysql  # needed by the schema import
 
   roles:
-    - role: icinga.icinga.icingadb
+    - role: netways.icinga.icingadb
 ```
 
 This more complex example installs IcingaDB and connects it to a **remote** PostgreSQL database, using client certificates and TLS. It also imports the schema into the database. Redis is installed locally.
@@ -120,5 +120,5 @@ This more complex example installs IcingaDB and connects it to a **remote** Post
     icingadb_database_import_schema: true
 
   roles:
-    - role: icinga.icinga.icingadb
+    - role: netways.icinga.icingadb
 ```

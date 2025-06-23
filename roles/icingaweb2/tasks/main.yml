@@ -15,6 +15,8 @@
 - name: Check each icingaweb2_modules key against known modules
   when: not icingaweb2_ignore_unknown_modules
   loop: "{{ icingaweb2_modules | default({}) | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   ansible.builtin.assert:
     that:
       - item.key in icingaweb2_module_packages.keys()
@@ -24,6 +26,8 @@
   ansible.builtin.set_fact:
     icingaweb2_packages: "{{ icingaweb2_packages + [ icingaweb2_module_packages[item.key] ] }}"
   loop: "{{ icingaweb2_modules | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
   when: icingaweb2_modules is defined and icingaweb2_module_packages[item.key] is defined and item.value.enabled | bool == true and item.value.source == "package"
   no_log: true
 
@@ -40,8 +44,10 @@
   ansible.builtin.include_tasks: "manage_icingaweb_config.yml"
 
 - name: Manage Icinga Web 2 DB
-  ansible.builtin.include_tasks: "manage_icingaweb_{{ icingaweb2_db.type }}_db.yml"
-  when: icingaweb2_db is defined
+  ansible.builtin.include_tasks: "manage_icingaweb_db.yml"
+  when:
+    - icingaweb2_db is defined
+    - (icingaweb2_db_import_schema | default(false)) or (icingaweb2_users is defined) or (icingaweb2_admin_username is defined)
 
 - name: Manage module states
   ansible.builtin.file:
@@ -64,6 +70,8 @@
     - icingaweb2_modules is defined
     - item.key in icingaweb2_module_packages.keys()
   loop: "{{ icingaweb2_modules | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
 
 # Many daemons fail before e.g. the resource is set up or the schema hasn't been migrated. This is a workaround.
 - name: Manage enabled module daemons
@@ -72,3 +80,5 @@
     state: restarted
   when: icingaweb2_modules is defined and item.value.enabled|default(false)|bool == true and item.key in ['vspheredb', 'x509']
   loop: "{{ icingaweb2_modules | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"

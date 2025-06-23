@@ -17,4 +17,4 @@ galaxy_info:
     - icinga
     - monitoring
   dependencies:
-    - icinga.icinga.repos
+    - netways.icinga.repos

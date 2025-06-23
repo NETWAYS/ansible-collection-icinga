@@ -4,7 +4,7 @@ To enable the feature command use the following block in the variable `icinga2_f
 
 **INFO** For detailed information and instructions see the Icinga 2 Docs. [Feature Command](https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#externalcommandlistener)
 
-```
+```yaml
 icinga2_features:
   - name: command
     state: present

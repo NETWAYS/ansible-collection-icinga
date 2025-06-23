@@ -1,0 +1,28 @@
+---
+
+- name: Prepare database
+  ansible.builtin.include_tasks: "{{ icingaweb2_db.type | default('mysql') }}/prepare_db.yml"
+
+- name: Import database schema
+  ansible.builtin.include_tasks: "{{ icingaweb2_db.type | default('mysql') }}/import_db.yml"
+  when: icingaweb2_db_import_schema | default(false)
+
+- name: Add admin to users list
+  ansible.builtin.set_fact:
+    icingaweb2_users: "{{ icingaweb2_users + [_current_user]}}"
+  vars:
+    _current_user:
+      username: "{{ icingaweb2_admin_username }}"
+      password: "{{ icingaweb2_admin_password }}"
+      recreate: "{{ icingaweb2_admin_recreate | default(false) }}"
+  when:
+    - icingaweb2_admin_username is defined
+    - icingaweb2_admin_password is defined
+
+- name: Add Icinga web 2 users
+  ansible.builtin.include_tasks: "{{ icingaweb2_db.type | default('mysql') }}/users_db.yml"
+  loop: "{{ icingaweb2_users }}"
+  loop_control:
+    loop_var: _current_user
+    label: "{{ _current_user.username }}"
+  when: icingaweb2_users | length > 0

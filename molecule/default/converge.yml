@@ -128,7 +128,7 @@
           - name: test.conf
             src_path: test.conf
   collections:
-    - icinga.icinga
+    - netways.icinga
   pre_tasks:
     - ansible.builtin.include_role:
         name: repos

@@ -10,7 +10,7 @@ All non Icinga attributes to configure the feature are explained below.
 
 Example how to install an Agent:
 
-```
+```yaml
 icinga2_features:
   - name: api
     force_newcert: false
@@ -25,7 +25,7 @@ icinga2_features:
 
 Example how to install a master/server instance:
 
-```
+```yaml
 icinga2_features:
   - name: api
     force_newcert: false
@@ -42,7 +42,7 @@ icinga2_features:
 
 To create an instance with a local CA, the API Feature parameter `ca_host` should be `none`.
 
-```
+```yaml
 ca_host: none
 ```
 
@@ -77,7 +77,7 @@ icinga2_features:
 icinga2_delegate_host: icinga-satellite.localdomain
 ```
 Example if agent should connect to satellite and the tickets are generated on the
-master host. 
+master host.
 
 ```yaml
 icinga2_features:
@@ -91,19 +91,19 @@ icinga2_delegate_host: icinga-master.localdomain
 By default the FQDN is used as certificate common name, to put a name
 yourself:
 
-```
+```yaml
 cert_name: myown-commonname.fqdn
 ```
 
 To force a new request set `force_newcert` to `true`:
 
-```
+```yaml
 force_newcert: true
 ```
 
 To increase your security set `ca_fingerprint` to validate the certificate of the `ca_host`:
 
-```
+```yaml
 ca_fingerprint: "00 DE AD BE EF"
 # alternatively
 ca_fingerprint: "00:DE:AD:BE:EF"
@@ -113,7 +113,7 @@ ca_fingerprint: "00 de ad be ef"
 
 The fingerprint can be retrieved with OpenSSL:
 
-```
+```bash
 openssl x509 -noout -fingerprint -sha256 -inform pem -in /path/to/ca.crt
 ```
 
@@ -122,7 +122,7 @@ openssl x509 -noout -fingerprint -sha256 -inform pem -in /path/to/ca.crt
 If you want to use certificates which aren't created by **Icinga 2 CA**, then use
 the following variables to point the role to your own certificates.
 
-```
+```yaml
 ssl_cacert: ca.crt
 ssl_cert: certificate.crt
 ssl_key: certificate.key
@@ -135,7 +135,7 @@ The role will copy the files from your Ansible controller node to
 **/var/lib/icinga2/certs** on the remote host. File names are
 set to by the parameter `cert_name` (by default FQDN).
 
-```
+```yaml
 icinga2_features:
   - name: api
     cert_name: host.example.org
@@ -171,7 +171,7 @@ icinga2_features:
   * Path to the certificate key file when using manual certificates.
 
 * `endpoints: list of dicts`
-  * Defines endpoints in **zones.conf**, each endpoint is required to have a name and optional a host or port.  
+  * Defines endpoints in **zones.conf**, each endpoint is required to have a name and optional a host or port.<br>
     * `name: string`
     * `host: string`
     * `port: number`

@@ -1,0 +1,32 @@
+---
+- name: Include OS specific vars
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_os_family }}-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_os_family }}-{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - default.yml
+      paths:
+        - "{{ role_path }}/vars"
+
+- name: Check supported operatingsystems
+  block:
+    - name: Include OS specific installation
+      ansible.builtin.include_tasks: "install_on_{{ ansible_os_family | lower }}.yml"
+  rescue:
+    - name: "OS family not supported!"
+      ansible.builtin.fail:
+        msg: "The OS {{ ansible_os_family }} is not supported!"
+
+- name: Include Tasks to configure Icinga Kubernetes
+  ansible.builtin.include_tasks: manage_config.yml
+
+- name: Include Tasks to import DB Schema
+  ansible.builtin.include_tasks: "manage_schema_{{ icinga_kubernetes_database_type | lower }}.yml"
+  when: icinga_kubernetes_database_import_schema and icinga_kubernetes_database_type is defined
+
+- name: Include Tasks to manage Kubernetes Service
+  ansible.builtin.include_tasks: manage_service.yml

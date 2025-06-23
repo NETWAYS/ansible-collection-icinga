@@ -1,4 +1,0 @@
----
-
-minor_changes:
-  - Change documentation to better reflect the intended usage of the variable 'icinga2_objects' as a host variable vs. as a play variable.

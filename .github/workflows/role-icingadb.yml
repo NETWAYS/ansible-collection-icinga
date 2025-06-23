@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      COLLECTION_NAMESPACE: icinga
+      COLLECTION_NAMESPACE: netways
       COLLECTION_NAME: icinga
 
     strategy:

@@ -5,7 +5,7 @@
 - [Using Constructed Inventory and Cache](#using-constructed-inventory-and-cache)
 - [Filter Options](#filter-options)
 
-There is a lot of Ansible Inventory Plugins to pull host information from different sources. This allows for dynamic inventories that adapt to changes made in other applications.  
+There is a lot of Ansible Inventory Plugins to pull host information from different sources. This allows for dynamic inventories that adapt to changes made in other applications.<br>
 Using this plugin you can use Icinga 2's API to build your Ansible Inventory.
 
 For this to work you need to create a file ending in either `icinga.yml` or `icinga.yaml` and fill it with all required variables to fetch information from your Icinga 2 API.
@@ -16,18 +16,18 @@ Example:
 
 **inventory-icinga.yml:**
 
-```
+```yaml
 ---
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 user: api-user
 password: api-user-password
 ```
 
-```
+```bash
 ansible -i inventory-icinga.yml localhost -m debug -a "msg='{{ groups }}'"
 ```
 
-```
+```yaml
 localhost | SUCCESS => {
     "msg": {
         "all": [
@@ -63,11 +63,11 @@ localhost | SUCCESS => {
 
 Variables of host `icinga-master`:
 
-```
+```bash
 ansible -i inventory-icinga.yml localhost -m debug -a "msg='{{ hostvars[\"icinga-master\"] }}'"
 ```
 
-```
+```yaml
 icinga-master | SUCCESS => {
     "msg": {
         "ansible_check_mode": false,
@@ -259,13 +259,13 @@ This inventory plugin needs
 
 **plugin**
 
-This is a token that ensures that the plugin definitions are meant for this inventory plugin.  
+This is a token that ensures that the plugin definitions are meant for this inventory plugin.<br>
 The form is `namespace.collection_name.plugin_name`.
 
-This must be `icinga.icinga.icinga`
+This must be `netways.icinga.icinga`
 
-Required: `true`  
-Type: `string`  
+Required: `true`<br>
+Type: `string`<br>
 Default: `None`
 
 ---
@@ -274,8 +274,8 @@ Default: `None`
 
 The url to be used for API requests.
 
-Required: `false`  
-Type: `string`  
+Required: `false`<br>
+Type: `string`<br>
 Default: `https://localhost`
 
 ---
@@ -284,8 +284,8 @@ Default: `https://localhost`
 
 The port used by Icinga 2.
 
-Required: `false`  
-Type: `int`  
+Required: `false`<br>
+Type: `int`<br>
 Default: `5665`
 
 ---
@@ -294,8 +294,8 @@ Default: `5665`
 
 The username to be used for API requests.
 
-Required: `true`  
-Type: `string`  
+Required: `true`<br>
+Type: `string`<br>
 Default: `None`
 
 ---
@@ -304,8 +304,8 @@ Default: `None`
 
 The password to be used for API requests.
 
-Required: `true`  
-Type: `string`  
+Required: `true`<br>
+Type: `string`<br>
 Default: `None`
 
 ---
@@ -314,8 +314,8 @@ Default: `None`
 
 Whether the certificates received when requesting the API should be validated to establish trust.
 
-Required: `false`  
-Type: `bool`  
+Required: `false`<br>
+Type: `bool`<br>
 Default: `true`
 
 ---
@@ -324,28 +324,28 @@ Default: `true`
 
 You may decide to define the username for Ansible to connect as within your Icinga 2 host object. This allows the inventory to dynamically adapt the Ansible variable `ansible_user`.
 
-Required: `false`  
-Type: `string`  
+Required: `false`<br>
+Type: `string`<br>
 Default: `None`
 
 ---
 
 **filters**
 
-The `filters` variable allows for filtering the Icinga 2 hosts to be used within Ansible. In the background [Icinga 2 API filters](https://icinga.com/docs/icinga-2/latest/doc/12-icinga2-api/#filters) are used.  
+The `filters` variable allows for filtering the Icinga 2 hosts to be used within Ansible. In the background [Icinga 2 API filters](https://icinga.com/docs/icinga-2/latest/doc/12-icinga2-api/#filters) are used.<br>
 Options for the `filters` variable are explained in [their own section](#filter-options).
 
 ---
 
 **group_prefix**
 
-The inventory plugin automatically builds Ansible groups based on the Icinga 2 host object attributes `groups` and `zone`.  
+The inventory plugin automatically builds Ansible groups based on the Icinga 2 host object attributes `groups` and `zone`.<br>
 This prefix is used as a prefix for those groups within Ansible.
 
 By default groups will be prefixed with `icinga_group_` and `icinga_zone_` respectively.
 
-Required: `false`  
-Type: `string`  
+Required: `false`<br>
+Type: `string`<br>
 Default: `icinga_`
 
 ---
@@ -353,24 +353,24 @@ Default: `icinga_`
 
 **want_ipv4**
 
-It is common practice to set an Icinga 2 host's name equal to its FQDN. This way DNS is the source of truth. But you may want to use a host's IP address for connections made by Ansible.  
-If `want_ipv4` is true, the Ansible variable `ansible_host` will be set to the Icinga host's `address` attribute if applicable.  
+It is common practice to set an Icinga 2 host's name equal to its FQDN. This way DNS is the source of truth. But you may want to use a host's IP address for connections made by Ansible.<br>
+If `want_ipv4` is true, the Ansible variable `ansible_host` will be set to the Icinga host's `address` attribute if applicable.<br>
 `want_ipv4` takes precedence over `want_ipv6`.
 
-Required: `false`  
-Type: `bool`  
+Required: `false`<br>
+Type: `bool`<br>
 Default: `false`
 
 ---
 
 **want_ipv6**
 
-Analogous to `want_ipv4` you may want to use a Icinga host's `address6` attribute to establish connections using Ansible.  
-If `want_ipv6` is true, the Ansible variable `ansible_host` will be set to the Icinga host's `address6` attribute if applicable.  
+Analogous to `want_ipv4` you may want to use a Icinga host's `address6` attribute to establish connections using Ansible.<br>
+If `want_ipv6` is true, the Ansible variable `ansible_host` will be set to the Icinga host's `address6` attribute if applicable.<br>
 `want_ipv4` takes precedence over `want_ipv6`.
 
-Required: `false`  
-Type: `bool`  
+Required: `false`<br>
+Type: `bool`<br>
 Default: `false`
 
 ---
@@ -379,24 +379,24 @@ Default: `false`
 
 All attributes of an Icinga 2 host will be used as host variables within Ansible. Those variables are prefixed with the `vars_prefix`.
 
-Required: `false`  
-Type: `string`  
+Required: `false`<br>
+Type: `string`<br>
 Default: `icinga_`
 
 ---
 
 ## Using Constructed Inventory and Cache
 
-Other than the variables used for this plugin explicitly, you can also make use of some options offered by Ansible's Inventory Module [**Constructed**](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/constructed_inventory.html).  
+Other than the variables used for this plugin explicitly, you can also make use of some options offered by Ansible's Inventory Module [**Constructed**](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/constructed_inventory.html).<br>
 Specifically `keyed_groups` might be useful. This allows you to build new Ansible groups based on Icinga host attributes, e.g. `vars["operating_system"]`.
 
 Example:
 
 **inventory-icinga.yml:**
 
-```
+```yaml
 ---
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 user: api-user
 password: api-user-password
 
@@ -409,11 +409,11 @@ keyed_groups:
     key: vars["operating_system"]
 ```
 
-```
+```bash
 ansible -i inventory-icinga.yml localhost -m debug -a "msg='{{ groups }}'"
 ```
 
-```
+```yaml
 localhost | SUCCESS => {
     "msg": {
         "all": [
@@ -466,12 +466,12 @@ localhost | SUCCESS => {
 
 ---
 
-In order to minimize API queries made against Icinga you might want to use cache and retrieve host information this way.  
+In order to minimize API queries made against Icinga you might want to use cache and retrieve host information this way.<br>
 The following is an example on how to use the Ansible builtin cache plugin `jsonfile`.
 
-```
+```yaml
 ---
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 user: api-user
 password: api-user-password
 
@@ -491,7 +491,7 @@ If cache is used and the cache is valid, no API calls are made.
 
 ## Filter Options
 
-You might want to restrict which hosts are part of the API query result. You can for example choose to only fetch host information for hosts within a specific Icinga zone.  
+You might want to restrict which hosts are part of the API query result. You can for example choose to only fetch host information for hosts within a specific Icinga zone.<br>
 If you use custom variables like e.g. *'operating_system'* to distinguish between different operating systems, you can use those variables to narrow down the results.
 
 Valid subkeys for `filters` are
@@ -501,8 +501,8 @@ Valid subkeys for `filters` are
 - custom
 - vars
 
-The subkeys 'name', 'group' and 'zone' are meant as defaults that allow for quick filtering based on those Icinga host attributes.  
-Internally Icinga's '**match**' filter is used for 'name' and 'zone'. This way string and boolean comparisons can be made while also allowing for pattern matching.  
+The subkeys 'name', 'group' and 'zone' are meant as defaults that allow for quick filtering based on those Icinga host attributes.<br>
+Internally Icinga's '**match**' filter is used for 'name' and 'zone'. This way string and boolean comparisons can be made while also allowing for pattern matching.<br>
 'group' uses the '**in**' filter to check membership.
 
 The following example shows filters to restrict the result to hosts
@@ -518,11 +518,11 @@ Using CURL:
 curl -k -u 'api-user':'api-user-password' -H 'X-HTTP-Method-Override: GET' -X POST https://localhost:5665/v1/objects/hosts -d '{ "filter": "((match(\"main\", host.zone)||match(\"satellite\", host.zone)))&&((match(\"dummy*\", host.name)))&&(((\"linux_hosts\" in host.groups)))" }'
 ```
 
-Using the plugin: 
+Using the plugin:
 
-```
+```yaml
 ---
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 user: api-user
 password: api-user-password
 
@@ -536,14 +536,14 @@ filters:
     - linux_hosts
 ```
 
-In general, all subkeys of `filters` have to evaluate to true **simultaneously**. In the example above 'zone', 'name' and 'group' **must** all match.  
+In general, all subkeys of `filters` have to evaluate to true **simultaneously**. In the example above 'zone', 'name' and 'group' **must** all match.<br>
 Within one of those filter options **only one** of the list's elements must match.
 
 It is also possible to negate entries. In that case **either** entry in the list has to match while **neither** of the negated entries is allowed to match.
 
 To illustrate the logic, we will use 'group' as an example.
 
-```
+```yaml
 group:
   - 'linux_hosts'
   - 'windows_hosts'
@@ -555,15 +555,15 @@ Logically this results in: ( in group 'linux_hosts' **OR** in group 'windows_hos
 
 ---
 
-The 'custom' option lets you simply supply your own filter as it would be passed with CURL (`'{ "filter": "YOUR CUSTOM FILTER" }'`).  
+The 'custom' option lets you simply supply your own filter as it would be passed with CURL (`'{ "filter": "YOUR CUSTOM FILTER" }'`).<br>
 Supplying multiple filters will use logic AND to combine them.
 
-The last subkey you can use is 'vars'. It behaves slightly differently since one cannot anticipate the variables other people might use.  
+The last subkey you can use is 'vars'. It behaves slightly differently since one cannot anticipate the variables other people might use.<br>
 Therefore you have to manually decide on the filter and the custom variable to be used.
 
 Currently the '**match**', '**in**' and '**is**' filters are supported. As before all their subkeys have to match with only one entry that has to match while none of the negated entries are allowed to match.
 
-The '**is**' is filter is special in that regard that here you are supposed to only pass one value to it. If multiple values are passed, only the first value in the list will be used.  
+The '**is**' is filter is special in that regard that here you are supposed to only pass one value to it. If multiple values are passed, only the first value in the list will be used.<br>
 Also, negation is only allowed for 'set' and 'null' using the '**is**' filter.
 
 The following values are accepted:
@@ -578,9 +578,9 @@ The value 'set' allows to check if the value of variable either evaluates to `tr
 
 Example:
 
-```
+```yaml
 ---
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 user: api-user
 password: api-user-password
 

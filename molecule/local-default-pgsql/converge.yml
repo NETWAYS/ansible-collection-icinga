@@ -67,7 +67,7 @@
       - zones.d/main/hosts
       - zones.d/main/services
   collections:
-    - icinga.icinga
+    - netways.icinga
   roles:
     - repos
     - geerlingguy.postgresql

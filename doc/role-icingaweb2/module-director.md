@@ -18,7 +18,7 @@ the resource.
 
 
 
-```
+```yaml
 icingaweb2_modules:
   director:
     enabled: true

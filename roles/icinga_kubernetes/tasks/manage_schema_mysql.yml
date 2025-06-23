@@ -1,0 +1,31 @@
+- name: MySQL import Kubernetes schema
+  when: icinga_kubernetes_database_import_schema | default(False)
+  block:
+    - name: Build mysql command
+      ansible.builtin.set_fact:
+        mysqlcmd: >-
+          mysql {% if icinga_kubernetes_database_host | default('localhost') != 'localhost' %} -h "{{ icinga_kubernetes_database_host }}" {%- endif %}
+          {% if icinga_kubernetes_database_port is defined %} -P {{ icinga_kubernetes_database_port }} {%- endif %}
+          {% if icinga_kubernetes_database_ca is defined %} --ssl-ca "{{ icinga_kubernetes_database_ca }}" {%- endif %}
+          {% if icinga_kubernetes_database_cert is defined %} --ssl-cert "{{ icinga_kubernetes_database_cert }}" {%- endif %}
+          {% if icinga_kubernetes_database_key is defined %} --ssl-key "{{ icinga_kubernetes_database_key }}" {%- endif %}
+          -u "{{ icinga_kubernetes_database_user | default('kubernetes') }}"
+          -p"{{ icinga_kubernetes_database_password }}"
+          "{{ icinga_kubernetes_database_name | default('kubernetes') }}"
+
+    - name: MySQL check for Kubernetes schema
+      ansible.builtin.shell: >
+        {{ mysqlcmd }}
+        -Ns -e "select version from kubernetes_schema"
+      failed_when: false
+      changed_when: false
+      check_mode: false
+      register: _db_schema
+
+    - name: MySQL import Kubernetes schema
+      ansible.builtin.shell: >
+        {{ mysqlcmd }}
+        < {{ icinga_kubernetes_database_schema }}
+      when: _db_schema.rc != 0
+      check_mode: false
+      run_once: true

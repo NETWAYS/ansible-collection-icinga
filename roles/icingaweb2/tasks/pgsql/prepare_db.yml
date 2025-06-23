@@ -1,0 +1,23 @@
+---
+
+- name: Check Database Credentials
+  ansible.builtin.assert:
+    that:
+      - icingaweb2_db['user'] is defined
+      - icingaweb2_db['password'] is defined
+    fail_msg: "No database credentials defined. Please set icingaweb2_db.<user|password> or a privileged user with icingaweb2_priv_db_<user|password>"
+  when: icingaweb2_priv_db_password is undefined and icingaweb2_priv_db_user is undefined
+
+- name: Build psql command
+  ansible.builtin.set_fact:
+    _tmp_pgsqlcmd: >-
+      PGPASSWORD="{{ icingaweb2_priv_db_password | default(icingaweb2_db['password']) }}"
+      psql
+      "host={{ icingaweb2_db['host'] }}
+      {% if icingaweb2_db['port'] is defined %} port={{ icingaweb2_db['port'] }} {%- endif %}
+      user={{ icingaweb2_priv_db_user | default(icingaweb2_db['user']) }}
+      dbname={{ icingaweb2_db['name'] }}
+      {% if icingaweb2_db['ssl_mode'] is defined %} sslmode={{ icingaweb2_db['ssl_mode'] | default('require') }} {%- endif %}
+      {% if icingaweb2_db['ssl_cert'] is defined %} sslcert={{ icingaweb2_db['ssl_cert']  }} {%- endif %}
+      {% if icingaweb2_db['ssl_key'] is defined %} sslkey={{ icingaweb2_db['ssl_key'] }} {%- endif %}
+      {% if icingaweb2_db['ssl_extra_options'] is defined %} {{ icingaweb2_db['ssl_extra_options'] }} {%- endif %}"

@@ -1,12 +1,15 @@
-namespace: icinga
+---
+
+namespace: netways
 name: icinga
-version: 0.3.4
+version: 0.4.0
 readme: README.md
 authors:
   - Lennart Betz <lennart.betz@netways.de>
   - Thilo Wening <thilo.wening@netways.de>
   - Thomas Widhalm <thomas.widhalm@netways.de>
   - Afeef Ghannam <afeef.ghannam@netways.de>
+  - Matthias Döhler <matthias.doehler@netways.de>
 description: >
   This collection manages all Icinga 2 Components.
   Including the official repositories, server, satellite and agent installations.
@@ -25,10 +28,10 @@ tags:
   - icingadb_redis
   - director
 dependencies: {}
-repository: https://github.com/Icinga/ansible-collection-icinga
-documentation: https://github.com/Icinga/ansible-collection-icinga/tree/main/doc
-homepage: http://icinga.com
-issues: https://github.com/Icinga/ansible-collection-icinga/issues
+repository: https://github.com/NETWAYS/ansible-collection-icinga
+documentation: https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc
+homepage: https://github.com/NETWAYS/ansible-collection-icinga
+issues: https://github.com/NETWAYS/ansible-collection-icinga/issues
 build_ignore:
   - yamllint.yaml
   - Makefile

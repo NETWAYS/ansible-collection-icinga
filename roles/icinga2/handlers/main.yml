@@ -1,10 +1,15 @@
 ---
-- name: restart icinga2 service
-  service:
-    name: icinga2
-    state: restarted
+- name: Check icinga2 configuration
+  ansible.builtin.command:
+    cmd: icinga2 daemon --validate
+  register: icinga2_check
+  changed_when: true
+  failed_when: icinga2_check.rc != 0
+  listen: check-and-reload-icinga2-service
+  notify: reload-icinga2
 
-- name: reload icinga2 service
-  service:
+- name: Reload icinga2 service
+  ansible.builtin.service:
     name: icinga2
     state: reloaded
+  listen: reload-icinga2

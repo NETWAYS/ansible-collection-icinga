@@ -2,7 +2,7 @@
 
 To enable the feature livestatus add the following block to the variable `icinga2_features`.
 
-```
+```yaml
 icinga2_features:
   - name: livestatus
 ```

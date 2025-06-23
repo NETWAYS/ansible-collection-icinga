@@ -3,6 +3,8 @@
   set_fact:
     icinga2_dict_features: "{{ icinga2_dict_features|default({}) | combine({ item.name: item }) }}"
   with_items: "{{ icinga2_features }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: main config file {{ icinga2_config_path + '/icinga2.conf' }}
   template:
@@ -10,7 +12,7 @@
     dest: "{{ icinga2_config_path + '/icinga2.conf' }}"
     owner: "{{ icinga2_user }}"
     group: "{{ icinga2_group }}"
-  notify: reload icinga2 service
+  notify: check-and-reload-icinga2-service
 
 - name: merge defaults and user specified constants (set_fact icinga2_combined_constants)
   set_fact:
@@ -22,7 +24,7 @@
     dest: "{{ icinga2_config_path + '/constants.conf' }}"
     owner: "{{ icinga2_user }}"
     group: "{{ icinga2_group }}"
-  notify: reload icinga2 service
+  notify: check-and-reload-icinga2-service
 
 - name: features
   include_tasks: features.yml
@@ -60,6 +62,8 @@
     state: absent
     dest: "{{ item.path }}"
   loop: "{{ result_frag.files }}"
+  loop_control:
+    label: "{{ item.path }}"
   when:
     - item.path not in icinga2_local_objects
     - item.path not in _icinga2_custom_conf_paths
@@ -94,7 +98,9 @@
     group: "{{ icinga2_group }}"
     mode: 0644
   loop: "{{ result.files }}"
-  notify: reload icinga2 service
+  loop_control:
+    label: "{{ item.path }}"
+  notify: check-and-reload-icinga2-service
 
 - name: enable features
   file:
@@ -102,7 +108,9 @@
     path: "{{ '/etc/icinga2/features-enabled/' + icinga2_feature_realname[item.name]|default(item.name) + '.conf' }}"
     src: "{{ '../features-available/' + icinga2_feature_realname[item.name]|default(item.name) + '.conf' if (item.state is undefined or item.state != 'absent') else omit }}"
   loop: "{{ icinga2_features }}"
-  notify: reload icinga2 service
+  loop_control:
+    label: "{{ item.name }}"
+  notify: check-and-reload-icinga2-service
 
 - name: remove empty config files
   ansible.builtin.file:
@@ -110,4 +118,4 @@
     path: "{{ item |regex_replace('^'+icinga2_fragments_path, '/etc/icinga2') }}"
   when: item.split('/')[icinga2_fragments_path.split('/')|length] == 'conf.d' or item.split('/')[icinga2_fragments_path.split('/')|length] == 'zones.d'
   loop: "{{ _empty_result.stdout_lines }}"
-  notify: reload icinga2 service
+  notify: check-and-reload-icinga2-service

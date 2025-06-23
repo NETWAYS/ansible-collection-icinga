@@ -4,7 +4,7 @@ To enable the feature icingadb use the following block in the variable `icinga2_
 
 **INFO** For detailed information and instructions see the Icinga 2 Docs. [Feature IcingaDB](https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#icingadb)
 
-```
+```yaml
 icinga2_features:
   - name: icingadb
     host: localhost
@@ -51,4 +51,3 @@ icinga2_features:
 
 * `connect_timeout: int`
   * Timeout for establishing new connections. Within this time, the TCP, TLS (if enabled) and Redis handshakes must complete. Defaults to 15s.
-

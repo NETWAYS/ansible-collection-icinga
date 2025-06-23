@@ -12,6 +12,8 @@
   set_fact:
     features_enabled: "{{ features_enabled|default([]) + [ icinga2_feature_realname[item.path| basename| splitext| first]| default(item.path| basename| splitext| first) ] }}"
   loop: "{{ icinga2_collected_features.files }}"
+  loop_control:
+    label: "{{ item.path }}"
   when: icinga2_purge_features
 
 - name: purge features
@@ -19,9 +21,11 @@
     state: absent
     path: "{{ '/etc/icinga2/features-enabled/' + icinga2_feature_realname[item]|default(item) + '.conf' }}"
   loop: "{{ features_enabled | default([]) | difference(icinga2_features| map(attribute='name')|list) }}"
-  notify: reload icinga2 service
+  notify: check-and-reload-icinga2-service
   when: icinga2_purge_features
 
 - name: configure features
   include_tasks: "features/{{ item.name }}.yml"
   loop: "{{ icinga2_features }}"
+  loop_control:
+    label: "{{ item.name }}"

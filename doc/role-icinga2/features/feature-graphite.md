@@ -4,7 +4,7 @@ To enable the feature Graphite use the following block in the variable `icinga2_
 
 **INFO** For detailed information and instructions see the Icinga 2 Docs. [Feature GraphiteWriter](https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#graphitewriter)
 
-```
+```yaml
 icinga2_features:
   - name: graphite
     host: localhost
@@ -26,16 +26,10 @@ icinga2_features:
   * Metric prefix for service name. Defaults to icinga2.$host.name$.services.$service.name$.$service.check_command$.
 
 * `enable_send_thresholds: boolean`
-  * Send additional threshold metrics. Defaults to false. 
+  * Send additional threshold metrics. Defaults to false.
 
 * `enable_send_metadata: boolean`
   * Send additional metadata metrics. Defaults to false.
 
 * `enable_ha: boolean`
   * Enable the high availability functionality. Only valid in a cluster setup. Defaults to false.
-
-
-
-
-
-

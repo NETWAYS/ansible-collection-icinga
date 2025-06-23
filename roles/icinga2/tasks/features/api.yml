@@ -22,7 +22,7 @@
 - name: api feature cleanup arguments list
   set_fact:
     args: "{{ args|default({}) | combine({idx.key: idx.value}) }}"
-  when: idx.key not in ['ca_host', 'icinga2_ca_host_port', 'cert_name', 'ca_fingerprint', 'force_newcert', 'zones', 'endpoints', 'ssl_cacert', 'ssl_key', 'ssl_cert' ]
+  when: idx.key not in ['ca_host', 'ca_host_port', 'cert_name', 'ca_fingerprint', 'force_newcert', 'zones', 'endpoints', 'ssl_cacert', 'ssl_key', 'ssl_cert', 'ticket_salt' ]
   loop: "{{ icinga2_dict_features.api |dict2items }}"
   loop_control:
     loop_var: idx
@@ -52,6 +52,7 @@
   loop: "{{ result.results }}"
   loop_control:
     loop_var: idx
+    label: "Add '{{ idx.path }}' to local objects"
 
 - name: feature api Zone objects
   icinga2_object:
@@ -67,6 +68,7 @@
   loop: "{{ result.results }}"
   loop_control:
     loop_var: idx
+    label: "Add '{{ idx.path }}' to local objects"
 
 - name: create new CA
   block:
@@ -152,7 +154,7 @@
         --trustedcert "{{ icinga2_cert_path }}/trusted-master.crt"
         {% else %} sign-csr --csr "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.csr" {%- endif %}
         --cert "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.crt"
-      notify: reload icinga2 service
+      notify: check-and-reload-icinga2-service
 
     - name: copy CA root certificate
       copy:
@@ -189,7 +191,7 @@
         dest: "{{ _crt.dest }}"
         owner: "{{ icinga2_user }}"
         group: "{{ icinga2_group }}"
-      notify: reload icinga2 service
+      notify: check-and-reload-icinga2-service
       loop: "{{ _tmp_crt }}"
       loop_control:
         loop_var: _crt

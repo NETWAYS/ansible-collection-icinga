@@ -4,7 +4,7 @@ To enable the feature OpenTSDB use the following block in the variable `icinga2_
 
 **INFO** For detailed information and instructions see the Icinga 2 Docs. [Feature OpenTsdbWriter](https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#opentsdbwriter)
 
-```
+```yaml
 icinga2_features:
   - name: opentsdb
     host: localhost
@@ -30,4 +30,3 @@ icinga2_features:
 
 * `service_template: dictionary`
   * Specify additional tags to be included with service metrics. This requires a sub-dictionary named tags. Also specify a naming prefix by setting metric. More information can be found in OpenTSDB custom tags and OpenTSDB Metric Prefix. Defaults to an empty Dictionary.
-

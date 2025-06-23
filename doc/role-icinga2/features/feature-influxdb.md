@@ -4,7 +4,7 @@ To enable the feature InfluxDb use the following block in the variable `icinga2_
 
 **INFO** For detailed information and instructions see the Icinga 2 Docs. [Feature InfluxdbWriter](https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#influxdbwriter)
 
-```
+```yaml
 icinga2_features:
   - name: influxdb
     host: localhost
@@ -48,7 +48,7 @@ icinga2_features:
   * Path to CA certificate to validate the remote host.
 
 * `ssl_cert: string`
-  * Path to host certificate to present to the remote host for mutual verification. 
+  * Path to host certificate to present to the remote host for mutual verification.
 
 * `ssl_key: string`
   * Path to host key to accompany the ssl_cert.
@@ -69,8 +69,7 @@ icinga2_features:
   * How long to buffer data points before transferring to InfluxDB. Defaults to 10s.
 
 * `flush_threshold: int`
-  * How many data points to buffer before forcing a transfer to InfluxDB. Defaults to 1024. 
+  * How many data points to buffer before forcing a transfer to InfluxDB. Defaults to 1024.
 
 * `enable_ha: boolean`
   * Enable the high availability functionality. Only valid in a cluster setup. Defaults to false.
-

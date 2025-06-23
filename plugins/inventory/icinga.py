@@ -29,7 +29,7 @@ DOCUMENTATION = '''
       plugin:
         description: Token that ensures this is a source file for the C(icinga) plugin.
         required: true
-        choices: ['icinga.icinga.icinga']
+        choices: ['netways.icinga.icinga']
       url:
         description:
           - URL of the Icinga 2 server.
@@ -108,13 +108,13 @@ DOCUMENTATION = '''
 
 EXAMPLES = '''
 # inventory-icinga.yml
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 url: https://icinga.example.com
 user: ansibleinventory
 password: changeme
 
 # icinga.yaml
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 url: https://icinga.example.com
 user: ansibleinventory
 password: changeme

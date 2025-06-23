@@ -4,7 +4,7 @@ To enable the feature **influxdb2** use the following block in the variable `ici
 
 **INFO** For detailed information and instructions see the Icinga 2 Docs. [Feature Influxdb2Writer](https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#influxdb2writer)
 
-```
+```yaml
 icinga2_features:
   - name: influxdb2
     host: localhost

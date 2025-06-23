@@ -5,12 +5,12 @@ __metaclass__ = type
 
 
 def prefix(d, prefix):
-    if type(d) is dict:
+    if isinstance(d, dict):
         ret = {}
         for key in d.keys():
             ret[prefix + key] = d[key]
         return ret
-    elif type(d) is list:
+    elif isinstance(d, list):
         ret = []
         for item in d:
             ret.append(prefix + item)

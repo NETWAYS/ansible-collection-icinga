@@ -169,7 +169,7 @@
       - zones.d/main/hosts
       - zones.d/main/services
   collections:
-    - icinga.icinga
+    - netways.icinga
   pre_tasks:
     - include_role:
         name: repos

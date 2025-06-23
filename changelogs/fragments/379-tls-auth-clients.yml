@@ -1,0 +1,4 @@
+---
+
+minor_changes:
+  - "Add variable :code:`icingadb_redis_client_certificate` to define whether TLS client certificates are accepted/required/rejected when connecting to the Redis server. Only has an effect when using TLS encryption." 

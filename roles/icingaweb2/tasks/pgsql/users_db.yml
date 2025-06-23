@@ -1,0 +1,20 @@
+---
+
+- name: PostgreSQL check for icingaweb admin user
+  ansible.builtin.shell: >
+    LANG=C
+    {{ _tmp_pgsqlcmd }}
+    -w -c "select name from icingaweb_user where name like '{{ _current_user.username }}'"
+  failed_when: false
+  changed_when: false
+  check_mode: false
+  register: _icingaweb2_db_user
+
+- name: Create user in Icinga Web (or reenable user / reset password)
+  run_once: true
+  ansible.builtin.shell: >-
+    echo "INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('{{ _current_user.username }}', 1,
+    '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"')
+    ON CONFLICT (name) DO UPDATE
+    SET active = 1, password_hash = '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"'" | {{ _tmp_pgsqlcmd }} -w
+  when: ("(0 rows)" in _icingaweb2_db_user.stdout_lines) or (_current_user.recreate is true)

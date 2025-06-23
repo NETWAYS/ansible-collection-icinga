@@ -11,7 +11,7 @@ For every config file, create a dictionary with sections as keys and the paramet
 
 
 Example:
-```
+```yaml
 icingaweb2_modules:
   businessprocess:
     enabled: true
@@ -25,7 +25,7 @@ Custom process files are a great way to transfer existing business process confi
 To copy existing processes into the processes folder please use the `custom_process_files` dictionary.
 
 The `src_path` will search within any `files/` directory in the Ansible environment.
-```
+```yaml
 icingaweb2_modules:
   businessprocess:
     enabled: true
@@ -33,4 +33,4 @@ icingaweb2_modules:
     custom_process_files:
       - name: test.conf
         src_path: processes/test.conf
-```    
+```

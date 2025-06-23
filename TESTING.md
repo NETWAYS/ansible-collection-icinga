@@ -17,18 +17,23 @@ ini files.
 
 Make sure the following tools are available before start testing with the collection.
 
-```
+```bash
 pip install ansible-core ansible-lint molecule pytest-testinfra
 ```
 
 To test roles locally without docker/service issues, we created a molecule test
 with vagrant. Then you need to install [vagrant](link/to/vagrant) and the molecule plugin.
 
-`pip install molecule-plugins[vagrant]`
+```bash
+pip install molecule-plugins[vagrant]
+```
 
 To use molecule with docker install the docker plugin.
 
-`pip install molecule-plugins[docker]`
+```bash
+pip install molecule-plugins[docker]
+```
+
 
 ### Roles Testing
 
@@ -36,14 +41,18 @@ To test roles over vagrant locally, it is the easiest to run the **local-default
 scenario. The local-default is very big and long running. For shorter tests use
 the role-<rolename> scenarios.
 
-`molecule test -s local-default`
+```bash
+molecule test -s local-default
+```
 
 The following tests are inplemented based on docker. Per default a **ubuntu2204**
 image from geerlingguy's container is used. Thanks [@geerlingguy Dockerhublink](https://hub.docker.com/u/geerlingguy)
 
 To test other distros use the command with the env **MOLECULE_DISTRO**.
 
-`MOLECULE_DISTRO=opensuseleap15 molecule test -s role-icingadb_redis`
+```bash
+MOLECULE_DISTRO=opensuseleap15 molecule test -s role-icingadb_redis
+```
 
 ### Templating Tests
 
