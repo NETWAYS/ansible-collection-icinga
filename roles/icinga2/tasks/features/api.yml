@@ -196,7 +196,7 @@
       loop_control:
         loop_var: _crt
 #  when: ( icinga2_ssl_cacert is defined and icinga2_ssl_cert is defined and icinga2_ssl_key is defined )
-  when: icinga2_ssl_cacert is defined
+  when: (icinga2_ssl_cert_path.stat.exists == false or icinga2_ssl_key_path.stat.exists == false or icinga2_force_newcert) and icinga2_ssl_cacert is defined
 
 - set_fact:
     args: None

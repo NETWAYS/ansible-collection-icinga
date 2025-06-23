@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Fixes issue with idempotency using self signed certificates
