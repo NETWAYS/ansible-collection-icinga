@@ -15,6 +15,27 @@
     icinga2_ssl_remote_source: "{{ icinga2_dict_features.api.ssl_remote_source | default(false) }}"
     icinga2_ticket_salt: "{{ icinga2_dict_features.api.ticket_salt | default(omit) }}"
 
+- name: Combine global zones into list
+  ansible.builtin.set_fact:
+    icinga2_global_zones: "{{ (icinga2_global_zones | default([])) + (icinga2_zones | selectattr('global', 'true') | map(attribute='name')) }}"
+
+- name: Build zones and endpoints from inventory
+  when:
+    - icinga2_zone_hierarchy is defined
+  icinga.icinga.icinga2_zones_conf:
+    hierarchy: "{{ icinga2_zone_hierarchy | default({}) }}"
+    global_zones: "{{ icinga2_global_zones }}"
+  register: "_zones_conf"
+
+- name: Overwrite some variables
+  when:
+    - icinga2_zone_hierarchy is defined
+  ansible.builtin.set_fact:
+    icinga2_zones: "{{ _zones_conf.icinga2_zones | default(icinga2_zones) }}"
+    icinga2_endpoints: "{{ _zones_conf.icinga2_endpoints | default(icinga2_endpoints) }}"
+    icinga2_ca_host: "{{ (_zones_conf.icinga2_endpoints | first).host | default('none') }}"
+    icinga2_ca_host_port: "{{ (_zones_conf.icinga2_zones | first).port | default(omit) }}"
+
 - assert:
     that: ((icinga2_ssl_cacert is defined and icinga2_ssl_cert is defined and icinga2_ssl_key is defined) or (icinga2_ssl_cacert is undefined and icinga2_ssl_cert is undefined and icinga2_ssl_key is undefined and icinga2_ca_host is defined))
     fail_msg: ca_host is mandatory or ssl_cacert/cert/key have to be set at the same time
