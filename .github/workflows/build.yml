@@ -32,8 +32,51 @@ jobs:
       max-parallel: 1
       matrix:
         distro: [ubuntu2204]
-        python: ['3.10', '3.11']
-        ansible: ['2.15', '2.16', '2.17']
+        python: ['3.10', '3.11', '3.12']
+        ansible: ['2.16', '2.17']
+        scenario: [default]
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install dependencies ansible
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r requirements-test-${{ matrix.ansible }}.txt
+
+      - name: Install collection
+        run: |
+          mkdir -p ~/.ansible/collections/ansible_collections/$COLLECTION_NAMESPACE
+          cp -a ../ansible-collection-$COLLECTION_NAME ~/.ansible/collections/ansible_collections/$COLLECTION_NAMESPACE/$COLLECTION_NAME
+
+      - name: Test with molecule
+        run: |
+          ansible --version
+          molecule --version
+          molecule test -s ${{ matrix.scenario }}
+        env:
+          MOLECULE_DISTRO: ${{ matrix.distro }}
+
+  icinga-default-scenario-ansible-2.18:
+    runs-on: ubuntu-latest
+
+    env:
+      COLLECTION_NAMESPACE: netways
+      COLLECTION_NAME: icinga
+
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        distro: [ubuntu2204]
+        python: ['3.11', '3.12', '3.13']
+        ansible: ['2.18']
         scenario: [default]
 
     steps:

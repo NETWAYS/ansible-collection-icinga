@@ -22,7 +22,7 @@ jobs:
     strategy:
       # max-parallel: 4
       matrix:
-        python: ['3.11']
+        python: ['3.11', '3.12', '3.13']
 
     steps:
       - name: Check out code
@@ -46,8 +46,8 @@ jobs:
     strategy:
       # max-parallel: 4
       matrix:
-        distro: [centos8, debian10]
-        python: [ '3.8', '3.9', '3.10', '3.11']
+        distro: [centos8, debian11, debian12]
+        python: [ '3.10', '3.11', '3.12', '3.13']
 
     steps:
       - name: Check out code
@@ -62,7 +62,7 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install "ansible-core>=2.13.10" "requests>=1.0.0"
+          python3 -m pip install "ansible-core>=2.16.14" "requests>=1.0.0"
 
       - name: Test with unittest
         run: |
