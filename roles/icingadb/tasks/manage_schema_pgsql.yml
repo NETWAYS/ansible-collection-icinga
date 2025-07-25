@@ -4,7 +4,7 @@
     - name: Build pgsql command
       ansible.builtin.set_fact:
         _tmp_pgsqlcmd: >-
-          PGPASSWORD="{{ icingadb_database_password }}"
+          PGPASSWORD={{ icingadb_database_password | quote }}
           psql
           "{% if icingadb_database_host %} host="{{ icingadb_database_host }}" {%- endif %}
           {% if icingadb_database_port is defined %} port={{ icingadb_database_port }} {%- endif %}

@@ -34,7 +34,7 @@
           {% if icinga2_dict_features.idomysql.ssl_cipher is defined %} --ssl-cipher "{{ icinga2_dict_features.idomysql.ssl_cipher }}" {%- endif %}
           {% if icinga2_dict_features.idomysql.extra_options is defined %} {{ icinga2_dict_features.idomysql.extra_options }} {%- endif %}
           -u "{{ icinga2_dict_features.idomysql.user | default('icinga2') }}"
-          -p"{{ icinga2_dict_features.idomysql.password }}"
+          -p{{ icinga2_dict_features.idomysql.password | quote }}"
           "{{ icinga2_dict_features.idomysql.database | default('icinga2') }}"
 
     - name: MySQL check for IDO schema

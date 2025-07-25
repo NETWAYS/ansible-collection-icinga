@@ -23,7 +23,7 @@
     - name: build psql command
       set_fact:
         psqlcmd: >-
-          PGPASSWORD="{{ icinga2_dict_features.idopgsql.password }}"
+          PGPASSWORD={{ icinga2_dict_features.idopgsql.password | quote }}
           psql
           "host={{ icinga2_dict_features.idopgsql.host| default('localhost') }}
           port={{ icinga2_dict_features.idopgsql.port| default('5432') }}

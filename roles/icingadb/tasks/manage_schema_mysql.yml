@@ -10,7 +10,7 @@
           {% if icingadb_database_cert is defined %} --ssl-cert "{{ icingadb_database_cert }}" {%- endif %}
           {% if icingadb_database_key is defined %} --ssl-key "{{ icingadb_database_key }}" {%- endif %}
           -u "{{ icingadb_database_user | default('icingadb') }}"
-          -p"{{ icingadb_database_password }}"
+          -p{{ icingadb_database_password | quote }}
           "{{ icingadb_database_name | default('icingadb') }}"
 
     - name: MySQL check for IcingaDB schema

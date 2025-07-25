@@ -18,7 +18,7 @@
       {% if _db['ssl_cipher'] is defined %} --ssl-cipher "{{ _db['ssl_cipher'] }}" {%- endif %}
       {% if _db['ssl_extra_options'] is defined %} {{ _db['ssl_extra_options'] }} {%- endif %}
       -u "{{ _db['user'] }}"
-      -p"{{ _db['password'] }}"
+      -p{{ _db['password'] | quote }}
       "{{ _db['name'] }}"
 
 - name: MySQL check for db schema

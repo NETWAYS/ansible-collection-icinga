@@ -9,7 +9,7 @@
 - name: Build pgsql command
   ansible.builtin.set_fact:
     _tmp_pgsqlcmd: >-
-      PGPASSWORD="{{ _db['password'] }}"
+      PGPASSWORD={{ _db['password'] | quote }}
       psql
       "{% if _db['host'] | default('localhost') != 'localhost' %} host={{ _db['host'] }}{%- endif %}
       {% if _db['port'] is defined %} port={{ _db['port'] }}{%- endif %}
