@@ -10,7 +10,7 @@
           {% if icinga_kubernetes_database_cert is defined %} --ssl-cert "{{ icinga_kubernetes_database_cert }}" {%- endif %}
           {% if icinga_kubernetes_database_key is defined %} --ssl-key "{{ icinga_kubernetes_database_key }}" {%- endif %}
           -u "{{ icinga_kubernetes_database_user | default('kubernetes') }}"
-          -p"{{ icinga_kubernetes_database_password }}"
+          -p{{ icinga_kubernetes_database_password | quote }}
           "{{ icinga_kubernetes_database_name | default('kubernetes') }}"
 
     - name: MySQL check for Kubernetes schema

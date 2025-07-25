@@ -11,7 +11,7 @@
 - name: Build psql command
   ansible.builtin.set_fact:
     _tmp_pgsqlcmd: >-
-      PGPASSWORD="{{ icingaweb2_priv_db_password | default(icingaweb2_db['password']) }}"
+      PGPASSWORD={{ icingaweb2_priv_db_password | default(icingaweb2_db['password']) | quote }}
       psql
       "host={{ icingaweb2_db['host'] }}
       {% if icingaweb2_db['port'] is defined %} port={{ icingaweb2_db['port'] }} {%- endif %}

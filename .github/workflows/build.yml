@@ -63,7 +63,7 @@ jobs:
         env:
           MOLECULE_DISTRO: ${{ matrix.distro }}
 
-  icinga-default-scenario-ansible-2.18:
+  icinga-default-scenario-ansible-2-18:
     runs-on: ubuntu-latest
 
     env:

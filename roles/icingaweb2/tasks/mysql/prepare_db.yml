@@ -26,5 +26,5 @@
       {% if icingaweb2_db['ssl_cipher'] is defined %} --ssl-cipher "{{ icingaweb2_db['ssl_cipher'] }}" {%- endif %}
       {% if icingaweb2_db['ssl_extra_options'] is defined %} {{ icingaweb2_db['ssl_extra_options'] }} {%- endif %}
       -u "{{ icingaweb2_priv_db_user | default(icingaweb2_db['user']) }}"
-      -p"{{ icingaweb2_priv_db_password | default(icingaweb2_db['password']) }}"
+      -p{{ icingaweb2_priv_db_password | default(icingaweb2_db['password']) | quote }}
       "{{ icingaweb2_db['name'] }}"

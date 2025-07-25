@@ -6,7 +6,7 @@
 #     - name: Build pgsql command
 #       ansible.builtin.set_fact:
 #         _tmp_pgsqlcmd: >-
-#           PGPASSWORD="{{ icinga_kubernetes_database_password }}"
+#           PGPASSWORD={{ icinga_kubernetes_database_password | quote }}
 #           psql
 #           "{% if icinga_kubernetes_database_host %} host="{{ icinga_kubernetes_database_host }}" {%- endif %}
 #           {% if icinga_kubernetes_database_port is defined %} port={{ icinga_kubernetes_database_port }} {%- endif %}
