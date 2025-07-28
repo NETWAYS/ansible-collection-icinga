@@ -22,7 +22,7 @@
 - name: Build zones and endpoints from inventory
   when:
     - icinga2_zone_hierarchy is defined
-  icinga.icinga.icinga2_zones_conf:
+  netways.icinga.icinga2_zones_conf:
     hierarchy: "{{ icinga2_zone_hierarchy | default({}) }}"
     global_zones: "{{ icinga2_global_zones }}"
   register: "_zones_conf"
