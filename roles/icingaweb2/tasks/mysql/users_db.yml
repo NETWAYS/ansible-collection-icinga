@@ -1,18 +1,23 @@
 ---
-
-- name: MySQL check for icingaweb db schema
+- name: MySQL create Icinga Web 2 user
   ansible.builtin.shell: >
     {{ _tmp_mysqlcmd }}
     -Ns -e "select name from icingaweb_user where name like '{{ _current_user.username }}'"
-  failed_when: false
-  changed_when: false
-  check_mode: false
+    | grep '{{ _current_user.username }}' ||
+    echo "INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('{{ _current_user.username }}', 1,
+    '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"')
+    ON DUPLICATE KEY UPDATE active = 1, password_hash = '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"'" |  {{ _tmp_mysqlcmd }} -Ns &&
+    echo "User created"
   register: _icingaweb2_db_user
+  when: _current_user.recreate is false
+  changed_when:
+    - _icingaweb2_db_user.stdout == "User created"
+  throttle: 1
 
-- name: Create user in Icinga Web (or reenable user / reset password)
-  run_once: true
-  ansible.builtin.shell: >-
+- name: MySQL recreate Icinga Web 2 user
+  ansible.builtin.shell: >
     echo "INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('{{ _current_user.username }}', 1,
     '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"')
     ON DUPLICATE KEY UPDATE active = 1, password_hash = '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"'" |  {{ _tmp_mysqlcmd }} -Ns
-  when: (_icingaweb2_db_user.stdout_lines | length <= 0) or (_current_user.recreate is true)
+  when: _current_user.recreate is true
+  throttle: 1

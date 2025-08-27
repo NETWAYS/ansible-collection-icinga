@@ -21,18 +21,14 @@
       -p{{ _db['password'] | quote }}
       "{{ _db['name'] }}"
 
-- name: MySQL check for db schema
+- name: MySQL import db schema
   ansible.builtin.shell: >
     {{ _tmp_mysqlcmd }}
-    -Ns -e "{{ _db['select_query'] }}"
-  failed_when: false
-  changed_when: false
-  check_mode: false
-  register: _db_schema
-
-- name: MySQL import  db schema
-  ansible.builtin.shell: >
+    -Ns -e "{{ _db['select_query'] }}" ||
     {{ _tmp_mysqlcmd }}
-    < {{ _db['schema_path_mysql'] }}
-  when: _db_schema.rc != 0
-  run_once: yes
+    < {{ _db['schema_path_mysql'] }} &&
+    echo "Schema imported"
+  register: _icingaweb2_schema
+  changed_when:
+    - _icingaweb2_schema.stdout == "Schema imported"
+  throttle: 1

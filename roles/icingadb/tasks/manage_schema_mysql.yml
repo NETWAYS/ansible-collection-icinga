@@ -1,3 +1,4 @@
+---
 - name: MySQL import IcingaDB schema
   when: icingadb_database_import_schema | default(False)
   block:
@@ -13,19 +14,14 @@
           -p{{ icingadb_database_password | quote }}
           "{{ icingadb_database_name | default('icingadb') }}"
 
-    - name: MySQL check for IcingaDB schema
-      ansible.builtin.shell: >
-        {{ mysqlcmd }}
-        -Ns -e "select version from icingadb_schema"
-      failed_when: false
-      changed_when: false
-      check_mode: false
-      register: _db_schema
-
     - name: MySQL import IcingaDB schema
       ansible.builtin.shell: >
         {{ mysqlcmd }}
-        < {{ icingadb_database_schema }}
-      when: _db_schema.rc != 0
-      check_mode: false
-      run_once: yes
+        -Ns -e "select version from icingadb_schema" ||
+        {{ mysqlcmd }}
+        < {{ icingadb_database_schema }} &&
+        echo "Schema imported"
+      register: _icingadb_schema
+      changed_when:
+        - _icingadb_schema.stdout == "Schema imported"
+      throttle: 1

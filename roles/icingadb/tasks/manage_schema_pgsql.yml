@@ -1,3 +1,4 @@
+---
 - name: PgSQL import IcingaDB schema
   when: icingadb_database_import_schema| default(False)
   block:
@@ -16,19 +17,14 @@
           {% if icingadb_database_key is defined %} sslkey={{ icingadb_database_key }} {%- endif %}
           {% if icingadb_database_ssl_extra_options is defined %} {{ icingadb_database_ssl_extra_options }} {%- endif %}"
 
-    - name: PgSQL check for IcingaDB schema
-      ansible.builtin.shell: >
-        {{ _tmp_pgsqlcmd }}
-        -w -c "select version from icingadb_schema"
-      failed_when: false
-      changed_when: false
-      check_mode: false
-      register: _db_schema
-
     - name: PgSQL import IcingaDB schema
       ansible.builtin.shell: >
         {{ _tmp_pgsqlcmd }}
-        -w -f {{ icingadb_database_schema }}
-      when: _db_schema.rc != 0
-      check_mode: false
-      run_once: yes
+        -w -c "select version from icingadb_schema" ||
+        {{ _tmp_pgsqlcmd }}
+        -w -f {{ icingadb_database_schema }} &&
+        echo "Schema imported"
+      register: _icingadb_schema
+      changed_when:
+        - _icingadb_schema.stdout == "Schema imported"
+      throttle: 1

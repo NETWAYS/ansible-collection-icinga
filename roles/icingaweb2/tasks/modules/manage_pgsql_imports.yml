@@ -20,18 +20,14 @@
       {% if _db['ssl_key'] is defined %} sslkey={{ _db['ssl_key'] }}{%- endif %}
       {% if _db['ssl_extra_options'] is defined %} {{ _db['ssl_extra_options'] }}{%- endif %}"
 
-- name: PostgresQL check for db schema
+- name: PostgresQL import db schema
   ansible.builtin.shell: >
     {{ _tmp_pgsqlcmd }}
-    -tq -c "{{ _db['select_query'] }}"
-  failed_when: false
-  changed_when: false
-  check_mode: false
-  register: _db_schema
-
-- name: PostgresQL import  db schema
-  ansible.builtin.shell: >
+    -tq -c "{{ _db['select_query'] }}" ||
     {{ _tmp_pgsqlcmd }}
-    < {{ _db['schema_path_pgsql'] }}
-  when: _db_schema.rc != 0
-  run_once: yes
+    < {{ _db['schema_path_pgsql'] }} &&
+    echo "Schema imported"
+  register: _icingaweb2_schema
+  changed_when:
+    - _icingaweb2_schema.stdout == "Schema imported"
+  throttle: 1
