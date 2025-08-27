@@ -21,10 +21,11 @@
       ansible.builtin.shell: >
         {{ _tmp_pgsqlcmd }}
         -w -c "select version from icingadb_schema" ||
-        {{ _tmp_pgsqlcmd }}
-        -w -f {{ icingadb_database_schema }} &&
-        echo "Schema imported"
+        (
+          {{ _tmp_pgsqlcmd }} -w -f {{ icingadb_database_schema }} &&
+          echo "Schema imported"
+        )
       register: _icingadb_schema
       changed_when:
-        - _icingadb_schema.stdout == "Schema imported"
+        - '"Schema imported" in _icingadb_schema.stdout_lines'
       throttle: 1

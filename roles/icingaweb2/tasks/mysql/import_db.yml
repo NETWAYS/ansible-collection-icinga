@@ -3,14 +3,13 @@
 - name: MySQL check for icingaweb db schema
   ansible.builtin.shell: >
     {{ _tmp_mysqlcmd }}
-    -Ns -e "select * from icingaweb_user"
-  failed_when: false
-  changed_when: false
-  check_mode: false
-  register: _icingaweb2_db_schema
+    -Ns -e "select * from icingaweb_user" ||
+    (
+      {{ _tmp_mysqlcmd }} < /usr/share/icingaweb2/schema/mysql.schema.sql &&
+      echo "Schema imported"
+    )
+  register: _icingaweb_schema
+  changed_when:
+    - '"Schema imported" in _icingaweb_schema.stdout_lines'
+  throttle: 1
 
-- name: MySQL import icingaweb db schema
-  ansible.builtin.shell: >
-    {{ _tmp_mysqlcmd }}
-    < /usr/share/icingaweb2/schema/mysql.schema.sql
-  when: _icingaweb2_db_schema.rc != 0

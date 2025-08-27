@@ -1,0 +1,5 @@
+---
+bugfixes:
+  - |
+    Switch from :code:`run_once` which was used to ensure it runs only once in a cluster resulting in propagated the databases only on the first node even if nodes are independent to :code:`throttle`.
+    This was also fixed for some cases where :code:`run_once` was missing in the current state.

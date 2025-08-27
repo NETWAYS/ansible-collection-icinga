@@ -5,15 +5,17 @@
     {{ _tmp_pgsqlcmd }}
     -w -c "select name from icingaweb_user where name like '{{ _current_user.username }}'"
     | grep '{{ _current_user.username }}' ||
-    echo "INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('{{ _current_user.username }}', 1,
-    '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"')
-    ON CONFLICT (name) DO UPDATE
-    SET active = 1, password_hash = '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"'" | {{ _tmp_pgsqlcmd }} -w &&
-    echo "User created"
+    (
+      echo "INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('{{ _current_user.username }}', 1,
+      '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"')
+      ON CONFLICT (name) DO UPDATE
+      SET active = 1, password_hash = '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"'" | {{ _tmp_pgsqlcmd }} -w &&
+      echo "User created"
+    )
   register: _icingaweb2_db_user
   when: _current_user.recreate is false
   changed_when:
-    - _icingaweb2_db_user.stdout == "User created"
+    - '"User created" in _icingaweb2_db_user.stdout_lines'
   throttle: 1
 
 - name: PostgreSQL recreate Icinga Web 2 user

@@ -18,10 +18,11 @@
       ansible.builtin.shell: >
         {{ mysqlcmd }}
         -Ns -e "select version from kubernetes_schema" ||
-        {{ mysqlcmd }}
-        < {{ icinga_kubernetes_database_schema }} &&
-        echo "Schema imported"
+        (
+          {{ mysqlcmd }} < {{ icinga_kubernetes_database_schema }} &&
+          echo "Schema imported"
+        )
       register: _icingakubernetes_schema
       changed_when:
-        - _icingakubernetes_schema.stdout == "Schema imported"
+        - '"Schema imported" in _icingakubernetes_schema.stdout_lines'
       throttle: 1

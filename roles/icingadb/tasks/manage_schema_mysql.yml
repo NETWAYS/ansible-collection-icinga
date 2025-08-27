@@ -18,10 +18,11 @@
       ansible.builtin.shell: >
         {{ mysqlcmd }}
         -Ns -e "select version from icingadb_schema" ||
-        {{ mysqlcmd }}
-        < {{ icingadb_database_schema }} &&
-        echo "Schema imported"
+        (
+          {{ mysqlcmd }} < {{ icingadb_database_schema }} &&
+          echo "Schema imported"
+        )
       register: _icingadb_schema
       changed_when:
-        - _icingadb_schema.stdout == "Schema imported"
+        - '"Schema imported" in _icingadb_schema.stdout_lines'
       throttle: 1

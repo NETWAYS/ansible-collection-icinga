@@ -1,11 +1,19 @@
 ---
 
-- name: Module Director | Apply pending migrations
-  ansible.builtin.command:
-    cmd: icingacli director migration run
+- name: Module Director | Apply pending migrations # noqa: command-instead-of-shell
+  ansible.builtin.shell:
+    cmd: icingacli director migration pending && icingacli director migration run || echo "No changes"
+  throttle: 1
   listen: "run_director_migrations"
+  register: _tmp_director_migration
+  changed_when: 'not "No changes" in _tmp_director_migration.stdout_lines'
+  failed_when: _tmp_director_migration.stderr_lines | length > 0
 
-- name: Module Director | Run kickstart if required
-  ansible.builtin.command:
-    cmd: icingacli director kickstart run
+- name: Module Director | Run kickstart if required # noqa: command-instead-of-shell
+  ansible.builtin.shell:
+    cmd: icingacli director kickstart required && icingacli director kickstart run || echo "No changes"
+  throttle: 1
   listen: "run_director_kickstart"
+  register: _tmp_director_kickstart
+  changed_when: 'not "No changes" in _tmp_director_kickstart.stdout_lines'
+  failed_when: _tmp_director_kickstart.stderr_lines | length > 0 or "Kickstart has not been configured" in _tmp_director_kickstart.stdout_lines

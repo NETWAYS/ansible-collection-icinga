@@ -24,10 +24,11 @@
   ansible.builtin.shell: >
     {{ _tmp_pgsqlcmd }}
     -tq -c "{{ _db['select_query'] }}" ||
-    {{ _tmp_pgsqlcmd }}
-    < {{ _db['schema_path_pgsql'] }} &&
-    echo "Schema imported"
+    (
+      {{ _tmp_pgsqlcmd }} < {{ _db['schema_path_pgsql'] }} &&
+      echo "Schema imported"
+    )
   register: _icingaweb2_schema
   changed_when:
-    - _icingaweb2_schema.stdout == "Schema imported"
+    - '"Schema imported" in _icingaweb2_schema.stdout_lines'
   throttle: 1

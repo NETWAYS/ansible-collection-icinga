@@ -23,10 +23,12 @@
 #       ansible.builtin.shell: >
 #         {{ _tmp_pgsqlcmd }}
 #         -w -c "select version from kubernetes_schema" ||
-#         {{ _tmp_pgsqlcmd }}
-#         -w -f {{ icinga_kubernetes_database_schema }} &&
-#         echo "Schema imported"
+#         (
+#           {{ _tmp_pgsqlcmd }}
+#           -w -f {{ icinga_kubernetes_database_schema }} &&
+#           echo "Schema imported"
+#         )
 #       register: _icingakubernetes_schema
 #       changed_when:
-#         - _icingakubernetes_schema.stdout == "Schema imported"
+#         - '"Schema imported" in _icingakubernetes_schema.stdout_lines'
 #       throttle: 1
