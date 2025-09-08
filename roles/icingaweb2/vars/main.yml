@@ -7,3 +7,6 @@ icingaweb2_module_packages:
   businessprocess: icinga-businessprocess
   kubernetes: icinga-kubernetes-web
   monitoring: icingaweb2
+  doc: icingaweb2
+  setup: icingaweb2
+  translation: icingaweb2
