@@ -6,3 +6,4 @@ icingaweb2_module_packages:
   x509: icinga-x509
   businessprocess: icinga-businessprocess
   kubernetes: icinga-kubernetes-web
+  monitoring: icingaweb2
