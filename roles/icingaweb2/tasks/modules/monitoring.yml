@@ -17,4 +17,4 @@
     _files:
       - commandtransports
       - backends
-      - security
+      - config
