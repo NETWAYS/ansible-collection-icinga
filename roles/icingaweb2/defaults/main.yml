@@ -6,6 +6,8 @@ icingaweb2_director_service: icinga-director.service
 
 icingaweb2_ignore_unknown_modules: false
 
+icingaweb2_db_import_schema: false
+
 icingaweb2_groups:
   icingaweb2:
     backend: db
