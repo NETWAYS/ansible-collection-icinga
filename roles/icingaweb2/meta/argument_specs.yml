@@ -1,0 +1,605 @@
+---
+
+argument_specs:
+  main:
+    short_description: Role to manage Icinga Web 2
+    description:
+      - Role to install, configure or manage Icinga Web 2 and official modules.
+    author:
+      - Lennart Betz <lennart.betz@netways.de>
+      - Thilo Wening <thilo.wening@netways.de>
+      - Thomas Widhalm <thomas.widhalm@netways.de>
+    options:
+      icingaweb2_db:
+        description:
+          - Defines Icinga Web's own database resource for storing its configuration.
+        type: dict
+        required: false
+        options:
+          type:
+            description:
+              - The type of database to be used.
+            type: str
+            required: false
+            default: mysql
+            choices: [ mysql, pgsql ]
+          name:
+            description:
+              - The name of the database to be used.
+            type: str
+            required: true
+          host:
+            description:
+              - The database host to be used.
+            type: str
+            required: false
+            default: localhost
+          port:
+            description:
+              - The database port to be used.
+            type: int
+            required: false
+            default: 3306
+          user:
+            description:
+              - The database user to be used.
+              - If O(icingaweb2_priv_db_user) is set, it will be used instead when interacting with the database.
+                This is useful if the normal O(icingaweb2_db.user) cannot apply a database schema.
+              - O(icingaweb2_priv_db_user) works in conjunction with O(icingaweb2_priv_db_password).
+            type: str
+            required: true
+          password:
+            description:
+              - The database password to be used.
+              - If O(icingaweb2_priv_db_password) is set, it will be used instead when interacting with the database.
+                This is useful if the normal O(icingaweb2_db.user) cannot apply a database schema.
+              - O(icingaweb2_priv_db_password) works in conjunction with O(icingaweb2_priv_db_user).
+            type: str
+            required: true
+          ssl_mode:
+            description:
+              - If O(icingaweb2_db.type=mysql), the value for C(--ssl-mode) to be passed to the C(mysql) command when interacting with the database.
+              - If O(icingaweb2_db.type=pgsql), the value for C(ssl-mode) to be passed to the C(psql) command when interacting with the database.
+            type: str
+            required: false
+          ssl_ca:
+            description:
+              - If O(icingaweb2_db.type=mysql), the for value for C(--ssl-ca) to be passed to the C(mysql) command when interacting with the database.
+            type: str
+            required: false
+          ssl_cert:
+            description:
+              - If O(icingaweb2_db.type=mysql), the for value for C(--ssl-cert) to be passed to the C(mysql) command when interacting with the database.
+              - If O(icingaweb2_db.type=pgsql), the for value for C(sslcert) to be passed to the C(psql) command when interacting with the database.
+            type: str
+            required: false
+          ssl_key:
+            description:
+              - If O(icingaweb2_db.type=mysql), the for value for C(--ssl-key) to be passed to the C(mysql) command when interacting with the database.
+              - If O(icingaweb2_db.type=pgsql), the for value for C(sslkey) to be passed to the C(psql) command when interacting with the database.
+            type: str
+            required: false
+          ssl_cipher:
+            description:
+              - If O(icingaweb2_db.type=mysql), the for value for C(--ssl-cipher) to be passed to the C(mysql) command when interacting with the database.
+            type: str
+            required: false
+          ssl_extra_options:
+            description:
+              - Any arbitrary extra options to be passed to the C(mysql)/C(psql) command when interacting with the database.
+            type: str
+            required: false
+      icingaweb2_db_import_schema:
+        description:
+          - Whether the role should import the schema into the database initially.
+          - If O(icingaweb2_db_import_schema=true), information from O(icingaweb2_db) (and O(icingaweb2_priv_db_user) / O(icingaweb2_priv_db_password)) will be used to do so.
+        type: bool
+        required: false
+        default: false
+      icingaweb2_config:
+        description:
+          - This defines the general configuration of Icinga Web 2.
+        type: dict
+        required: false
+        default:
+          global:
+            show_stacktraces: 1
+            show_application_state_messages: 1
+            config_resource: icingaweb2_db
+            module_path: /usr/share/icingaweb2/modules
+          logging:
+            log: syslog
+            level: ERROR
+            application: icingaweb2
+            facility: user
+          themes:
+            default: Icinga
+        options:
+          global:
+            description:
+              - This defines global options for Icinga Web 2.
+            type: dict
+            required: true
+            options:
+              show_stacktraces:
+                description:
+                  - Whether to show stacktraces.
+                type: int
+                required: true
+                choices: [ 0, 1 ]
+              show_application_state_messages:
+                description:
+                  - Whether to show application state messages.
+                type: int
+                required: true
+                choices: [ 0, 1 ]
+              config_resource:
+                description:
+                  - Defines which resource will be used by Icinga Web 2. Also see O(icingaweb2_resources) and O(icingaweb2_db).
+                type: str
+                required: true
+              module_path:
+                description:
+                  - Defines where Icinga Web 2 modules are located on the filesystem.
+                type: str
+                required: true
+          logging:
+            description:
+              - Defines the logging behavior of Icinga Web 2.
+            type: dict
+            required: true
+            options:
+              log:
+                description:
+                  - Specifies the logging type.
+                type: str
+                required: true
+                choices: [ syslog, file, php, none ]
+              level:
+                description:
+                  - Specifies the logging level.
+                type: str
+                required: true
+                choices: [ ERROR, WARNING, INFORMATION, DEBUG ]
+              file:
+                description:
+                  - Specifies the log file path if O(icingaweb2_config.logging.log=file).
+                type: path
+                required: false
+              application:
+                description:
+                  - Specifies the application name if O(icingaweb2_config.logging.log=syslog).
+                type: str
+                required: true
+              facility:
+                description:
+                  - Specifies the syslog facility if O(icingaweb2_config.logging.log=syslog).
+                type: str
+                required: false
+                default: user
+                choices: [ user, local0, local1, local2, local3, local4, local5, local6, local7 ]
+          themes:
+            description:
+              - Specifies the default theme for Icinga Web 2.
+            type: str
+            required: true
+      icingaweb2_authentication:
+        description:
+          - Specifies different authentication methods for Icinga Web 2.
+          - Each key in this dictionary represents an authentication method to be used.
+            For a list of available options, see L(the official documentation, https://icinga.com/docs/icinga-web/latest/doc/05-Authentication/).
+        type: dict
+        required: false
+        default:
+          icingaweb2:
+            backend: db
+            resource: icingaweb2_db
+      icingaweb2_groups:
+        description:
+          - Specifies different backends for assigning users to groups.
+          - Each key in this dictionary represents a group backend to be used.
+            For a list of available options, see L(the official documentation, https://icinga.com/docs/icinga-web/latest/doc/05-Authentication/#groups).
+        type: dict
+        required: false
+        default:
+          icingaweb2:
+            backend: db
+            resource: icingaweb2_db
+      icingaweb2_resources:
+        description:
+          - Defines Icinga Web 2 resources. A resource can be a database connection, LDAP connection, or SSH.
+          - Each key in the dictionary represents a resource. Each resource type supports different options.
+            See L(database resource, https://icinga.com/docs/icinga-web/latest/doc/04-Resources/#database),
+            L(LDAP resource, https://icinga.com/docs/icinga-web/latest/doc/04-Resources/#ldap),
+            and L(SSH resource, https://icinga.com/docs/icinga-web/latest/doc/04-Resources/#ssh) for valid options.
+          - "Example: C(icingaweb2_resources: { icingadb_db: { type: db, db: mysql, host: localhost, dbname: icingadb, username: icingadb_user, password: icingadb_password, use_ssl: 0 charset: utf8 } })"
+        type: dict
+        required: false
+        ### Ansible does not support arbitrary keys in argument specs.
+        ### This cannot properly be documented if it is a dictionary. A list of dictionries would work better, since each entry's keys can be documented.
+        #options:
+        #  <arbitrary_key>:
+        #    description:
+        #      - The dictionary key is the name of the resource to be created.
+        #      - Its sub keys define the resource itself.
+        #    type: dict
+        #    required: true
+        #    options:
+        #      type:
+        #        description:
+        #          - The type of resource.
+        #        type: str
+        #        required: true
+        #        choices: [ db, ldap, ssh ]
+        #      db:
+        #        description:
+        #          - The type of database.
+        #        type: str
+        #        required: false
+        #        choices: [ mysql, pgsql ]
+        #      host:
+        #        description:
+        #          - The database host.
+        #        type: str
+        #        required: false
+        #        choices: [ mysql, pgsql ]
+        #      port:
+        #        description:
+        #          - The database port.
+        #        type: int
+        #        required: false
+        #      dbname:
+        #        description:
+        #          - The database name.
+        #        type: str
+        #        required: false
+        #      username:
+        #        description:
+        #          - The database username.
+        #        type: str
+        #        required: false
+        #      password:
+        #        description:
+        #          - The database password.
+        #        type: str
+        #        required: false
+        #      use_ssl:
+        #        description:
+        #          - Whether to use SSL for the connection.
+        #        type: int
+        #        required: false
+        #        choices: [ 0, 1 ]
+        #      charset:
+        #        description:
+        #          - The character set of the database.
+        #        type: str
+        #        required: false
+      icingaweb2_admin_username:
+        description:
+          - The name of the initial admin user for Icinga Web 2.
+        type: str
+        required: false
+      icingaweb2_admin_password:
+        description:
+          - The password of the initial admin user for Icinga Web 2.
+        type: str
+        required: false
+      icingaweb2_users:
+        description:
+          - A list of additional Icinga Web 2 users to create.
+          - Requires O(icingaweb2_db) to be defined.
+        type: list
+        elements: dict
+        required: false
+        default: []
+        options:
+          username:
+            description:
+              - The name of the user to create.
+            type: str
+            required: true
+          password:
+            description:
+              - The password of the user to create.
+            type: str
+            required: true
+          recreate:
+            description:
+              - Whether to update the password for the given user.
+            type: str
+            required: false
+      icingaweb2_roles:
+        description:
+          - A dictionary of roles for Icinga Web 2.
+          - Each key is a role, each subkey is an option for the given role. See L(Icinga Web Roles, https://icinga.com/docs/icinga-web/latest/doc/06-Security/#configuration) for valid options.
+          - Modules can also extend the permission system, so it is not possible to document all options here.
+          - "Example: C(icingaweb2_roles: { watchers: { users: [ user1, user2 ], permissions: [ module/icingadb, icingadb/command/downtime/* ], icingadb/filter/hosts: host.name=*windows* } })"
+        type: dict
+        required: false
+      icingaweb2_modules:
+        description:
+          - A dictionary of Icinga Web 2 modules.
+          - Each key is a specific module, each subkey is an option for the given module.
+        type: dict
+        required: false
+        options:
+          icingadb:
+            description:
+              - This configures the L(Icinga DB Web module, https://icinga.com/docs/icinga-db-web/latest/doc/03-Configuration/).
+            type: dict
+            options:
+              source: &module_source
+                description:
+                  - Defines the source from which to install the module
+                type: str
+                required: true
+                choices: [ package ]
+              enabled: &module_enabled
+                description:
+                  - Whether the module should be enabled.
+                type: bool
+                required: true
+              commandtransports: &common_commandtransports
+                description:
+                  - Defines the command transports to be used.
+                  - Each key defines a command transport. Each subkey defines an option to that command transport.
+                  - "Example: C(instance01: { transport: api, host: 10.0.0.10, port: 5665, username: root, password: changeme }, instance02: { transport: api, host: 10.0.0.20, port: 5665, username: root, password: changeme })"
+                type: dict
+                required: true
+              config:
+                description:
+                  - Defines the general module settings.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                type: dict
+                required: true
+                options:
+                  icingadb:
+                    description:
+                      - Defines the C(icingadb) section of the configuration file.
+                    type: dict
+                    options:
+                      resource:
+                        description:
+                          - Sets the module's database resource.
+                        type: str
+                  redis:
+                    description:
+                      - Defines the C(redis) section of the configuration file.
+                    type: dict
+                    options:
+                      tls:
+                        description:
+                          - Defines whether TLS encryption should be used.
+                        type: int
+                        choices: [ 0, 1 ]
+                      ca:
+                        description:
+                          - The path to the CA certificate in PEM format.
+                        type: path
+                      cert:
+                        description:
+                          - The path to the client certificate in PEM format.
+                        type: path
+                      key:
+                        description:
+                          - The path to the client key in PEM format.
+                        type: path
+              redis:
+                description:
+                  - Defines the redis configuration.
+                  - Each key defines the connection to a redis instance. Each subkey defines an option to that connection.
+                type: dict
+                required: true
+                options:
+                  redis1:
+                    description:
+                      - Defines the connection to the first redis instance.
+                    type: dict
+                    options: &common_redis_options
+                      host:
+                        description:
+                          - The address of the redis instance.
+                        type: str
+                      port:
+                        description:
+                          - The port of the redis instance.
+                          - Icinga DB Redis uses C(6380) by default.
+                        type: int
+                      database:
+                        description:
+                          - The database identifier.
+                          - This is only needed if Icinga 2 is configured to write into another database index.
+                        type: int
+                      username:
+                        description:
+                          - The username for the redis instance.
+                        type: str
+                      password:
+                        description:
+                          - The password for the redis instance.
+                        type: str
+                  redis2:
+                    description:
+                      - Defines the connection to the second redis instance.
+                    type: dict
+                    options: *common_redis_options
+          director:
+            description:
+              - This configures the L(Icinga DB Web module, https://icinga.com/docs/icinga-db-web/latest/doc/03-Configuration/).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              ### Currently does not do anything. Schema is applied via kickstart (unprivileged user could not apply schema).
+              import_schema:
+                description:
+                  - Whether the Director's database schema should be initially imported initially.
+                type: bool
+                required: false
+              run_kickstart:
+                description:
+                  - Whether the Director's kickstart should be run initially.
+                  - Requires O(icingaweb2_modules.director.kickstart) to be defined.
+                type: bool
+                required: false
+              kickstart:
+                description:
+                  - Defines the Director's C(kickstart.ini) configuration file.
+                  - This is required if O(icingaweb2_modules.director.run_kickstart=true).
+                type: dict
+                options:
+                  config:
+                    description:
+                      - Defines the the C(config) section in the C(kickstart.ini) configuration file.
+                    type: dict
+                    options:
+                      endpoint:
+                        description:
+                          - The Icinga 2 endpoint to deploy to.
+                        type: str
+                      host:
+                        description:
+                          - The initial host to run API commands against to get the actual endpoint object.
+                          - &director_initial_endpoint Once a valid endpoint has been found, its attributes are used for actual deployments.
+                        type: str
+                      port:
+                        description:
+                          - The initial port to run API commands against to get the actual endpoint object.
+                          - *director_initial_endpoint
+                        type: str
+                      username:
+                        description:
+                          - The Icinga 2 API user's username.
+                        type: str
+                      password:
+                        description:
+                          - The Icinga 2 API user's password.
+                        type: str
+              config:
+                description:
+                  - Defines the Director's C(config.ini) configuration file.
+                type: dict
+                options:
+                  db:
+                    description:
+                      - Defines the C(db) section of the C(config.ini) configuration file.
+                    type: dict
+                    options:
+                      resource:
+                        description:
+                          - Defines the database resource to be used.
+                        type: str
+          graphite:
+            description:
+              - This configures the L(Graphite module, https://icinga.com/docs/icinga-web-graphite-integration/latest/doc/03-Configuration/).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              config:
+                description:
+                  - Defines the Graphite module's C(config.ini) configuration file.
+                type: dict
+                options:
+                  graphite:
+                    description:
+                      - Defines the the C(graphite) section in the C(config.ini) configuration file.
+                    type: dict
+                    options:
+                      url:
+                        description:
+                          - The URL to the Graphite Web instance.
+                        type: str
+                      user:
+                        description:
+                          - The username to the Graphite Web instance.
+                        type: str
+                      password:
+                        description:
+                          - The password to the Graphite Web instance.
+                        type: str
+                      insecure:
+                        description:
+                          - Disables TLS certificate verification.
+                        type: int
+                        choices: [ 0, 1 ]
+                      timeout:
+                        description:
+                          - Timeout for HTTP requests to Graphite Web.
+                        type: int
+                        choices: [ 0, 1 ]
+                  ui:
+                    description:
+                      - Defines the the C(ui) section in the C(config.ini) configuration file.
+                    type: dict
+                    options:
+                      default_time_range:
+                        description:
+                          - The default time range to be displayed.
+                          - The value of O(icingaweb2_modules.graphite.config.ui.default_time_range_unit) is used as the unit to this value.
+                        type: str
+                      default_time_range_unit:
+                        description:
+                          - The default time range unit to be used.
+                        type: str
+                        choices: [ minutes, hours, days, weeks, months, years ]
+                      disable_no_graphs_found:
+                        description:
+                          - Disables graphs completely for monitored objects without graphs. Shows nothing at all.
+                        type: int
+                        choices: [ 0, 1 ]
+                  icinga:
+                    description:
+                      - Defines the the C(icinga) section in the C(config.ini) configuration file.
+                    type: dict
+                    options:
+                      graphite_writer_host_name_template:
+                        description:
+                          - The name of the Icinga 2 GraphiteWriter's attribute C(host_name_template).
+                          - This is only needed if the writer does not use the default.
+                        type: str
+                      graphite_writer_service_name_template:
+                        description:
+                          - The name of the Icinga 2 GraphiteWriter's attribute C(service_name_template).
+                          - This is only needed if the writer does not use the default.
+                        type: str
+                      customvar_obscured_check_command:
+                        description:
+                          - The Icinga custom variable with the "actual" check command obscured by e.g. check_by_ssh.
+                        type: str
+          ### Disabled for now since another PR is needed for the monitoring module to even work.
+          #monitoring:
+          #  description:
+          #    - This configures the L(monitoring module, https://icinga.com/docs/icinga-web/latest/modules/monitoring/doc/03-Configuration/).
+          #  type: dict
+          #  options:
+          #    source: *module_source
+          #    enabled: *module_enabled
+          #    commandtransports: *common_commandtransports
+          #    backends:
+          #      description:
+          #        - Defines the database backends to use.
+          #        - Each key defines a backend. Each subkey defines an option to that backend.
+          #        - "Example: C(my_ido_backend: { type: ido, disabled: 0, resource: ido_resource })"
+          #      type: dict
+          #    config:
+          #      description:
+          #        - Defines the general module settings.
+          #        - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+          #      type: dict
+          #      options:
+          #        security:
+          #          description:
+          #            - Defines the security settings.
+          #          type: dict
+          #          options:
+          #            protected_customvars:
+          #              description:
+          #                - Defines variable name patterns. The values of variables that match a given pattern are hidden from the user's view.
+          #                - "Example: C(protected_customvars: *pw*,*pass*,community)"
+          #              type: str
+          #        settings:
+          #          description:
+          #            - Defines the default settings for the module.
+          #            - "Example: C(settings: { acknowledge_sticky: 1 })"
+          #          type: dict
