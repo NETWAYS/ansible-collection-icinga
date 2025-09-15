@@ -1,3 +1,3 @@
 ---
-major_changes:
-  - added internal modules to allowed modules list
+bugfixes:
+  - Add package name :code:`icingaweb2` for Icinga Web's internal modules (e.g. :code:`monitoring`), so they can be installed and configured properly.
