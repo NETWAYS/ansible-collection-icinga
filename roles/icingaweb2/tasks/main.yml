@@ -28,7 +28,10 @@
   loop: "{{ icingaweb2_modules | dict2items }}"
   loop_control:
     label: "{{ item.key }}"
-  when: icingaweb2_modules is defined and icingaweb2_module_packages[item.key] is defined and item.value.enabled | bool == true and item.value.source == "package"
+  when:
+    - icingaweb2_modules is defined
+    - icingaweb2_module_packages[item.key] is defined
+    - item.value.source == "package"
   no_log: true
 
 - name: Check supported operatingsystems

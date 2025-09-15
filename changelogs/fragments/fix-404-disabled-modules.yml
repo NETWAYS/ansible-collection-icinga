@@ -1,0 +1,4 @@
+bugfixes:
+  - |
+    Fix issue where the package for any given Icinga Web 2 module was not installed if that module had set :code:`enabled: false`.
+    Modules are now installed and configured properly even when they are set to be disabled in the end.
