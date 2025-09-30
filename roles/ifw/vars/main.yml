@@ -1,0 +1,14 @@
+---
+
+ifw_repository_json: "https://packages.icinga.com/IcingaForWindows/stable/ifw.repo.json"
+
+ifw_framework_path_options:
+  - "C:/Program Files/WindowsPowerShell/Modules"
+  - "C:/Windows/system32/WindowsPowerShell/v1.0/Modules"
+  - "C:/Users/{{ ansible_user }}/Documents/WindowsPowerShell/Modules"
+
+ifw_temp_directory: "%localappdata%/Temp/"
+
+ifw_fixed_repositories:
+  - name: "Icinga Stable"
+    remote_path: "https://packages.icinga.com/IcingaForWindows/stable/ifw.repo.json"

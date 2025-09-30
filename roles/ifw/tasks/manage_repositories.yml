@@ -1,0 +1,43 @@
+---
+
+- name: Get current repositories
+  changed_when: false
+  ansible.windows.win_shell: ConvertTo-Json -InputObject @(Get-IcingaRepositories)
+  register: _current_repositories
+
+- name: Convert current repositories to json
+  ansible.builtin.set_fact:
+    _current_repositories_json: "{{ _current_repositories.stdout | from_json }}"
+
+- name: Combine requested repositories and fixed repositories
+  ansible.builtin.set_fact:
+    ifw_repositories: "{{ ifw_repositories + ifw_fixed_repositories }}"
+
+- name: Remove non requested repositories
+  loop: "{{ _current_repositories_json }}"
+  when:
+    - not item is none
+    - item.Name not in (ifw_repositories | map(attribute='name'))
+  ansible.windows.win_shell: Remove-IcingaRepository -Name "{{ item.Name }}"
+
+- name: Update existing repositories
+  loop: "{{ ifw_repositories }}"
+  vars:
+    _current_repository: "{{ _current_repositories_json | selectattr('Name', 'defined') | selectattr('Name', 'eq', item.name) }}"
+  when:
+    - _current_repository | length > 0
+    - _current_repository[0].Value.RemotePath != item.remote_path
+  ansible.windows.win_shell: Add-IcingaRepository -Name "{{ item.name }}" -RemotePath "{{ item.remote_path }}" -Force
+
+- name: Add repositories
+  loop: "{{ ifw_repositories }}"
+  vars:
+    _current_repository: "{{ _current_repositories_json | selectattr('Name', 'defined') | selectattr('Name', 'eq', item.name) }}"
+  when:
+    - not _current_repository
+  ansible.windows.win_shell: Add-IcingaRepository -Name "{{ item.name }}" -RemotePath "{{ item.remote_path }}"
+
+- name: Push fixed repositories to the end of the list (lowest priority)
+  changed_when: false
+  loop: "{{ ifw_fixed_repositories | map(attribute='name') }}"
+  ansible.windows.win_shell: Push-IcingaRepository -Name "{{ item }}"

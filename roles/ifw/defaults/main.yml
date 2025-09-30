@@ -1,0 +1,20 @@
+---
+
+ifw_framework_url: "https://packages.icinga.com/IcingaForWindows/stable/framework/"
+ifw_framework_version: "latest"
+ifw_framework_path:
+
+ifw_repositories: []
+
+ifw_components:
+  - name: "plugins"
+    version: "latest"
+  - name: "agent"
+    version: "latest"
+
+ifw_icinga2_ca_host:
+ifw_connection_direction: "fromagent"
+ifw_force_newcert: false
+ifw_icinga2_cn: "{{ inventory_hostname }}"
+ifw_icinga2_port: 5665
+ifw_icinga2_global_zones: []

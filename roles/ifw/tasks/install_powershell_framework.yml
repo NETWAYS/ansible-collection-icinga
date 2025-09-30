@@ -1,0 +1,73 @@
+---
+
+- name: Get latest Framework version
+  run_once: true
+  when: ifw_framework_version == "latest"
+  block:
+    - name: Get list of available Framework versions
+      delegate_to: localhost
+      ansible.builtin.uri:
+        url: "{{ ifw_framework_url }}"
+        return_content: true
+      register: _repo_html
+
+    - name: Set fact for Framework version
+      ansible.builtin.set_fact:
+        ifw_framework_version: "{{ _repo_html.content | regex_findall('[\\d\\.]+\\.zip') | community.general.version_sort | last | replace('.zip', '') }}"
+
+- name: Determine Icinga PowerShell Framework module path
+  when: not ifw_framework_path
+  block:
+    - name: Check existence of possible module paths
+      ansible.windows.win_stat:
+        path: "{{ item }}"
+      register: _module_path_info
+      loop: "{{ ifw_framework_path_options }}"
+
+    - name: Set Icinga PowerShell Framework module path
+      ansible.builtin.set_fact:
+        ifw_framework_path: "{{ (_module_path_info.results | selectattr('stat', 'defined') | selectattr('stat.exists', 'equalto', true) | first).stat.path }}"
+      when: (_module_path_info.results | selectattr('stat', 'defined') | selectattr('stat.exists', 'equalto', true) | first).stat.exists
+
+- name: Download Icinga PowerShell Framework
+  run_once: true
+  delegate_to: localhost
+  ansible.builtin.get_url:
+    url: "{{ ifw_framework_url }}/icinga-powershell-framework-{{ ifw_framework_version }}.zip"
+    dest: "/tmp/icinga-powershell-framework.zip"
+    mode: "0665"
+
+- name: Unzip Icinga PowerShell Framework
+  run_once: true
+  delegate_to: localhost
+  ansible.builtin.unarchive:
+    src: "/tmp/icinga-powershell-framework.zip"
+    dest: "/tmp/"
+
+- name: Remove previous Icinga PowerShell Framework directory
+  run_once: true
+  delegate_to: localhost
+  changed_when: false
+  ansible.builtin.file:
+    state: absent
+    path: "/tmp/icinga-powershell-framework/"
+
+- name: Rename Icinga PowerShell Framework directory
+  run_once: true
+  delegate_to: localhost
+  changed_when: false
+  ansible.builtin.command: "cp -r /tmp/icinga-powershell-framework-{{ ifw_framework_version }}/ /tmp/icinga-powershell-framework"
+
+- name: Check if Icinga PowerShell Framework needs to be copied
+  ansible.windows.win_stat:
+    path: "{{ ifw_framework_path }}/icinga-powershell-framework"
+  register: _ifw_framework_path_stat
+
+- name: Copy Icinga PowerShell Framework to Windows hosts
+  when: not _ifw_framework_path_stat.stat.exists
+  ansible.windows.win_copy:
+    src: "/tmp/icinga-powershell-framework/"
+    dest: "{{ ifw_framework_path }}/icinga-powershell-framework/"
+
+- name: Run Use-Icinga once
+  ansible.windows.win_shell: Use-Icinga
