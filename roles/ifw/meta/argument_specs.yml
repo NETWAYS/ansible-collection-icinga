@@ -1,0 +1,165 @@
+---
+
+argument_specs:
+  main:
+    short_description: Role to manage Icinga for Windows
+    description:
+      - Role to install, configure and manage L(Icinga for Windows, https://icinga.com/docs/icinga-for-windows/latest/doc/000-Introduction/).
+      - The role installs the Icinga PowerShell Framework and can manage components.
+    author:
+      - Matthias Döhler <matthias.doehler@netways.de>
+    options:
+      ifw_framework_url:
+        description:
+          - The URL to the different verions of the Icinga PowerShell Framework.
+          - This is where the zip files for the different versions are located, e.g. C(icinga-powershell-framework-1.13.3.zip) and C(icinga-powershell-framework-1.13.2.zip).
+          - HORIZONTALLINE
+          - The Icinga PowerShell Framework will be downloaded to your Ansible control node and copied over to the target machine.
+        type: str
+        required: false
+        default: "https://packages.icinga.com/IcingaForWindows/stable/framework/"
+      ifw_framework_version:
+        description:
+          - The version of the Icinga PowerShell Framework to install. You can specify a specific version here like C(1.11.1).
+          - This is only used for the initial installation of the framework. Updates can be done using O(ifw_components).
+        type: str
+        required: false
+        default: "latest"
+      ifw_framework_path:
+        description:
+          - The path where the Icinga PowerShell Framework should be installed.
+          - If unspecified, the role will try using the best available path.
+        type: str
+        required: false
+      ifw_repositories:
+        description:
+          - Here you can specify additional repositories from which to pull components from.
+          - The default Icinga For Windows repository will always be added.
+        type: list
+        elements: dict
+        required: false
+        default: []
+        options:
+          name:
+            description:
+              - The name of the repository.
+            type: str
+            required: true
+          remote_path:
+            description:
+              - The remote path to the repository. This has to end in C(ifw.repo.json).
+              - "Example: C(remote_path: https://packages.icinga.com/IcingaForWindows/stable/ifw.repo.json)"
+            type: str
+            required: true
+      ifw_components:
+        description:
+          - Specify which components should be present. Optionally specify which version of the component should be installed.
+          - Components installed but not present within this list will be removed.
+          - &icinga2_requirements
+            Icinga 2 is only configured if
+            O(ifw_components) is set to install the component C(agent),
+            O(ifw_icinga2_parents) is set, and
+            O(ifw_icinga2_parent_zone) is set.
+        type: list
+        elements: dict
+        required: false
+        default:
+          - name: "plugins"
+            version: "latest"
+          - name: "agent"
+            version: "latest"
+        options:
+          state:
+            description:
+              - The desired state of the component.
+            type: str
+            required: false
+            default: present
+            choices: [ present, absent, latest ]
+          name:
+            description:
+              - The name of the component to be installed / removed.
+              - On the Windows host, a list of available components can be shown using C(Get-IcingaComponentList | Select-Object -Property Components | ConvertTo-Json).
+            type: str
+            required: true
+          version:
+            description:
+              - The version of the component to be installed / removed.
+            type: str
+            required: false
+      ifw_icinga2_ca_host:
+        description:
+          - The Ansible C(inventory_hostname) of your Icinga 2 CA host (master).
+          - This variable is used to sign the certificate for your Windows host using delegated tasks.
+          - If O(ifw_icinga2_ticket) is set, the ticket will take precedence.
+        type: str
+        required: false
+      ifw_icinga2_ticket:
+        description:
+          - The ticket obtained from your Icinga 2 CA host (master) using C(icinga2 pki ticket --cn "<COMMON_NAME>").
+          - It is used to receive a valid certificate.
+        type: str
+        required: false
+      ifw_connection_direction:
+        description:
+          - This variable decides whether your host should connect to its parent(s), its parent(s) to the host, or if connection should be established from both sides.
+          - This influences the firewall rules that are automatically deployed.
+          - In a well structured Icinga environment the master(s) (or satellite(s)) should not connect to the agent, but the agent should connect "up" to its parent(s).
+        type: str
+        required: false
+        default: fromagent
+        choices: [ fromagent, fromparent, both ]
+      ifw_force_newcert:
+        description:
+          - If O(ifw_force_newcert=true), this forces the generation of a new certificate.
+        type: bool
+        required: false
+        default: false
+      ifw_icinga2_cn:
+        description:
+          - This variable is used to define what common name your host takes within the Icinga hierarchy. Certificates will be generated using that name.
+        type: str
+        required: false
+        default: "{{ inventory_hostname }}"
+      ifw_icinga2_port:
+        description:
+          - This number is used for the local port on which your host should listen for Icinga 2 cluster communication.
+        type: int
+        required: false
+        default: 5665
+      ifw_icinga2_global_zones:
+        description:
+          - Here you can specify all global zones your host should be aware of.
+        type: list
+        elements: str
+        required: false
+        default: []
+      ifw_icinga2_parents:
+        description:
+          - Here you can specify the parent endpoint(s) of your host's parent zone (O(ifw_icinga2_parent_zone)).
+          - You can specify each parent's C(cn), its C(host) attribute and the C(port) on which it listens.
+          - *icinga2_requirements
+        type: list
+        elements: dict
+        required: false
+        options:
+          cn:
+            description:
+              - The CN of the given host. This is the C(name) of the Icinga 2 Endpoint object.
+            type: str
+            required: true
+          host:
+            description:
+              - The hostname or address of the given host. This is the C(host) attribute of the Icinga 2 Endpoint object.
+            type: str
+            required: false
+          port:
+            description:
+              - The port of the given host. This is the C(port) attribute of the Icinga 2 Endpoint object.
+            type: str
+            required: false
+      ifw_icinga2_parent_zone:
+        description:
+          - The name of the Icinga 2 parent(s) zone.
+          - *icinga2_requirements
+        type: list

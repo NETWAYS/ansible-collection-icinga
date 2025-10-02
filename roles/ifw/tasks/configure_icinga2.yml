@@ -1,0 +1,132 @@
+---
+
+- name: Get path to Icinga binary
+  changed_when: false
+  ansible.windows.win_shell: Get-IcingaAgentBinary
+  register: _icinga_binary_cmd
+
+- name: Get Icinga PowerShell Framework path
+  changed_when: false
+  ansible.windows.win_shell: Get-IcingaFrameworkRootPath
+  register: _framework_path
+
+- name: Get path to Icinga configuration directory
+  changed_when: false
+  ansible.windows.win_shell: Get-IcingaAgentConfigDirectory
+  register: _icinga_config_dir_cmd
+
+- name: CA certificate
+  when: not ifw_icinga2_ca_host is none
+  block:
+    - name: Get CA certificate
+      become: true
+      run_once: true
+      delegate_to: "{{ ifw_icinga2_ca_host | default('localhost', true) }}"
+      ansible.builtin.slurp:
+        src: "/var/lib/icinga2/certs/ca.crt"
+      register: _icinga2_ca_cert
+
+    - name: Deploy CA certificate
+      ansible.windows.win_copy:
+        dest: "{{ _icinga_config_dir_cmd.stdout | trim }}../../var/lib/icinga2/certs/ca.crt"
+        content: "{{ _icinga2_ca_cert.content | b64decode }}"
+
+- name: Create private key and signing request
+  ansible.windows.win_shell: |
+    & '{{ (_icinga_binary_cmd.stdout | trim) }}' pki new-cert \
+    --cn "{{ ifw_icinga2_cn }}" \
+    --key  "{{ _icinga_config_dir_cmd.stdout | trim }}../../var/lib/icinga2/certs/{{ ifw_icinga2_cn }}.key" \
+    --cert "{{ _icinga_config_dir_cmd.stdout | trim }}../../var/lib/icinga2/certs/{{ ifw_icinga2_cn }}.crt" \
+    --csr  "{{ _icinga_config_dir_cmd.stdout | trim }}../../var/lib/icinga2/certs/{{ ifw_icinga2_cn }}.csr"
+  args:
+    creates: "{{ _icinga_config_dir_cmd.stdout | trim }}../../var/lib/icinga2/certs/{{ ifw_icinga2_cn }}.key"
+  register: _created_private_key
+
+- name: Handle certificate
+  when:
+    - not ifw_icinga2_ca_host is none
+    - (_created_private_key.skipped is not defined) or (ifw_force_newcert)
+  block:
+    - name: Get content of CSR
+      ansible.builtin.slurp:
+        src: "{{ _icinga_config_dir_cmd.stdout | trim }}../../var/lib/icinga2/certs/{{ ifw_icinga2_cn }}.csr"
+      register: _ifw_csr
+
+    - name: Copy CSR to CA
+      delegate_to: "{{ ifw_icinga2_ca_host | default('localhost', true) }}"
+      ansible.builtin.copy:
+        dest: "/tmp/{{ ifw_icinga2_cn }}.csr"
+        content: "{{ _ifw_csr.content | b64decode }}"
+        mode: "0664"
+
+    - name: Sign CSR
+      become: true
+      delegate_to: "{{ ifw_icinga2_ca_host | default('localhost', true) }}"
+      changed_when: false
+      ansible.builtin.shell: |
+        icinga2 pki sign-csr \
+        --csr /tmp/{{ ifw_icinga2_cn }}.csr \
+        --cert /tmp/{{ ifw_icinga2_cn }}.crt
+
+    - name: Get host certificate
+      become: true
+      delegate_to: "{{ ifw_icinga2_ca_host | default('localhost', true) }}"
+      ansible.builtin.slurp:
+        src: "/tmp/{{ ifw_icinga2_cn }}.crt"
+      register: _icinga2_host_cert
+
+    - name: Deploy host certificate
+      when: not ifw_icinga2_ca_host is none
+      ansible.windows.win_copy:
+        dest: "{{ _icinga_config_dir_cmd.stdout | trim }}../../var/lib/icinga2/certs/{{ ifw_icinga2_cn }}.crt"
+        content: "{{ _icinga2_host_cert.content | b64decode }}"
+
+- name: Get current configuration
+  ansible.builtin.slurp:
+    src: "{{ _framework_path.stdout | trim }}/config/config.json"
+  register: _current_icinga_configuration
+
+- name: Create Icinga install command
+  vars:
+    ifw_icinga2_agent_version: "{{ (ifw_components | selectattr('name', 'eq', 'agent')).version | default('latest') }}"
+  ansible.builtin.set_fact:
+    _install_command: "{{ lookup('template', role_path + '/templates/windows/icinga_install_command.j2') }}"
+
+- name: Set facts for comparison
+  when:
+    - (_current_icinga_configuration.content | b64decode | from_json).Framework.Config is defined
+    - (_current_icinga_configuration.content | b64decode | from_json).Framework.Config.Live is defined
+  vars:
+    _framework_config_live: "{{ (_current_icinga_configuration.content | b64decode | from_json).Framework.Config.Live }}"
+  ansible.builtin.set_fact:
+    _current_ca_server: "{{ _framework_config_live['IfW-CAServer']['Values'][0] | default(none) }}"
+    _current_global_zones: "{{ _framework_config_live['IfW-CustomZones']['Values'] }}"
+    _current_port: "{{ _framework_config_live['IfW-Port']['Values'][0] | default(none) }}"
+    _current_parent_zone: "{{ _framework_config_live['IfW-ParentZone']['Values'][0] | default(none) }}"
+    _current_parents: "{{ _framework_config_live['IfW-ParentNodes']['Values'] }}"
+    _current_parents0: "{{ _framework_config_live['IfW-ParentAddress:' + ifw_icinga2_parents[0].cn]['Values'][0] | default(none) }}"
+    _current_parents1: "{{ (_framework_config_live['IfW-ParentAddress:' + ifw_icinga2_parents[1].cn]['Values'][0] if ifw_icinga2_parents | length > 1 else none) | default(none) }}" # noqa: yaml[line-length]
+
+- name: Check whether requested and existing configuration is identical
+  failed_when: false
+  vars:
+    _ifw_ca_server: "[{{ ifw_icinga2_parents[0].host | default(ifw_icinga2_parents[0].cn) }}]:{{ ifw_icinga2_parents[0].port | default('5665') }}"
+    _parent0: "[{{ ifw_icinga2_parents[0].host | default(ifw_icinga2_parents[0].cn) }}]:{{ ifw_icinga2_parents[0].port | default('5665') }}"
+    _parent1: "[{{ ifw_icinga2_parents[1].host | default(ifw_icinga2_parents[1].cn) | default(none) }}]:{{ ifw_icinga2_parents[1].port | default('5665') | default(none) }}" # noqa: yaml[line-length]
+  ansible.builtin.assert:
+    that:
+      - (_current_icinga_configuration.content | b64decode | from_json).Framework.Config.Live is defined
+      - (_current_ca_server | default(true, true)) == (_ifw_ca_server)
+      - _current_global_zones == ifw_icinga2_global_zones
+      - (_current_port | int) == (ifw_icinga2_port | int)
+      - _current_parent_zone == ifw_icinga2_parent_zone
+      - _current_parents == (ifw_icinga2_parents | map(attribute='cn'))
+      - _current_parents0 == _parent0
+      - (_current_parents1 == _parent1 if ifw_icinga2_parents | length > 1 else true)
+    fail_msg: "Configuration needs an update"
+    success_msg: "Configuration needs no update"
+  register: _assertion_result
+
+- name: Set up Icinga
+  when: _assertion_result.evaluated_to is defined
+  ansible.windows.win_shell: "Install-Icinga -InstallCommand \"{{ _install_command }}\""
