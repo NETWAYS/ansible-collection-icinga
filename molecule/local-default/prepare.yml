@@ -8,5 +8,6 @@
         name:
           - gpg
           - apt-transport-https
+          - python3-debian
         update_cache: yes
       when: ansible_os_family == "Debian"

@@ -4,6 +4,12 @@
   hosts: all
   vars:
     icingaweb2_modules:
+      businessprocess:
+        enabled: true
+        source: package
+        custom_process_files:
+          - name: test.conf
+            src_path: test.conf
       graphite:
         enabled: true
         source: package
@@ -48,6 +54,7 @@
             host: "127.0.0.1"
       monitoring:
         enabled: false
+        source: package
         backends:
           icinga2_ido_mysql:
             type: ido
@@ -120,13 +127,6 @@
       - zones.d/main/commands
       - zones.d/main/hosts
       - zones.d/main/services
-    icingaweb2_modules:
-      businessprocess:
-        enabled: true
-        source: package
-        custom_process_files:
-          - name: test.conf
-            src_path: test.conf
   collections:
     - netways.icinga
   pre_tasks:

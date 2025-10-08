@@ -1,0 +1,4 @@
+minor_changes:
+  - The error messages about unsupported operating systems have been tuned. They should now appear if and only if the actual OS is in fact not supported instead of appearing after unrelated task failures.
+  - The deb repositories made available by the :code:`repos` role now use the `deb822 format <https://repolib.readthedocs.io/en/latest/deb822-format.html>`__.
+    This can lead to APT warnings on systems that already have the repositories deployed using the old format (sources.list). To fix this, simply remove the old :code:`icinga.list` file after the repositories have been deployed in the new format.
