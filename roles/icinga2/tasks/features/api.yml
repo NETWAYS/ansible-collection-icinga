@@ -24,52 +24,43 @@
   set_fact:
     args: "{{ args|default({}) | combine({idx.key: idx.value}) }}"
   when: idx.key not in ['ca_host', 'ca_host_port', 'cert_name', 'ca_fingerprint', 'force_newcert', 'zones', 'endpoints', 'ssl_cacert', 'ssl_key', 'ssl_cert', 'ssl_remote_source', 'ticket_salt' ]
-  loop: "{{ icinga2_dict_features.api |dict2items }}"
+  loop: "{{ icinga2_dict_features.api | dict2items }}"
   loop_control:
     loop_var: idx
 
 - name: feature api ApiListener object
-  icinga2_object:
-    name: api
-    type: ApiListener
-    file: features-available/api.conf
-    args: "{{ args }}"
-  register: result
-
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+  ansible.builtin.set_fact:
+    icinga2_objects: "{{ icinga2_objects + objects }}"
+  vars:
+    objects:
+      - name: api
+        type: ApiListener
+        file: features-available/api.conf
+        args: "{{ args }}"
 
 - name: feature api Endpoint objects
-  icinga2_object:
-    type: Endpoint
-    args: "{{ idx }}"
+  ansible.builtin.set_fact:
+    icinga2_objects: "{{ icinga2_objects + objects }}"
+  vars:
+    objects:
+      - type: Endpoint
+        args: "{{ idx }}"
   loop: "{{ icinga2_endpoints }}"
   loop_control:
     loop_var: idx
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [idx.dest] }}"
-  loop: "{{ result.results }}"
-  loop_control:
-    loop_var: idx
-    label: "Add '{{ idx.path }}' to local objects"
-
 - name: feature api Zone objects
-  icinga2_object:
-    type: Zone
-    args: "{{ idx }}"
+  ansible.builtin.set_fact:
+    icinga2_objects: "{{ icinga2_objects + objects }}"
+  vars:
+    objects:
+      - type: Zone
+        args: "{{ idx }}"
   loop: "{{ icinga2_zones }}"
   loop_control:
     loop_var: idx
   register: result
-
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [idx.dest] }}"
-  loop: "{{ result.results }}"
-  loop_control:
-    loop_var: idx
-    label: "Add '{{ idx.path }}' to local objects"
 
 - name: create new CA
   block:
