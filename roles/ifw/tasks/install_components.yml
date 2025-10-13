@@ -1,0 +1,40 @@
+---
+
+- name: Get list of available components
+  changed_when: false
+  ansible.windows.win_shell: ConvertTo-Json -InputObject ((Get-IcingaComponentList).Components)
+  register: _available_components
+
+- name: Get list of installed components
+  changed_when: false
+  ansible.windows.win_shell: ConvertTo-Json -InputObject (Get-IcingaInstallation)
+  register: _installed_components
+
+- name: Convert available/installed components to json
+  ansible.builtin.set_fact:
+    _available_components_json: "{{ _available_components.stdout | from_json | dict2items }}"
+    _installed_components_json: "{{ _installed_components.stdout | from_json | dict2items }}"
+
+- name: Validate requested components are installable
+  loop: "{{ ifw_components }}"
+  ansible.builtin.assert:
+    that: "{{ item.name in (_available_components_json | map(attribute='key') | sort) }}"
+    fail_msg: "'{{ item.name }}' is not an installable component! (Keep component names lowercase)"
+
+- name: Remove non requested components
+  vars:
+    _installed_components_list: "{{ _installed_components_json | map(attribute='key') | difference(['framework']) }}"
+    _components_to_be_removed: "{{ _installed_components_list | difference(ifw_components | map(attribute='name')) }}"
+  netways.icinga.ifw_component:
+    state: absent
+    name: "{{ _components_to_be_removed }}"
+
+- name: Combine component name with component version
+  loop: "{{ ifw_components }}"
+  ansible.builtin.set_fact:
+    _components_to_be_installed: "{{ (_components_to_be_installed | default([])) + [item.name + (':' + item.version if item.version is defined else '')] }}"
+
+- name: Install components
+  netways.icinga.ifw_component:
+    state: present
+    name: "{{ _components_to_be_installed }}"
