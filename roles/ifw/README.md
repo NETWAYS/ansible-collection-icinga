@@ -10,6 +10,12 @@ Tasks it can do:
 * Configure the Icinga 2 Agent
 * Create a valid Icinga 2 certificate
 
+Tasks it will not do:
+
+* Management of custom Monitoring Plugins
+* Management of firewall rules outside of Icinga for Windows (like allowing ICMP echo request)
+* Management of Check Commands (available as Icinga Config or Director Basket)
+
 Table of contents:
 
 * [Variables](#variables)
@@ -19,6 +25,7 @@ Table of contents:
   * [Install Other Plugins](#install-other-plugins)
   * [Add Custom Repositories](#add-custom-repositories)
   * [Icinga 2 Setup](#icinga-2-setup)
+* [Additional Tasks](#additional-tasks)
 
 ## Variables
 
@@ -191,4 +198,45 @@ It adds the global zone `windows-agents`.
 
   roles:
     - netways.icinga.ifw
+```
+
+
+## Additional Tasks
+
+This is meant as a hint for additional tasks you may need but which are not covered by Icinga for Windows and this role.
+
+This will use [`community.windows.win_firewall_rule`](https://docs.ansible.com/ansible/latest/collections/community/windows/win_firewall_rule_module.html) to allow ICMP (echo request) in all network zones, so default host checks like `hostalive` work.
+
+```
+- name: Allow ICMP (echo request) in firewall
+  community.windows.win_firewall_rule:
+    state: present
+    name: "{{ item.name }}"
+    enabled: true
+    profiles: "{{ item.profiles }}"
+    action: "{{ item.action }}"
+    direction: "{{ item.direction }}"
+    protocol: "{{ item.protocol }}"
+    icmp_type_code: "{{ item.icmp_type }}"
+  loop:
+    - name: "Allow inbound ICMPv4 (echo request)"
+      direction: "in"
+      protocol: "icmpv4"
+      icmp_type:
+        - "8:*"
+      action: "allow"
+      profiles:
+        - "domain"
+        - "private"
+        - "public"
+    - name: "Allow inbound ICMPv6 (echo request)"
+      direction: "in"
+      protocol: "icmpv6"
+      icmp_type:
+        - "8:*"
+      action: "allow"
+      profiles:
+        - "domain"
+        - "private"
+        - "public"
 ```
