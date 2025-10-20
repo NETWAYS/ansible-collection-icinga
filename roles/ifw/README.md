@@ -45,7 +45,7 @@ Table of contents:
   Here you can specify additional repositories from which to pull components from. The default Icinga For Windows repository will always be added.  
   Default: `none`  
   Example:  
-  ```
+  ```yaml
   ifw_repositories:
     - name: "Custom"
       remote_path: "https://example.com/IcingaForWindows/stable/ifw.repo.json"
@@ -94,7 +94,7 @@ Table of contents:
   You can specify each parent's `cn`, its `host` attribute and the `port` on which it listens. The `cn` attribute is **required**.  
   Default: `none`  
   Example:
-  ```
+  ```yaml
   ifw_icinga2_parents:
     - cn: parent1
       host: icinga01.example.com
@@ -124,7 +124,7 @@ The examples below showcase different aspects of the Icinga for Windows configur
 
 This installs just the Icinga PowerShell Framework, the Agent component and the Icinga PowerShell Plugins.
 
-```
+```yaml
 - name: Run ifw role
   hosts: all
 
@@ -137,7 +137,7 @@ This installs just the Icinga PowerShell Framework, the Agent component and the 
 This installs the Agent component, the basic plugins and in addition to that the plugins for MSSQL and HyperV.  
 It also pins the Agent component to a specific version.
 
-```
+```yaml
 - name: Run ifw role
   hosts: all
 
@@ -158,7 +158,7 @@ It also pins the Agent component to a specific version.
 This adds more repositories to Icinga for Windows in addition to the default one.  
 This is useful if you want to host a local mirror.
 
-```
+```yaml
 - name: Run ifw role
   hosts: all
 
@@ -176,7 +176,7 @@ This is useful if you want to host a local mirror.
 This installs the Agent component and sets it up to communicate with both its parents.  
 It adds the global zone `windows-agents`.
 
-```
+```yaml
 - name: Run ifw role
   hosts: all
 
@@ -207,7 +207,7 @@ This is meant as a hint for additional tasks you may need but which are not cove
 
 This will use [`community.windows.win_firewall_rule`](https://docs.ansible.com/ansible/latest/collections/community/windows/win_firewall_rule_module.html) to allow ICMP (echo request) in all network zones, so default host checks like `hostalive` work.
 
-```
+```yaml
 - name: Allow ICMP (echo request) in firewall
   community.windows.win_firewall_rule:
     state: present
