@@ -54,7 +54,7 @@ Table of contents:
 - `ifw_components: list of dictionaries`  
   Specify which components should be present. Optionally specify which version of the component should be installed.  
   Components installed but not present within this list will be removed.  
-  Default: `[ { name: "plugins", version: "latest" }, { name: "agent", version: "latest" } ]`
+  Default: `[ { name: "plugins", state: "present" }, { name: "agent", state: "present" } ]`
 
 - `ifw_icinga2_ca_host: string`  
   The Ansible inventory hostname of your Icinga 2 CA host (master).  

@@ -8,9 +8,9 @@ ifw_repositories: []
 
 ifw_components:
   - name: "plugins"
-    version: "latest"
+    state: "present"
   - name: "agent"
-    version: "latest"
+    state: "present"
 
 ifw_icinga2_ca_host:
 ifw_connection_direction: "fromagent"

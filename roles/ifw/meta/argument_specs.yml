@@ -65,9 +65,9 @@ argument_specs:
         required: false
         default:
           - name: "plugins"
-            version: "latest"
+            state: "present"
           - name: "agent"
-            version: "latest"
+            state: "present"
         options:
           state:
             description:
