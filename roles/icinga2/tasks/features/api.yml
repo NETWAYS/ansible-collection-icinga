@@ -30,7 +30,7 @@
 
 - name: feature api ApiListener object
   ansible.builtin.set_fact:
-    icinga2_objects: "{{ icinga2_objects + objects }}"
+    tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:
     objects:
       - name: api
@@ -40,7 +40,7 @@
 
 - name: feature api Endpoint objects
   ansible.builtin.set_fact:
-    icinga2_objects: "{{ icinga2_objects + objects }}"
+    tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:
     objects:
       - type: Endpoint
@@ -52,7 +52,7 @@
 
 - name: feature api Zone objects
   ansible.builtin.set_fact:
-    icinga2_objects: "{{ icinga2_objects + objects }}"
+    tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:
     objects:
       - type: Zone

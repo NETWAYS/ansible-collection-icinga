@@ -78,6 +78,7 @@
   changed_when: _removed_dirs.attempts > 1
 
 - name: Collect config files (icinga2_config_path)
+  when: icinga2_config_directories is defined
   vars:
     _icinga2_config_directories: "{{
       (icinga2_config_directories | select('match', '^conf.d/.*')) +
@@ -96,6 +97,7 @@
   vars:
     _icinga2_sys_config_fragment_path: "{{ item | regex_replace('^' + icinga2_config_path + '(.*)$', icinga2_fragments_path + '\\1') }}"
   when:
+    - icinga2_config_directories is defined
     - _icinga2_sys_config_fragment_path not in icinga2_local_objects
     - _icinga2_sys_config_fragment_path not in _icinga2_custom_conf_paths
   ansible.builtin.file:
@@ -103,6 +105,7 @@
     dest: "{{ item }}"
 
 - name: Remove empty config dirs (icinga2_config_path) # noqa: command-instead-of-shell
+  when: icinga2_config_directories is defined
   vars:
     _icinga2_config_directories: "{{
       (

@@ -6,7 +6,7 @@
 
 - name: feature idomysql IdoMysqlConnection object
   ansible.builtin.set_fact:
-    icinga2_objects: "{{ icinga2_objects + objects }}"
+    tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:
     objects:
       - name: ido-mysql
