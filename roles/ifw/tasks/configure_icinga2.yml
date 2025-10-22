@@ -102,6 +102,7 @@
     _current_ca_server: "{{ _framework_config_live['IfW-CAServer']['Values'][0] | default(none) }}"
     _current_global_zones: "{{ _framework_config_live['IfW-CustomZones']['Values'] }}"
     _current_cn: "{{ _framework_config_live['IfW-CustomHostname']['Values'][0] }}"
+    _current_agent_user: "{{ _framework_config_live['IfW-AgentUser']['Values'][0] }}"
     _current_port: "{{ _framework_config_live['IfW-Port']['Values'][0] | default(none) }}"
     _current_parent_zone: "{{ _framework_config_live['IfW-ParentZone']['Values'][0] | default(none) }}"
     _current_parents: "{{ _framework_config_live['IfW-ParentNodes']['Values'] }}"
@@ -122,6 +123,7 @@
       - (_current_ca_server | default(true, true)) == (_ifw_ca_server)
       - _current_global_zones == ifw_icinga2_global_zones
       - _current_cn == ifw_icinga2_cn
+      - _current_agent_user == ifw_icinga2_user
       - (_current_port | int) == (ifw_icinga2_port | int)
       - _current_parent_zone == ifw_icinga2_parent_zone
       - _current_parents == (ifw_icinga2_parents | map(attribute='cn'))

@@ -90,6 +90,12 @@
       "{{ ifw_icinga2_cn }}"
     ]
   },
+  "IfW-AgentUser": {
+    "Values": [
+      {# Ensure single backslash becomes double backslash. InstallCommand fails otherwise #}
+      "{{ ifw_icinga2_user | replace('\\', '\\\\') }}"
+    ]
+  },
   "IfW-InstallApiChecks": {
     {# 0 -> Don't install IfW Api Check Forwarder #}
     "Selection": "0"

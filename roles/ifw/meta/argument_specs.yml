@@ -89,6 +89,12 @@ argument_specs:
               - The version of the component to be installed / removed.
             type: str
             required: false
+      ifw_icinga2_user:
+        description:
+          - The user Icinga 2 runs as. This user is only used if O(ifw_jea_managed_user=false).
+        type: str
+        required: false
+        default: "NT Authority\\NetworkService"
       ifw_icinga2_ca_host:
         description:
           - The Ansible C(inventory_hostname) of your Icinga 2 CA host (master).
@@ -168,8 +174,9 @@ argument_specs:
       ifw_jea_install:
         description:
           - Whether to install the Icinga for Windows JEA profile.
-            If O(ifw_jea_managed_user=false), the JEA will profile will be created and registered.
+            If O(ifw_jea_managed_user=false), the JEA will profile will be created and registered for the user running Icinga for Windows (O(ifw_icinga2_user) by default).
             If O(ifw_jea_managed_user=true), the service user 'icinga' will also be created to run Icinga for Windows as.
+            If both O(ifw_jea_install=true) and O(ifw_jea_managed_user=true), O(ifw_icinga2_user) will essentially be ignored.
             L(Read more about Icinga for Windows and JEA, https://icinga.com/docs/icinga-for-windows/latest/doc/130-JEA/01-JEA-Profiles/).
         type: bool
         required: false

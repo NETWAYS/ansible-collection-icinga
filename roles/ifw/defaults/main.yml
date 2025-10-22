@@ -14,12 +14,14 @@ ifw_components:
   - name: "agent"
     state: "present"
 
+ifw_icinga2_user: "NT Authority\\NetworkService"
 ifw_icinga2_ca_host:
 ifw_connection_direction: "fromagent"
 ifw_force_newcert: false
 ifw_icinga2_cn: "{{ inventory_hostname }}"
 ifw_icinga2_port: 5665
 ifw_icinga2_global_zones: []
+
 
 ifw_jea_install: true
 ifw_jea_managed_user: true

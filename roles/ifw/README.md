@@ -56,6 +56,10 @@ Table of contents:
   Components installed but not present within this list will be removed.  
   Default: `[ { name: "plugins", state: "present" }, { name: "agent", state: "present" } ]`
 
+- `ifw_icinga2_user: string`  
+   The user Icinga 2 runs as. This user is only used if `ifw_jea_managed_user=false`.  
+   Default: `NT Authority\NetworkService`
+
 - `ifw_icinga2_ca_host: string`  
   The Ansible inventory hostname of your Icinga 2 CA host (master).  
   This variable is used to sign the certificate for your Windows host using delegated tasks.  
@@ -112,6 +116,7 @@ Table of contents:
   Whether to install the Icinga for Windows JEA profile.  
   If `ifw_jea_managed_user=false`, the JEA will profile will be created and registered.  
   If `ifw_jea_managed_user=true`, the service user 'icinga' will also be created to run Icinga for Windows as.  
+  If both `ifw_jea_install=true` and `ifw_jea_managed_user=true`, `ifw_icinga2_user` will essentially be ignored.  
   [Read more about Icinga for Windows and JEA](https://icinga.com/docs/icinga-for-windows/latest/doc/130-JEA/01-JEA-Profiles/).  
   Default: `true`
 
