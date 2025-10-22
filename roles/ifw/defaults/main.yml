@@ -23,3 +23,5 @@ ifw_icinga2_global_zones: []
 
 ifw_jea_install: true
 ifw_jea_managed_user: true
+
+ifw_api_feature: true

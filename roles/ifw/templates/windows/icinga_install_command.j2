@@ -107,5 +107,14 @@
     {# 2 Do not install JEA Profile #}
     "Selection": "2"
     {% endif %}
+  },
+  "IfW-InstallApiChecks": {
+    {% if ifw_api_feature %}
+    {# 1 -> Install Api-Checks feature #}
+    "Selection": "1"
+    {% else %}
+    {# 0 -> Do not install Api-Checks feature #}
+    "Selection": "0"
+    {% endif %}
   }
 }

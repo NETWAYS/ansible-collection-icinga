@@ -108,6 +108,7 @@
     _current_parents0: "{{ _framework_config_live['IfW-ParentAddress:' + ifw_icinga2_parents[0].cn]['Values'][0] | default(none) }}"
     _current_parents1: "{{ (_framework_config_live['IfW-ParentAddress:' + ifw_icinga2_parents[1].cn]['Values'][0] if ifw_icinga2_parents | length > 1 else none) | default(none) }}" # noqa: yaml[line-length]
     _current_jea: "{{ _framework_config_live['IfW-InstallJEAProfile']['Selection'] }}"
+    _current_api_feature: "{{ _framework_config_live['IfW-InstallApiChecks']['Selection'] }}"
 
 - name: Check whether requested and existing configuration is identical
   failed_when: false
@@ -129,6 +130,8 @@
       - (_current_jea == "0" if (ifw_jea_install and not ifw_jea_managed_user) else true)
       - (_current_jea == "1" if (ifw_jea_install and ifw_jea_managed_user) else true)
       - (_current_jea == "2" if not ifw_jea_install else true)
+      - (_current_api_feature == "0" if not ifw_api_feature else true)
+      - (_current_api_feature == "1" if ifw_api_feature else true)
     fail_msg: "Configuration needs an update"
     success_msg: "Configuration needs no update"
   register: _assertion_result

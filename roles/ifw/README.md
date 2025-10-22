@@ -119,6 +119,12 @@ Table of contents:
   Whether to use the Icinga for Windows service user 'icinga' when `ifw_jea_install=true`.  
   Default: `true`
 
+- `ifw_api_feature: boolean`  
+  Whether to enable the Icinga for Windows API Check Forwarder.  
+  [Read more about the Icinga for Windows API Check Forwarder](https://icinga.com/docs/icinga-for-windows/latest/doc/110-Installation/30-API-Check-Forwarder/).  
+  Default: `true`
+
+
 ### Getting a Certificate
 
 If neither `ifw_icinga2_ca_host` nor `ifw_icinga2_ticket` is specified, your target host will connect to the first parent in `ifw_icinga2_parents` and file a CSR. This needs to be signed manually afterwards.
