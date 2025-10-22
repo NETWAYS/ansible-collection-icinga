@@ -94,10 +94,18 @@
     {# 0 -> Don't install IfW Api Check Forwarder #}
     "Selection": "0"
   },
-  "IfW-AgentUser": {
-    {# TODO WIP - Define user to run service as #}
-    "Values": [
-      "NT Authority\\NetworkService"
-    ]
+  "IfW-InstallJEAProfile": {
+    {% if ifw_jea_install %}
+    {%   if not ifw_jea_managed_user %}
+    {# 0 Install JEA Profile #}
+    "Selection": "0"
+    {%   else %}
+    {# 1 Install JEA Profile with managed user "icinga" #}
+    "Selection": "1"
+    {%   endif %}
+    {% else %}
+    {# 2 Do not install JEA Profile #}
+    "Selection": "2"
+    {% endif %}
   }
 }

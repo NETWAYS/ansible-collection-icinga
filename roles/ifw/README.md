@@ -90,7 +90,7 @@ Table of contents:
   Default: `[]`
 
 - `ifw_icinga2_parents: list of dictionaries`  
-  Here you can specify the parent endpoint(s) of your host's parent zone (O(ifw_icinga2_parent_zone)).  
+  Here you can specify the parent endpoint(s) of your host's parent zone (`ifw_icinga2_parent_zone`).  
   You can specify each parent's `cn`, its `host` attribute and the `port` on which it listens. The `cn` attribute is **required**.  
   Default: `none`  
   Example:
@@ -107,6 +107,17 @@ Table of contents:
 - `ifw_icinga2_parent_zone: string`  
   The name of your parent(s) zone.  
   Default: `none`
+
+- `ifw_jea_install: boolean`  
+  Whether to install the Icinga for Windows JEA profile.  
+  If `ifw_jea_managed_user=false`, the JEA will profile will be created and registered.  
+  If `ifw_jea_managed_user=true`, the service user 'icinga' will also be created to run Icinga for Windows as.  
+  [Read more about Icinga for Windows and JEA](https://icinga.com/docs/icinga-for-windows/latest/doc/130-JEA/01-JEA-Profiles/).  
+  Default: `true`
+
+- `ifw_jea_managed_user: boolean`  
+  Whether to use the Icinga for Windows service user 'icinga' when `ifw_jea_install=true`.  
+  Default: `true`
 
 ### Getting a Certificate
 

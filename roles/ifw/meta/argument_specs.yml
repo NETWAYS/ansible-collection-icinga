@@ -64,6 +64,8 @@ argument_specs:
         elements: dict
         required: false
         default:
+          - name: "service"
+            state: "present"
           - name: "plugins"
             state: "present"
           - name: "agent"
@@ -163,3 +165,18 @@ argument_specs:
           - The name of the Icinga 2 parent(s) zone.
           - *icinga2_requirements
         type: list
+      ifw_jea_install:
+        description:
+          - Whether to install the Icinga for Windows JEA profile.
+            If O(ifw_jea_managed_user=false), the JEA will profile will be created and registered.
+            If O(ifw_jea_managed_user=true), the service user 'icinga' will also be created to run Icinga for Windows as.
+            L(Read more about Icinga for Windows and JEA, https://icinga.com/docs/icinga-for-windows/latest/doc/130-JEA/01-JEA-Profiles/).
+        type: bool
+        required: false
+        default: true
+      ifw_jea_managed_user:
+        description:
+          - Whether to use the Icinga for Windows service user 'icinga' when O(ifw_jea_install=true).
+        type: bool
+        required: false
+        default: true

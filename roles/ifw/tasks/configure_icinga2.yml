@@ -101,11 +101,13 @@
   ansible.builtin.set_fact:
     _current_ca_server: "{{ _framework_config_live['IfW-CAServer']['Values'][0] | default(none) }}"
     _current_global_zones: "{{ _framework_config_live['IfW-CustomZones']['Values'] }}"
+    _current_cn: "{{ _framework_config_live['IfW-CustomHostname']['Values'][0] }}"
     _current_port: "{{ _framework_config_live['IfW-Port']['Values'][0] | default(none) }}"
     _current_parent_zone: "{{ _framework_config_live['IfW-ParentZone']['Values'][0] | default(none) }}"
     _current_parents: "{{ _framework_config_live['IfW-ParentNodes']['Values'] }}"
     _current_parents0: "{{ _framework_config_live['IfW-ParentAddress:' + ifw_icinga2_parents[0].cn]['Values'][0] | default(none) }}"
     _current_parents1: "{{ (_framework_config_live['IfW-ParentAddress:' + ifw_icinga2_parents[1].cn]['Values'][0] if ifw_icinga2_parents | length > 1 else none) | default(none) }}" # noqa: yaml[line-length]
+    _current_jea: "{{ _framework_config_live['IfW-InstallJEAProfile']['Selection'] }}"
 
 - name: Check whether requested and existing configuration is identical
   failed_when: false
@@ -118,11 +120,15 @@
       - (_current_icinga_configuration.content | b64decode | from_json).Framework.Config.Live is defined
       - (_current_ca_server | default(true, true)) == (_ifw_ca_server)
       - _current_global_zones == ifw_icinga2_global_zones
+      - _current_cn == ifw_icinga2_cn
       - (_current_port | int) == (ifw_icinga2_port | int)
       - _current_parent_zone == ifw_icinga2_parent_zone
       - _current_parents == (ifw_icinga2_parents | map(attribute='cn'))
       - _current_parents0 == _parent0
       - (_current_parents1 == _parent1 if ifw_icinga2_parents | length > 1 else true)
+      - (_current_jea == "0" if (ifw_jea_install and not ifw_jea_managed_user) else true)
+      - (_current_jea == "1" if (ifw_jea_install and ifw_jea_managed_user) else true)
+      - (_current_jea == "2" if not ifw_jea_install else true)
     fail_msg: "Configuration needs an update"
     success_msg: "Configuration needs no update"
   register: _assertion_result

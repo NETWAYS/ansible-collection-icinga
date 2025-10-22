@@ -7,6 +7,8 @@ ifw_framework_path:
 ifw_repositories: []
 
 ifw_components:
+  - name: "service"
+    state: "present"
   - name: "plugins"
     state: "present"
   - name: "agent"
@@ -18,3 +20,6 @@ ifw_force_newcert: false
 ifw_icinga2_cn: "{{ inventory_hostname }}"
 ifw_icinga2_port: 5665
 ifw_icinga2_global_zones: []
+
+ifw_jea_install: true
+ifw_jea_managed_user: true
