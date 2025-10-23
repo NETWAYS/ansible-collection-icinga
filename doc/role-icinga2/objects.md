@@ -48,10 +48,14 @@ You can use this variant within a playbook where `host.example.org` is your cent
   collections:
     - netways.icinga
   pre_tasks:
+    # This assumes that agents don't have 'icinga2_objects' defined at hostvars level
+    # 'set_fact' will override them!
     - name: Add agent hosts to Icinga 2 objects
+      when: inventory_hostname in groups["icinga2_agents"]
       set_fact:
         icinga2_objects:
-          host.example.org   // name of the central system
+          # Name of the central system on which to deploy the given objects
+          host.example.org:
             - name: "{{ inventory_hostname }}"
               type: Zone
               file: "zones.d/{{ monitoring_zone }}/hosts/{{ inventory_hostname }}.conf"
@@ -71,8 +75,6 @@ You can use this variant within a playbook where `host.example.org` is your cent
                 distroversion: "{{ ansible_distribution_version }}"
                 arch: "{{ ansible_architecture }}"
               address: "{{ ansible_default_ipv4.address }}"
-      when:
-        - inventory_hostname in groups["icinga2_agents"]
   roles:
     - netways.icinga.icinga2
 ```
