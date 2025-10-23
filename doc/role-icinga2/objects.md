@@ -21,6 +21,7 @@ The `type` will be the original Icinga 2 object types, a list of all can be foun
 
 When defining `icinga2_objects` as a host specific variable (hostvars/groupvars) you can define the variable as a dictionary. Each dictionary key represents the host on which the key's value will be deployed as configuration.<br>
 Alternatively you can define `icinga2_objects` as a list which results in the configuration being deployed on just the host for which the variable is defined.
+
 Because it's easily overlooked, here are few more words of clarification: The first example shows variables of the host `webserver.example.org` but the `icinga2_objects` variable includes `host.example.org` and an extra level of indentation. This means that the following configuration will not be deployed on `webserver.example.org` but on `host.example.org`. This is especially useful when defining host objects on agents but "sending" them to the central nodes.
 
 Example defining the variable within hostvars as a dictionary (inventory entry):
