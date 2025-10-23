@@ -118,7 +118,7 @@ The default values for some variables - like the ones for JEA and the API featur
 
 - `ifw_jea_install: boolean`  
   Whether to install the Icinga for Windows JEA profile.  
-  If `ifw_jea_managed_user=false`, the JEA will profile will be created and registered.  
+  If `ifw_jea_managed_user=false`, the JEA will profile will be created and registered for the user running Icinga for Windows (`ifw_icinga2_user`) by default).  
   If `ifw_jea_managed_user=true`, the service user 'icinga' will also be created to run Icinga for Windows as.  
   If both `ifw_jea_install=true` and `ifw_jea_managed_user=true`, `ifw_icinga2_user` will essentially be ignored.  
   [Read more about Icinga for Windows and JEA](https://icinga.com/docs/icinga-for-windows/latest/doc/130-JEA/01-JEA-Profiles/).  
