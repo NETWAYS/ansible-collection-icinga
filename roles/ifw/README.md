@@ -15,6 +15,8 @@ Tasks it will not do:
 * Management of custom Monitoring Plugins
 * Management of firewall rules outside of Icinga for Windows (like allowing ICMP echo request)
 * Management of Check Commands (available as Icinga Config or Director Basket)
+* Management of Background Daemons (available via module `ifw_backgrounddaemon`)
+* Management of what commands are allowed by the API Check Forwarder (available via module `ifw_restapicommand`)
 
 Table of contents:
 
@@ -28,6 +30,8 @@ Table of contents:
 * [Additional Tasks](#additional-tasks)
 
 ## Variables
+
+The default values for some variables - like the ones for JEA and the API feature - are considered best practice. Though, feel free to adjust them to your needs.
 
 - `ifw_framework_url: string`  
   The URL to the different verions of the Icinga PowerShell Framework.  

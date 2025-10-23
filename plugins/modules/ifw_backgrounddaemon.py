@@ -12,7 +12,7 @@ seealso:
   - name: Icinga for Windows Background Daemons
     description: Reference for the Background Daemons.
     link: https://icinga.com/docs/icinga-for-windows/latest/doc/110-Installation/05-Background-Daemons/
-  - name: Icinga for Windows API Check Forwareder
+  - name: Icinga for Windows API Check Forwarder
     description: Reference for a possible use case regarding the API Check Forwarder.
     link: https://icinga.com/docs/icinga-for-windows/latest/doc/110-Installation/30-API-Check-Forwarder/
 options:
