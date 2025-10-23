@@ -79,6 +79,7 @@ You can use this variant within a playbook where `host.example.org` is your cent
     - netways.icinga.icinga2
 ```
 
+> You could also add `icinga2_objects` to your agents's host variables within your inventory instead.
 Example defining the variable within hostvars as a list (inventory entry):
 
 ```yaml
