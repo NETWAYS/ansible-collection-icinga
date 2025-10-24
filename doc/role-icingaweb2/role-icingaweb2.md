@@ -144,3 +144,24 @@ icingaweb2_groups:
 ```
 
 For more information about key value pairs for different authentication methods see the [official documentation](https://icinga.com/docs/icinga-web/latest/doc/05-Authentication/).
+
+### Roles
+
+Icinga Web 2 roles can be created using `icingaweb2_roles`. Options for roles need to be set in accordance with the [upstream documentation](https://icinga.com/docs/icinga-web/latest/doc/06-Security/#roles). Depending on the installed modules other options might be available.
+
+```
+icingaweb2_roles:
+  watchers:
+    users:
+      - "some-user"
+      - "another-user"
+    groups:
+      - "some-group"
+      - "another-group"
+    permissions:
+      - "module/icingadb"
+      - "icingadb/command/downtime/*"
+    refusals:
+      - "icingadb/object/show-source"
+    icingadb/filter/hosts: "host.name=*windows*"
+```

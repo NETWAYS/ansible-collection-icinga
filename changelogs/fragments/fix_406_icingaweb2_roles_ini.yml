@@ -1,0 +1,5 @@
+bugfixes:
+  - :code:`icingaweb2_roles` was not deployed at all if :code:`icingaweb2_admin_username` and :code:`icingaweb2_admin_password` were missing.
+    Now for both, the predefined admin role and user-defined :code:`icingaweb2_roles`, the respective variables are tested for correctly when creating :code:`roles.ini`.
+    Thus, the creation of an initial admin user is no longer strictly necessary.
+  - A short example for the previously undocumented :code:`icingaweb2_roles` has been added.

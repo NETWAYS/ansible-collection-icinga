@@ -39,7 +39,7 @@
     dest: "{{ icingaweb2_config_dir }}/{{ item }}.ini"
     owner: "{{ icingaweb2_httpd_user }}"
     group: "{{ icingaweb2_group }}"
-    mode: "0770"
+    mode: "0660"
   loop:
     - config
     - authentication
@@ -47,9 +47,16 @@
   vars:
     _i2_config_hash: "{{ lookup('ansible.builtin.vars', 'icingaweb2_' + item) }}"
 
-- name: Prepare config hash
+- name: Create temporary config variable
   ansible.builtin.set_fact:
-    _i2_config_hash:
+    _tmp_i2_config_hash:
+      roles: {}
+      resources: {}
+
+- name: Prepare config hash
+  when: icingaweb2_db is defined
+  vars:
+    _resources:
       icingaweb2_db:
         type: db
         db: "{{ icingaweb2_db['type'] | default('mysql') }}"
@@ -65,76 +72,38 @@
         ssl_ca: "{{ icingaweb2_db['ssl_ca'] | default(omit) }}"
         ssl_cipher: "{{ icingaweb2_db['ssl_cipher'] | default(omit) }}"
         ssl_capath: "{{ icingaweb2_db['ssl_capath'] | default(omit) }}"
-  when: icingaweb2_db is defined
+  ansible.builtin.set_fact:
+    _tmp_i2_config_hash: "{{ _tmp_i2_config_hash | combine({'resources': _resources}, recursive=true) }}"
 
-- name: Assemble resources.ini
-  when: icingaweb2_db is defined or icingaweb2_resources is defined
-  block:
-    - name: Manage icingaweb_db resource config
-      ansible.builtin.template:
-        src: modules_config.ini.j2
-        dest: "{{ icingaweb2_fragments_path }}/resources/resources_01"
-        owner: root
-        group: "{{ icingaweb2_group }}"
-      when: icingaweb2_db is defined
+- name: Set resources facts
+  when: icingaweb2_resources is defined
+  ansible.builtin.set_fact:
+    _tmp_i2_config_hash: "{{ _tmp_i2_config_hash | combine({'resources': icingaweb2_resources}, recursive=true) }}"
 
-    - name: Set resources facts
-      ansible.builtin.set_fact:
-        _i2_config_hash: "{{ icingaweb2_resources }}"
-      when: icingaweb2_resources is defined
-
-    - name: Manage Resources
-      ansible.builtin.template:
-        src: modules_config.ini.j2
-        dest: "{{ icingaweb2_fragments_path }}/resources/resources_02"
-        owner: root
-        group: "{{ icingaweb2_group }}"
-      when: icingaweb2_resources is defined
-
-- name: Assemble roles.ini
+- name: Assemble roles.ini (adding default admin role)
   when: icingaweb2_admin_username is defined and icingaweb2_admin_password is defined
-  block:
-    - name: Build variable
-      ansible.builtin.set_fact:
-        _i2_config_hash:
-          default_admins:
-            users:
-              - "{{ icingaweb2_admin_username }}"
-            permissions:
-              - "*"
+  vars:
+    _tmp_i2_config_hash_admin_role:
+      default_admins:
+        users:
+          - "{{ icingaweb2_admin_username }}"
+        permissions:
+          - "*"
+  ansible.builtin.set_fact:
+    _tmp_i2_config_hash: "{{ _tmp_i2_config_hash | combine({'roles': _tmp_i2_config_hash_admin_role}, recursive=true) }}"
 
-    - name: Manage icingaweb2_admin privileges
-      ansible.builtin.template:
-        src: modules_config.ini.j2
-        dest: "{{ icingaweb2_fragments_path }}/roles/roles_01"
-        owner: root
-        group: "{{ icingaweb2_group }}"
-      when: icingaweb2_admin_username is defined and icingaweb2_admin_password is defined
+- name: Assemble roles.ini (adding icingaweb2_roles)
+  when: icingaweb2_roles is defined
+  ansible.builtin.set_fact:
+    _tmp_i2_config_hash: "{{ _tmp_i2_config_hash | combine({'roles': icingaweb2_roles}, recursive=true) }}"
 
-    - name: Build variable
-      ansible.builtin.set_fact:
-        _i2_config_hash: "{{ icingaweb2_roles }}"
-      when: icingaweb2_roles is defined
-
-    - name: Manage icingaweb2_admin privileges
-      ansible.builtin.template:
-        src: modules_config.ini.j2
-        dest: "{{ icingaweb2_fragments_path }}/roles/roles_02"
-        owner: root
-        group: "{{ icingaweb2_group }}"
-      when: icingaweb2_roles is defined
-
-
-- name: Assemble configuration files
-  ansible.builtin.assemble:
-    dest: "{{ icingaweb2_config_dir }}/{{ item }}.ini"
-    src: "{{ icingaweb2_fragments_path }}/{{ item }}"
+- name: Deploy configuration files
+  loop: "{{ _tmp_i2_config_hash | dict2items }}"
+  vars:
+    _i2_config_hash: "{{ _tmp_i2_config_hash[item.key] }}"
+  ansible.builtin.template:
+    src: modules_config.ini.j2
+    dest: "{{ icingaweb2_config_dir }}/{{ item.key }}.ini"
     group: "{{ icingaweb2_group }}"
     owner: "{{ icingaweb2_httpd_user }}"
-    mode: 0770
-  loop:
-    - resources
-    - roles
-
-
-# {{ icingaweb2_db | ansible.builtin.combine(icingaweb2_db, append_rp)}}
+    mode: "0660"
