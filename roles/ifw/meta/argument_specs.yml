@@ -190,6 +190,7 @@ argument_specs:
       ifw_api_feature:
         description:
           - Whether to enable the Icinga for Windows API Check Forwarder.
+            Be sure to install the C(service) component if you want to make use of this feature.
             L(Read more about the Icinga for Windows API Check Forwarder, https://icinga.com/docs/icinga-for-windows/latest/doc/110-Installation/30-API-Check-Forwarder/).
         type: bool
         required: false

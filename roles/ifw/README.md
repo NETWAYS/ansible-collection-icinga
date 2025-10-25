@@ -130,6 +130,7 @@ The default values for some variables - like the ones for JEA and the API featur
 
 - `ifw_api_feature: boolean`  
   Whether to enable the Icinga for Windows API Check Forwarder.  
+  Be sure to install the `service` component if you want to make use of this feature.  
   [Read more about the Icinga for Windows API Check Forwarder](https://icinga.com/docs/icinga-for-windows/latest/doc/110-Installation/30-API-Check-Forwarder/).  
   Default: `true`
 
