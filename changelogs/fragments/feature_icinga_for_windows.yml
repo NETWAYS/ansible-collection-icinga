@@ -1,0 +1,5 @@
+major_changes:
+  - "Introduction of role :code:`ifw` - Icinga for Windows: This role allows to install the Icinga PowerShell Framework, manage components and repositories, and install and configure Icinga 2 through Icinga for Windows."
+  - "Module :code:`ifw_backgrounddaemon`: Registers/unregisters an Icinga for Windows background daemon."
+  - "Module :code:`ifw_component`: Installs/removes/updates Icinga for Windows components (e.g. :code:`agent`, :code:`plugins`)."
+  - "Module :code:`ifw_restapicommand`: Adds/removes commands to/from the whitelist/blacklist of the Icinga for Windows REST-Api."
