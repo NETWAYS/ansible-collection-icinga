@@ -16,7 +16,7 @@
         ifw_framework_version: "{{ _repo_html.content | regex_findall('[\\d\\.]+\\.zip') | community.general.version_sort | last | replace('.zip', '') }}"
 
 - name: Determine Icinga PowerShell Framework module path
-  when: not ifw_framework_path
+  when: not ifw_framework_path is none
   block:
     - name: Check existence of possible module paths
       ansible.windows.win_stat:
