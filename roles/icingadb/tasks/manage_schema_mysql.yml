@@ -10,6 +10,7 @@
           {% if icingadb_database_ca is defined %} --ssl-ca "{{ icingadb_database_ca }}" {%- endif %}
           {% if icingadb_database_cert is defined %} --ssl-cert "{{ icingadb_database_cert }}" {%- endif %}
           {% if icingadb_database_key is defined %} --ssl-key "{{ icingadb_database_key }}" {%- endif %}
+          {% if icingadb_database_tls_insecure is defined and icingadb_database_tls_insecure | bool %} --ssl-verify-server-cert=off {%- endif %}
           -u "{{ icingadb_database_user | default('icingadb') }}"
           -p{{ icingadb_database_password | quote }}
           "{{ icingadb_database_name | default('icingadb') }}"
