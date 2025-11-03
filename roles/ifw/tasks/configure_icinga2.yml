@@ -75,6 +75,16 @@
         src: "/tmp/{{ ifw_icinga2_cn }}.crt"
       register: _icinga2_host_cert
 
+    - name: Remove temporary CSR and CRT
+      become: true
+      delegate_to: "{{ ifw_icinga2_ca_host | default('localhost', true) }}"
+      loop:
+        - "/tmp/{{ ifw_icinga2_cn }}.csr"
+        - "/tmp/{{ ifw_icinga2_cn }}.crt"
+      ansible.builtin.file:
+        state: absent
+        path: "{{ item }}"
+
     - name: Deploy host certificate
       when: not ifw_icinga2_ca_host is none
       ansible.windows.win_copy:
@@ -148,8 +158,4 @@
   async: 300
   poll: 30
   when: _assertion_result.evaluated_to is defined
-  ansible.windows.win_powershell:
-    script: "Install-Icinga -InstallCommand \"{{ _install_command }}\""
-    arguments:
-      - "-ExecutionPolicy"
-      - "ByPass"
+  ansible.windows.win_shell: "Install-Icinga -InstallCommand '{{ _install_command }}'"
