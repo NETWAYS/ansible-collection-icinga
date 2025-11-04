@@ -10,7 +10,7 @@
   changed_when: apt_result.stdout is defined
   when:
     - needed_packages is defined
-    - needed_packages
+    - needed_packages | length > 0
 
 - name: Apt - remove non-requested packages
   become: yes
@@ -20,4 +20,4 @@
     autoremove: "{{ icinga_monitoring_plugins_autoremove }}"
   when:
     - icinga_monitoring_plugins_remove
-    - unwanted_packages
+    - unwanted_packages | length > 0
