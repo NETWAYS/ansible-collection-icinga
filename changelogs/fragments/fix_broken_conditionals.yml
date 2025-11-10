@@ -1,2 +1,2 @@
 bugfixes:
-  - "Fix broken conditionals when using on ansible-core >= 2.19 because of some playbooks changes"
+  - "Use explicit booleans in conditions inside of role :code:`monitoring_plugins` for compatibility with :code:`ansible-core >= 2.19`. Thanks @gianmarco-mameli"
