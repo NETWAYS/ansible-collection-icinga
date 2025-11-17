@@ -158,4 +158,4 @@
   async: 300
   poll: 30
   when: _assertion_result.evaluated_to is defined
-  ansible.windows.win_shell: "Install-Icinga -InstallCommand '{{ _install_command }}'"
+  ansible.windows.win_shell: 'Install-Icinga -InstallCommand "{{ _install_command }}"'
