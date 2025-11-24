@@ -2,7 +2,7 @@
 
 - name: Check if Icinga PowerShell Framework is installed
   ansible.windows.win_shell: Use-Icinga -Minimal
-  when: ansible_os_family == "Windows"
+  when: ansible_facts["os_family"] == "Windows"
   register: _use_icinga
   changed_when: false
   failed_when: false
@@ -10,23 +10,23 @@
 - name: Install Icinga PowerShell Framework
   ansible.builtin.include_tasks: "{{ role_path }}/tasks/install_powershell_framework.yml"
   when:
-    - ansible_os_family == "Windows"
+    - ansible_facts["os_family"] == "Windows"
     - _use_icinga.stderr != ""
 
 - name: Manage repositories
   ansible.builtin.include_tasks: "{{ role_path }}/tasks/manage_repositories.yml"
-  when: ansible_os_family == "Windows"
+  when: ansible_facts["os_family"] == "Windows"
 
 - name: Install Icinga Powershell Components
   ansible.builtin.include_tasks: "{{ role_path }}/tasks/install_components.yml"
   when:
-    - ansible_os_family == "Windows"
+    - ansible_facts["os_family"] == "Windows"
     - ifw_components | length > 0
 
 - name: Configure Icinga 2
   ansible.builtin.include_tasks: "{{ role_path }}/tasks/configure_icinga2.yml"
   when:
-    - ansible_os_family == "Windows"
+    - ansible_facts["os_family"] == "Windows"
     - ifw_components | selectattr('name', 'eq', 'agent') | length > 0
     - ifw_icinga2_parents is defined
     - ifw_icinga2_parent_zone is defined

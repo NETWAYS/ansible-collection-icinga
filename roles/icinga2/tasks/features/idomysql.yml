@@ -14,8 +14,8 @@
         file: features-available/ido-mysql.conf
         args: "{{ icinga2_dict_features.idomysql }}"
 
-- name: install on {{ ansible_os_family }}
-  include_tasks: "features/idomysql/install_on_{{ ansible_os_family }}.yml"
+- name: "install on {{ ansible_facts['os_family'] }}"
+  include_tasks: "features/idomysql/install_on_{{ ansible_facts['os_family'] }}.yml"
 
 # Hint: For MySQL the client-side --ssl option is deprecated as of MySQL 5.7.11 and is removed in MySQL 8.0. For client programs, use --ssl-mode instead
 # However, MariaDB currently does not offer a --ssl-mode option, MariaDB enables --ssl automatically with other flags

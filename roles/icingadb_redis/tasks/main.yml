@@ -4,10 +4,10 @@
   vars:
     params:
       files:
-        - "{{ ansible_os_family }}-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-        - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
-        - "{{ ansible_os_family }}-{{ ansible_distribution }}.yml"
-        - "{{ ansible_os_family }}.yml"
+        - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}.yml"
         - default.yml
       paths:
         - "{{ role_path }}/vars"
@@ -15,17 +15,17 @@
 - name: Check supported operatingsystems
   vars:
     _paths: "{{ ansible_search_path }}"
-    _file: "install_on_{{ ansible_os_family | lower }}.yml"
+    _file: "install_on_{{ ansible_facts['os_family'] | lower }}.yml"
     _tasks_file: "{{ lookup('first_found', paths=_paths, files=_file, skip=true) }}"
   block:
     - name: Include OS specific installation
       when: _tasks_file | length > 0
-      ansible.builtin.include_tasks: "install_on_{{ ansible_os_family | lower }}.yml"
+      ansible.builtin.include_tasks: "install_on_{{ ansible_facts['os_family'] | lower }}.yml"
 
     - name: "OS family not supported!"
       when: _tasks_file | length == 0
       ansible.builtin.fail:
-        msg: "The OS '{{ ansible_os_family }}' is not supported!"
+        msg: "The OS '{{ ansible_facts['os_family'] }}' is not supported!"
 
 - name: Manage IcingaDB Redis configuration
   ansible.builtin.include_tasks: "manage_config.yml"

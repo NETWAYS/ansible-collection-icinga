@@ -121,7 +121,7 @@ This is an example on how to install an Icinga 2 server/master instance.
   vars:
     icinga2_constants:  # Set default constants and TicketSalt for the CA
       TicketSalt: "{{ lookup('ansible.builtin.password', '.icinga-server-ticketsalt') }}"
-      NodeName: "{{ ansible_fqdn }}"
+      NodeName: "{{ ansible_facts['fqdn'] }}"
       ZoneName: "main"
     icinga2_confd: false # Disable example configuration
     icinga2_purge_features: yes # Ansible will manage all features
@@ -239,11 +239,11 @@ This is a example on how to install Icinga 2 server with Icinga Web 2 and Icinga
       - name: api
         ca_host: none
         endpoints:
-          - name: "{{ ansible_fqdn }}"
+          - name: "{{ ansible_facts['fqdn'] }}"
         zones:
           - name: "main"
             endpoints:
-              - "{{ ansible_fqdn }}"
+              - "{{ ansible_facts['fqdn'] }}"
   pre_tasks:
     - ansible.builtin.include_role:
         name: netways.icinga.repos
