@@ -27,7 +27,7 @@ icingaweb2_modules:
     run_kickstart: true
     kickstart:
       config:
-        endpoint: "{{ ansible_fqdn }}"
+        endpoint: "{{ ansible_facts['fqdn'] }}"
         host: 127.0.0.1
         username: root
         password: root

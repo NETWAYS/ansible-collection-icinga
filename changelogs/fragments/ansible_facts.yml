@@ -1,0 +1,2 @@
+minor_changes:
+  - Change occurrences of :code:`ansible_<fact_name>` to :code:`ansible_facts["<fact_name>"]` in preparation of :code:`ansible-core=2.24`'s new :code:`INJECT_FACTS_AS_VARS` behavior.

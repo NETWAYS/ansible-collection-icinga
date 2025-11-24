@@ -14,8 +14,8 @@
         file: features-available/ido-pgsql.conf
         args: "{{ icinga2_dict_features.idopgsql }}"
 
-- name: install on {{ ansible_os_family }}
-  include_tasks: "features/idopgsql/install_on_{{ ansible_os_family }}.yml"
+- name: "install on {{ ansible_facts['os_family'] }}"
+  include_tasks: "features/idopgsql/install_on_{{ ansible_facts['os_family'] }}.yml"
 
 - name: PostgreSQL import IDO schema
   block:

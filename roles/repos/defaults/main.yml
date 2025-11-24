@@ -17,10 +17,10 @@ icinga_repo_zypper_snapshot_url: "https://packages.icinga.com/openSUSE/$releasev
 
 icinga_repo_apt_key: "{{ icinga_repo_gpgkey }}"
 icinga_repo_apt_keyring: /etc/apt/keyrings/icinga-archive-keyring.asc
-icinga_repo_apt_url: "http://packages.icinga.com/{{ ansible_distribution | lower }}"
-icinga_repo_apt_stable_deb: "icinga-{{ ansible_distribution_release | lower }}"
-icinga_repo_apt_testing_deb: "icinga-{{ ansible_distribution_release | lower }}-testing"
-icinga_repo_apt_snapshot_deb: "icinga-{{ ansible_distribution_release | lower }}-snapshots"
+icinga_repo_apt_url: "http://packages.icinga.com/{{ ansible_facts['distribution'] | lower }}"
+icinga_repo_apt_stable_deb: "icinga-{{ ansible_facts['distribution_release'] | lower }}"
+icinga_repo_apt_testing_deb: "icinga-{{ ansible_facts['distribution_release'] | lower }}-testing"
+icinga_repo_apt_snapshot_deb: "icinga-{{ ansible_facts['distribution_release'] | lower }}-snapshots"
 
 icinga_repo_gpgkey: "https://packages.icinga.com/icinga.key"
 icinga_repo_stable: true

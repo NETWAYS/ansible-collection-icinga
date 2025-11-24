@@ -17,4 +17,4 @@ icinga2_features:
 icinga2_objects: []
 icinga2_remote_objects: []
 _icinga2_custom_conf_paths: []
-icinga2_config_host: "{{ ansible_fqdn }}"
+icinga2_config_host: "{{ ansible_facts['fqdn'] }}"

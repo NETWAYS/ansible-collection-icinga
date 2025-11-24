@@ -2,7 +2,7 @@
 
 - name: set api feature facts
   set_fact:
-    icinga2_cert_name: "{{ icinga2_dict_features.api.cert_name | default(ansible_fqdn) }}"
+    icinga2_cert_name: "{{ icinga2_dict_features.api.cert_name | default(ansible_facts['fqdn']) }}"
     icinga2_ca_host: "{{ icinga2_dict_features.api.ca_host | default(omit) }}"
     icinga2_ca_host_port: "{{ icinga2_dict_features.api.ca_host_port | default(omit) }}"
     icinga2_ca_fingerprint: "{{ icinga2_dict_features.api.ca_fingerprint | default(omit) }}"

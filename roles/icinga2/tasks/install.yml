@@ -2,17 +2,17 @@
 - name: Check supported operatingsystems
   vars:
     _paths: "{{ ansible_search_path }}"
-    _file: "install_on_{{ ansible_os_family }}.yml"
+    _file: "install_on_{{ ansible_facts['os_family'] }}.yml"
     _tasks_file: "{{ lookup('first_found', paths=_paths, files=_file, skip=true) }}"
   block:
-    - name: Install on {{ ansible_os_family }}
+    - name: Install on {{ ansible_facts['os_family'] }}
       when: _tasks_file | length > 0
-      ansible.builtin.include_tasks: "install_on_{{ ansible_os_family }}.yml"
+      ansible.builtin.include_tasks: "install_on_{{ ansible_facts['os_family'] }}.yml"
 
     - name: "OS family not supported!"
       when: _tasks_file | length == 0
       ansible.builtin.fail:
-        msg: "The OS '{{ ansible_os_family }}' is not supported!"
+        msg: "The OS '{{ ansible_facts['os_family'] }}' is not supported!"
 
 - name: Prepare fragments path
   ansible.builtin.file:

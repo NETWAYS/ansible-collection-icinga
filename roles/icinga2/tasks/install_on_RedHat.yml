@@ -7,4 +7,4 @@
   ansible.builtin.yum:
     name: icinga2-selinux
     state: present
-  when: ansible_selinux is defined and ansible_selinux.status == "enabled"
+  when: ansible_facts["selinux"] is defined and ansible_facts["selinux"]["status"] == "enabled"

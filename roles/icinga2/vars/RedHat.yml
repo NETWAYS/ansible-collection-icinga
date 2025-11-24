@@ -11,6 +11,6 @@ icinga2_default_constants:
   PluginDir: /usr/lib64/nagios/plugins
   ManubulonPluginDir: /usr/lib64/nagios/plugins
   PluginContribDir: /usr/lib64/nagios/plugins
-  NodeName: "{{ ansible_fqdn }}"
+  NodeName: "{{ ansible_facts['fqdn'] }}"
   ZoneName: NodeName
   TicketSalt: ''

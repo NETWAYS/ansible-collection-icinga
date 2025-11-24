@@ -47,5 +47,5 @@
     state: present
   when:
     - icinga_repo_scl|bool == true
-    - ansible_distribution == "CentOS"
-    - ansible_distribution_major_version < "8"
+    - ansible_facts["distribution"] == "CentOS"
+    - ansible_facts["distribution_major_version"] < "8"

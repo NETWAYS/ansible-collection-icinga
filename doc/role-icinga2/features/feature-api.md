@@ -163,7 +163,7 @@ icinga2_features:
   * Force new certificates on the destination hosts.
 
 * `cert_name: string`
-  * Common name of Icinga client/server instance. Default is **ansible_fqdn**.
+  * Common name of Icinga client/server instance. Default is **ansible_facts['fqdn']**.
 
 * `ssl_cacert: string`
   * Path to the ca file when using manual certificates

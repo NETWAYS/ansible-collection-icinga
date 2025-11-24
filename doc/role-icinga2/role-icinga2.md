@@ -35,10 +35,10 @@ icinga2_confd: true/false/<directory_name>
 
 The Icinga 2 role will automatically detect via Ansible facts if SELinux is enabled on the system. If this is the case the package icinga2-selinux will be automatically installed.
 
-If the package should be installed, even if SELinux is not enabled or somehow wrongly disabled in Ansible use the following variable.
+If the package should be installed, even if SELinux is not enabled or somehow wrongly disabled in Ansible, set the following fact.
 
 ```yaml
-ansible_selinux:
+selinux:
   status: enabled
 ```
 
