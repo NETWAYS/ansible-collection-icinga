@@ -4,10 +4,10 @@
   vars:
     params:
       files:
-        - "{{ ansible_os_family | lower }}-{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
-        - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
-        - "{{ ansible_os_family | lower }}-{{ ansible_distribution | lower }}.yml"
-        - "{{ ansible_os_family | lower }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_major_version'] | lower }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution_major_version'] | lower }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution'] | lower }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}.yml"
         - default.yml
       paths:
         - "{{ role_path }}/vars"
@@ -37,17 +37,17 @@
 - name: Check supported operatingsystems
   vars:
     _paths: "{{ ansible_search_path }}"
-    _file: "install_on_{{ ansible_os_family | lower }}.yml"
+    _file: "install_on_{{ ansible_facts['os_family'] | lower }}.yml"
     _tasks_file: "{{ lookup('first_found', paths=_paths, files=_file, skip=true) }}"
   block:
     - name: Include OS specific installation
       when: _tasks_file | length > 0
-      ansible.builtin.include_tasks: "install_on_{{ ansible_os_family | lower }}.yml"
+      ansible.builtin.include_tasks: "install_on_{{ ansible_facts['os_family'] | lower }}.yml"
 
     - name: "OS family not supported!"
       when: _tasks_file | length == 0
       ansible.builtin.fail:
-        msg: "The OS '{{ ansible_os_family }}' is not supported!"
+        msg: "The OS '{{ ansible_facts['os_family'] }}' is not supported!"
 
 - name: Manage Icinga Web 2 config
   ansible.builtin.include_tasks: "manage_icingaweb_config.yml"

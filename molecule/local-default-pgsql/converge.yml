@@ -57,11 +57,11 @@
       - name: api
         ca_host: none
         endpoints:
-          - name: "{{ ansible_fqdn }}"
+          - name: "{{ ansible_facts['fqdn'] }}"
         zones:
           - name: "main"
             endpoints:
-              - "{{ ansible_fqdn }}"
+              - "{{ ansible_facts['fqdn'] }}"
     icinga2_config_directories:
       - zones.d/main/commands
       - zones.d/main/hosts
