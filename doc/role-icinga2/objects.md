@@ -33,7 +33,7 @@ webserver.example.org:
     host.example.org:
       - name: "{{ inventory_hostname }}"
         type: Host
-        file: "{{ 'conf.d/' + ansible_hostname + '.conf' }}"
+        file: "{{ 'conf.d/' + ansible_facts['hostname'] + '.conf' }}"
         address: "{{ ansible_host }}"
         check_command: hostalive
         check_interval: 3m
@@ -72,10 +72,10 @@ You can use this variant within a playbook where `host.example.org` is your cent
               imports:
                 - linux-host
               vars:
-                distro: "{{ ansible_distribution }}"
-                distroversion: "{{ ansible_distribution_version }}"
-                arch: "{{ ansible_architecture }}"
-              address: "{{ ansible_default_ipv4.address }}"
+                distro: "{{ ansible_facts['distribution'] }}"
+                distroversion: "{{ ansible_facts['distribution_version'] }}"
+                arch: "{{ ansible_facts['architecture'] }}"
+              address: "{{ ansible_facts['default_ipv4']['address'] }}"
   roles:
     - netways.icinga.icinga2
 ```
@@ -89,7 +89,7 @@ webserver.example.org:
   icinga2_objects:
     - name: "web-api-user"
       type: ApiUser
-      file: "{{ 'conf.d/' + ansible_hostname + '.conf' }}"
+      file: "{{ 'conf.d/' + ansible_facts['hostname'] + '.conf' }}"
       password: "somepassword"
       permissions:
         - "objects/query/Host"

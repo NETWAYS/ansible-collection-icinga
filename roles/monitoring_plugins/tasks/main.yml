@@ -5,26 +5,26 @@
 - name: Check supported operatingsystems
   vars:
     _paths: "{{ role_path }}/vars"
-    _file: "{{ ansible_os_family }}.yml"
+    _file: "{{ ansible_facts['os_family'] }}.yml"
     _tasks_file: "{{ lookup('first_found', paths=_paths, files=_file, skip=true) }}"
   block:
     - name: Include OS family specific vars
       when: _tasks_file | length > 0
-      ansible.builtin.include_vars: "{{ role_path }}/vars/{{ ansible_os_family }}.yml"
+      ansible.builtin.include_vars: "{{ role_path }}/vars/{{ ansible_facts['os_family'] }}.yml"
 
     - name: "OS family not supported!"
       when: _tasks_file | length == 0
       ansible.builtin.fail:
-        msg: "The OS '{{ ansible_os_family }}' is not supported!"
+        msg: "The OS '{{ ansible_facts['os_family'] }}' is not supported!"
 
 - name: Include OS distribution/version specific vars
   include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
       files:
-        - "{{ ansible_os_family }}-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-        - "{{ ansible_os_family }}-{{ ansible_distribution }}.yml"
-        - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
         - "default.yml"
       paths:
         - "{{ role_path }}/vars"
@@ -58,4 +58,4 @@
     unwanted_packages: "{{ icinga_monitoring_plugins_available_packages | map(attribute='pkg_name') | difference(needed_packages | default ([])) }}"
 
 - name: Install
-  include_tasks: "install_on_{{ ansible_os_family }}.yml"
+  include_tasks: "install_on_{{ ansible_facts['os_family'] }}.yml"

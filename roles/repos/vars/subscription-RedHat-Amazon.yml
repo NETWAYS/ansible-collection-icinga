@@ -1,7 +1,7 @@
 ---
 icinga_repo_yum_stable_url: "https://packages.icinga.com/subscription/amazon/al$releasever/release/"
-icinga_repo_yum_stable_description: "ICINGA (stable release for al{{ ansible_distribution_major_version }})"
+icinga_repo_yum_stable_description: "ICINGA (stable release for al{{ ansible_facts['distribution_major_version'] }})"
 icinga_repo_yum_testing_url: "https://packages.icinga.com/subscription/amazon/al$releasever/testing/"
-icinga_repo_yum_testing_description: "ICINGA (testing release for al{{ ansible_distribution_major_version }})"
+icinga_repo_yum_testing_description: "ICINGA (testing release for al{{ ansible_facts['distribution_major_version'] }})"
 icinga_repo_yum_snapshot_url: "https://packages.icinga.com/subscription/amazon/al$releasever/snapshot/"
-icinga_repo_yum_snapshot_description: "ICINGA (snapshot release al{{ ansible_distribution_major_version }})"
+icinga_repo_yum_snapshot_description: "ICINGA (snapshot release al{{ ansible_facts['distribution_major_version'] }})"
