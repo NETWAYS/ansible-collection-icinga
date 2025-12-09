@@ -2,7 +2,7 @@ def test_string(host):
     i2_file = host.file("/tmp/string")
     print(i2_file.content_string)
     assert i2_file.is_file
-    assert i2_file.content_string == "\n[section]\ntest = string\n"
+    assert i2_file.content_string == '\n[section]\ntest = "string"\n'
 
 def test_number(host):
     i2_file = host.file("/tmp/number")

@@ -3,14 +3,10 @@
 
 [{{ section }}]
 {% for option, value in options.items() %}
-{% if value is number %}
-{{ option }} = "{{ value | quote }}"
-{% elif value is iterable and (value is not string and value is not mapping) %}
+{% if value is iterable and (value is not string and value is not mapping) %}
 {{ option }} = "{{ value | join(', ') }}"
-{% elif ( value is string and ( "=" in value or "!" in value or " " in value ) )%}
-{{ option }} = "{{ value }}"
 {% else %}
-{{ option }} = {{ value }}
+{{ option }} = "{{ value | to_json | trim('"') }}"
 {% endif %}
 {% endfor %}
 {% endfor %}

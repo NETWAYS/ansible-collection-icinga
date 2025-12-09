@@ -1,0 +1,2 @@
+bugfixes:
+  - Fix escaping of special characters within the generic INI writer (:code:`icingaweb2` role). Values are now enclosed by double quotes while using the :code:`to_json` filter for the escaping (#426).
