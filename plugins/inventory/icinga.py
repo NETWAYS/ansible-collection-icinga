@@ -498,7 +498,7 @@ class InventoryModule(BaseInventoryPlugin, Cacheable, Constructable):
         self._read_config_data(path)
 
         # Set attributes based on parsed file
-        self.icinga_url      = self.get_option('url').strip('/')
+        self.icinga_url      = self.get_option('url')
         self.icinga_port     = self.get_option('port')
         self.icinga_user     = self.get_option('user')
         self.icinga_password = self.get_option('password')
@@ -516,7 +516,16 @@ class InventoryModule(BaseInventoryPlugin, Cacheable, Constructable):
         self.keyed_groups    = self.get_option('keyed_groups')
         self.strict          = self.get_option('strict')
 
+        # Jinja2 templating for url, user and password
+        if self.templar.is_template(self.icinga_url):
+            self.icinga_url = self.templar.template(variable=self.icinga_url)
+        if self.templar.is_template(self.icinga_user):
+            self.icinga_user = self.templar.template(variable=self.icinga_user)
+        if self.templar.is_template(self.icinga_password):
+            self.icinga_password = self.templar.template(variable=self.icinga_password)
+
         # Build API URL and validate
+        self.icinga_url      = self.icinga_url.rstrip('/')
         self.api_url         = f'{self.icinga_url}:{self.icinga_port}/v1'
         if not self._validate_url(self.api_url):
             raise ValueError(f'\'{self.api_url}\' is not a valid URL.')

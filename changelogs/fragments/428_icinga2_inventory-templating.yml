@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - Add templating support for :code:`url`, :code:`user` and :code:`password` variables in :code:`netways.icinga.icinga` inventory plugin to support loading them from :code:`ansible-vault`. Thanks @johannesst
