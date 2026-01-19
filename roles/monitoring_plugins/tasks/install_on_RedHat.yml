@@ -12,7 +12,7 @@
     name: "{{ needed_packages }}"
     update_cache: true
   when:
-    - ansible_distribution_major_version < "8"
+    - ansible_distribution_major_version | int < 8
     - needed_packages is defined
     - needed_packages | length > 0
 
@@ -24,7 +24,7 @@
     update_cache: true
     enablerepo: "{{ icinga_monitoring_plugins_dependency_repos }}"
   when:
-    - ansible_distribution_major_version >= "8"
+    - ansible_distribution_major_version | int >= 8
     - needed_packages is defined
     - needed_packages | length > 0
 

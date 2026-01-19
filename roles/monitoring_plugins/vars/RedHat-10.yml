@@ -1,0 +1,5 @@
+---
+
+icinga_monitoring_plugins_available_packages_exclude:
+  - name: radius
+    pkg_name: "nagios-plugins-radius"

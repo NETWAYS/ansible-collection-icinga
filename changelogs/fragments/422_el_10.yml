@@ -1,0 +1,2 @@
+minor_changes:
+  - "Add EL 10 to the :code:`monitoring_plugins` role."
