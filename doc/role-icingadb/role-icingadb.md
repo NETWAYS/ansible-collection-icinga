@@ -51,11 +51,26 @@ For more information on the respective settings please see [the official documen
 
 ### Logging configuration
 
-For logging, currently only the **logging level** can be set. The default is `info`:
-
 | Variable | Type | Description | Default |
 |----------|------|-------------|---------|
 | `icingadb_logging_level` | `fatal\|error\|warn\|info\|debug` | Defines the logging level for IcingaDB. | `info` |
+
+#### Compont based log level
+The following variables can be used to define special log levels for individual components.
+
+| Variable | Type | Description | Default |
+|----------|------|-------------|---------|
+| `icingadb_log_level_confic_sync` | `fatal\|error\|warn\|info\|debug` | log-level for component `config-sync`  | value from `icingadb_logging_level`, `info` by default   |
+| `icingadb_log_level_database` | `fatal\|error\|warn\|info\|debug` | log-level for component `database`  | value from `icingadb_logging_level`, `info` by default   |
+| `icingadb_log_level_dumps_ignals` | `fatal\|error\|warn\|info\|debug` | log-level for component `dump-signals`  | value from `icingadb_logging_level`, `info` by default   |
+| `icingadb_log_level_confic_sync` | `fatal\|error\|warn\|info\|debug` | log-level for component `heartbeat`  | value from `icingadb_logging_level`, `info` by default   |
+| `icingadb_log_level_high_availability` | `fatal\|error\|warn\|info\|debug` | log-level for component `high-availability`  | value from `icingadb_logging_level`, `info` by default   |
+| `icingadb_log_level_history_sync` | `fatal\|error\|warn\|info\|debug` | log-level for component `history-sync`  | value from `icingadb_logging_level`, `info` by default   |
+| `icingadb_log_level_overdue_sync` | `fatal\|error\|warn\|info\|debug` | log-level for component `overdue-sync`  | value from `icingadb_logging_level`, `info` by default   |
+| `icingadb_log_level_redis` | `fatal\|error\|warn\|info\|debug` | log-level for component `redis`  | value from `icingadb_logging_level`, `info` by default   |
+| `icingadb_log_level_retention` | `fatal\|error\|warn\|info\|debug` | log-level for component `retention`  | value from `icingadb_logging_level`, `info` by default   |
+| `icingadb_log_level_runtime_updates` | `fatal\|error\|warn\|info\|debug` | log-level for component `runtime-updates`  | value from `icingadb_logging_level`, `info` by default   |
+| `icingadb_log_level_telemetry` | `fatal\|error\|warn\|info\|debug` | log-level for component `telemetry`  | value from `icingadb_logging_level`, `info` by default   |
 
 ### IcingaDB Retention
 
