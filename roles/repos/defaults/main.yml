@@ -28,3 +28,21 @@ icinga_repo_testing: false
 icinga_repo_snapshot: false
 icinga_repo_epel: false
 icinga_repo_scl: false
+
+
+# defaults for NETWAYS repos
+netways_repo_gpgkey: "https://packages.netways.de/netways-repo.asc"
+netways_repo_extras: false
+netways_repo_plugins: false
+
+netways_repo_extras_yum_key: "{{ netways_repo_gpgkey }}"
+netways_repo_extras_yum_url: "https://packages.netways.de/extras/epel/$releasever"
+netways_repo_extras_yum_description: "NETWAYS provided additional software - Enterprise Linux $releasever"
+netways_repo_plugins_yum_key: "{{ netways_repo_gpgkey }}"
+netways_repo_plugins_yum_url: "https://packages.netways.de/plugins/epel/$releasever"
+netways_repo_plugins_yum_description: "NETWAYS provided monitoring plugins - Enterprise Linux $releasever"
+
+netways_repo_apt_key: "{{ netways_repo_gpgkey }}"
+netways_repo_apt_keyring: "/etc/apt/keyrings/netways.asc"
+netways_repo_extras_apt_url: "https://packages.netways.de/extras/{{ ansible_facts['distribution'] | lower }}"
+netways_repo_plugins_apt_url: "https://packages.netways.de/plugins/{{ ansible_facts['distribution'] | lower }}"

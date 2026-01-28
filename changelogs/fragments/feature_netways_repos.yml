@@ -1,0 +1,2 @@
+minor_changes:
+  - "Add the ability to add the `NETWAYS Extras <https://packages.netways.de/extras/>`__ and `NETWAYS Plugins <https://packages.netways.de/plugins/>`__ repositories to provide more packages. If the repositories `netways-extras` / `netways-plugins` already exist on the system, they are - by default - disabled by the role."

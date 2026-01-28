@@ -31,9 +31,45 @@
     components:
       - main
     signed_by: "{{ icinga_repo_apt_keyring }}"
-  register: _apt_repo
+  register: _apt_repo_icinga
+
+- name: Apt - add NETWAYS repository key
+  when: netways_repo_extras or netways_repo_plugins
+  ansible.builtin.get_url:
+    url: "{{ netways_repo_apt_key }}"
+    dest: "{{ netways_repo_apt_keyring }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: true
+
+- name: Apt - add NETWAYS Extras repository
+  when: netways_repo_extras
+  ansible.builtin.deb822_repository:
+    state: present
+    name: "netways-extras"
+    types: deb
+    uris: "{{ netways_repo_extras_apt_url }}"
+    suites: "{{ ansible_facts['distribution_release'] | lower }}"
+    components:
+      - main
+    signed_by: "{{ netways_repo_apt_keyring }}"
+  register: _apt_repo_extras
+
+- name: Apt - add NETWAYS Plugins repository
+  when: netways_repo_plugins
+  ansible.builtin.deb822_repository:
+    state: present
+    name: "netways-plugins"
+    types: deb
+    uris: "{{ netways_repo_plugins_apt_url }}"
+    suites: "{{ ansible_facts['distribution_release'] | lower }}"
+    components:
+      - main
+    signed_by: "{{ netways_repo_apt_keyring }}"
+  register: _apt_repo_plugins
 
 - name: Apt - update cache
-  when: _apt_repo.changed
+  when: _apt_repo_icinga.changed or _apt_repo_extras.changed or _apt_repo_plugins.changed
   ansible.builtin.apt:
     update_cache: true
