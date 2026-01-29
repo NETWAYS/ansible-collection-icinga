@@ -11,3 +11,7 @@ icingaweb2_module_packages:
   migrate: icingaweb2
   setup: icingaweb2
   translation: icingaweb2
+  perfdatagraphs: icingaweb2-module-perfdatagraphs
+  perfdatagraphsgraphite: icingaweb2-module-perfdatagraphs-graphite
+  perfdatagraphsinfluxdbv1: icingaweb2-module-perfdatagraphs-influxdbv1
+  perfdatagraphsinfluxdbv2: icingaweb2-module-perfdatagraphs-influxdbv2
