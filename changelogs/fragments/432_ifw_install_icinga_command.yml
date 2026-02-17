@@ -1,2 +1,4 @@
 bugfixes:
-  - "The IfW `InstallCommand` now uses double quotes around the JSON to avoid timeouts during the task (#432). Thanks @afeefghannam89 for bringing up the topic again and testing the fix."
+  - "The IfW :code:`InstallCommand` now uses double quotes around the JSON to avoid timeouts during the task (#432).
+    The JSON is also properly parsed and put into a single line to further avoid unwanted behavior.
+    Thanks @afeefghannam89 for bringing up the topic again and testing the fix."

@@ -100,7 +100,7 @@
   vars:
     ifw_icinga2_agent_version: "{{ (ifw_components | selectattr('name', 'eq', 'agent')).version | default('latest') }}"
   ansible.builtin.set_fact:
-    _install_command: "{{ lookup('template', role_path + '/templates/windows/icinga_install_command.j2') }}"
+    _install_command: "{{ lookup('template', role_path + '/templates/windows/icinga_install_command.j2') | from_json }}"
 
 - name: Set facts for comparison
   when:
