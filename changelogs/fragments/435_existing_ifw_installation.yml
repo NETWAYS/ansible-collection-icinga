@@ -1,0 +1,3 @@
+bugfixes:
+  - Using the :code:`ifw` role in pre-existing Icinga for Windows installations would fail due to :code:`IfW-CustomHostname` potentially not being set at all.
+    The role now defaults to comparing with :code:`null` if unset, avoiding failure in the process.
