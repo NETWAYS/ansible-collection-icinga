@@ -79,7 +79,7 @@ class ActionModule(ActionBase):
                     if 'apply_target' in obj and obj['apply_target']:
                         object_content += ' ' + object_name + ' to ' + obj['apply_target']
                     elif 'apply_for' in obj and obj['apply_for']:
-                        object_content += ' for (' + obj['apply_for'] + ') '
+                        object_content += ' ' + object_name + ' for (' + obj['apply_for'] + ') '
                         r = re.search(r'^(.+)\s+in\s+', obj['apply_for'])
                         if r:
                             tmp = r.group(1).strip()
