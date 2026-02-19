@@ -1,0 +1,4 @@
+bugfixes:
+  - The :code:`icinga2_object` plugin did not make use of the :code:`name` parameter passed to it when using :code:`apply_for`.
+    If more than one service used the same :code:`apply_for`, this would result in multiple services with the same name, thus leading to failure (#434).
+    The plugin now uses the :code:`name` as a prefix for the service name.
