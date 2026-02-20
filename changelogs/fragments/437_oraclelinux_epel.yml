@@ -1,0 +1,4 @@
+bugfixes:
+  - The package name for EPEL on OracleLinux is :code:`oracle-epel-release-el<version number>`.
+    Some versions of OracleLinux provide a mapping from :code:`epel-release` to the appropriate package name while others do not.
+    The :code:`repos` and :code:`monitoring_plugins` roles now use variables to handle the different names of the package correctly (#437).
