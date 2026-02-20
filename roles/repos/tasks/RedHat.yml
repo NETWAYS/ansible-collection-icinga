@@ -37,7 +37,7 @@
 
 - name: Yum - add EPEL repository
   yum:
-    name: epel-release
+    name: "{{ icinga_repo_epel_package_name }}"
     state: present
   when: icinga_repo_epel|bool == true
 

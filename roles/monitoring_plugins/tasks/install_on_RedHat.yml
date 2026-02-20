@@ -1,7 +1,7 @@
 ---
 - name: Activate epel repository
   ansible.builtin.yum:
-    name: epel-release
+    name: "{{ icinga_monitoring_plugins_epel_package_name }}"
     state: present
   when: icinga_monitoring_plugins_epel|bool
 

@@ -1,5 +1,10 @@
 ---
 
+icinga_monitoring_plugins_epel_package_name: "{{
+  'oracle-epel-release-el' + ansible_facts['distribution_major_version'] if ansible_facts['distribution'] == 'OracleLinux'
+  else 'epel-release'
+}}"
+
 icinga_monitoring_plugins_available_packages:
   - name: apt
     pkg_name: "nagios-plugins-apt"
