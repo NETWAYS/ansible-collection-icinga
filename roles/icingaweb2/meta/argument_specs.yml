@@ -567,6 +567,22 @@ argument_specs:
                         description:
                           - The Icinga custom variable with the "actual" check command obscured by e.g. check_by_ssh.
                         type: str
+              custom_template_files:
+                description:
+                  - Custom templates are good to enhance the graphite basic template library. To include own graphs and modifications.
+                    To copy them into the templates folder please use the O(custom_template_files) dictionary.
+                    The src_path will search within any files/ directory in the Ansible environment.
+                type: list
+                elements: dict
+                options:
+                  name:
+                    description:
+                      - The name of the destination file in the module's templates directory.
+                    required: true
+                  src_path:
+                    description:
+                      - The path to the file on the Ansible controller (uses Ansible's search paths).
+                    required: true
           monitoring:
             description:
               - This configures the L(monitoring module, https://icinga.com/docs/icinga-web/latest/modules/monitoring/doc/03-Configuration/).
@@ -602,3 +618,218 @@ argument_specs:
                       - Defines the default settings for the module.
                       - "Example: C(settings: { acknowledge_sticky: 1 })"
                     type: dict
+          businessprocess:
+            description:
+              - This configures the L(Icinga Business Process module, https://icinga.com/docs/icinga-business-process-modeling/latest/doc/01-About/).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              ### Currently does not do anything. Schema is applied via kickstart (unprivileged user could not apply schema).
+              custom_process_files:
+                description:
+                  - Custom process files are a great way to transfer existing business process configurations into the Business Process Modeling Module.
+                    To copy existing processes into the processes folder please use the C(custom_process_files) dictionary.
+                    The src_path will search within any files/ directory in the Ansible environment.
+                  - "Example: C(icingaweb2_modules.businessprocess.custom_process_files: { [ { name: test.conf, src_path: processes/test.conf } ] })"
+                type: list
+                elements: dict
+                required: false
+          x509:
+            description:
+              - This configures the L(Icinga Web Certificate Monitoring module, https://icinga.com/docs/icinga-certificate-monitoring/latest/doc/03-Configuration/).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              ### Currently does not do anything. Schema is applied via kickstart (unprivileged user could not apply schema).
+              config:
+                description:
+                  - This defines database backend to be used.
+                  - "Example: C(icingaweb2_modules.x509.config: { backend: { resource: x509 } })"
+                type: dict
+              database:
+                description:
+                  - This defines variables necessary to apply the schema to the database.
+                type: dict
+                options:
+                  import_schema:
+                    description:
+                      - Whether the database schema should be applied.
+                    type: bool
+                  type:
+                    description:
+                      - The type of database to be used.
+                    type: str
+                    choices:
+                      - mysql
+                      - pgsql
+                  host:
+                    description:
+                      - The database host to be used.
+                    type: str
+                    default: localhost
+                  port:
+                    description:
+                      - The database port to be used.
+                    type: str
+                  name:
+                    description:
+                      - The name of the database to be used.
+                    type: str
+                    default: x509
+                  user:
+                    description:
+                      - The database user to be used.
+                    type: str
+                    default: x509
+                  password:
+                    description:
+                      - The database password to be used.
+                    type: str
+                  ssl_mode:
+                    description:
+                      - Clients attempt to connect using encryption, falling back to an unencrypted connection if an encrypted connection cannot be established.
+                    type: str
+                  ssl_ca:
+                    description:
+                      - Defines the path to the ca certificate for client authentication.
+                    type: str
+                  ssl_cert:
+                    description:
+                      - Defines the path to the certificate for client authentication.
+                    type: str
+                  ssl_key:
+                    description:
+                      - Defines the path to the certificate key for client key authentication.
+                    type: str
+                  ssl_cipher:
+                    description:
+                      - Ciphers for the client authentication.
+                    type: str
+                  ssl_extra_options:
+                    description:
+                      - Extra options for the client authentication.
+                    type: str
+          kubernetes:
+            description:
+              - This configures the L(Icinga Web Kubernetes module, https://icinga.com/docs/icinga-for-kubernetes/latest/doc/03-Configuration/).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              ### Currently does not do anything. Schema is applied via kickstart (unprivileged user could not apply schema).
+              config:
+                description:
+                  - Defines the general module settings.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                  - "Example: C(icingaweb2_modules.kubernetes.config: { database: { resource: kubernetes_db } })"
+                type: dict
+                required: false
+          doc:
+            description:
+              - This configures the L(Icinga Web Doc module, https://icinga.com/docs/icinga-web/latest/modules/doc/doc/01-About/).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+          migrate:
+            description:
+              - This configures the L(Icinga Web Migrate module, https://icinga.com/docs/icinga-web/latest/doc/01-About/) (part of Icinga Web).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+          setup:
+            description:
+              - This configures the L(Icinga Web Setup module, https://icinga.com/docs/icinga-web/latest/doc/01-About/) (part of Icinga Web).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+          translation:
+            description:
+              - This configures the L(Icinga Web Translation module, https://icinga.com/docs/icinga-web/latest/modules/translation/doc/01-About/).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+          perfdatagraphs:
+            description:
+              - This configures the L(NETWAYS Perfdata Graphs module, https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs/blob/main/doc/03-Configuration.md).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              config:
+                description:
+                  - Defines the general module settings.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                type: dict
+                required: false
+                options:
+                  perfdatagraphs:
+                    description:
+                      - Sets genereal options for Perfdata Graphs.
+                    type: dict
+                    required: true
+                    options:
+                      default_backend:
+                        description:
+                          - Defines the default backend to be used.
+                        type: str
+                        choices:
+                          - Graphite
+                          - InfluxDBv1
+                          - InfluxDBv2
+                      default_timerange:
+                        description:
+                          - Defines the default timerange to visualize.
+                            This uses ISO8601 durations.
+                        type: str
+                      cache_lifetime:
+                        description:
+                          - How long the data for the charts will be cached by the server (in seconds).
+                        type: int
+          perfdatagraphsgraphite:
+            description:
+              - This configures the L(NETWAYS Perfdata Graphs Graphite module, https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs-graphite/blob/main/doc/02-Installation.md#configuration).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              config:
+                description:
+                  - Defines the general module settings.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                  - "Example: C(icingaweb2_modules.perfdatagraphsgraphite.config: { graphite: { api_url: http://localhost:8080, api_timeout: 10, api_tls_insecure: 0 } })"
+                type: dict
+                required: false
+          perfdatagraphsinfluxdbv1:
+            description:
+              - This configures the L(NETWAYS Perfdata Graphs InfluxDBv1 module, https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs-influxdbv1/blob/main/doc/02-Installation.md#configuration).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              config:
+                description:
+                  - Defines the general module settings.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                  - "Example: C(icingaweb2_modules.perfdatagraphsinfluxdbv1.config: { influx: { api_url: http://localhost:8086, api_database: icinga2, api_username: icinga2-user, api_password: icinga2-password } })"
+                type: dict
+                required: false
+          perfdatagraphsinfluxdbv2:
+            description:
+              - This configures the L(NETWAYS Perfdata Graphs InfluxDBv2 module, https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs-influxdbv2/blob/main/doc/02-Installation.md#configuration).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              config:
+                description:
+                  - Defines the general module settings.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                  - "Example: C(icingaweb2_modules.perfdatagraphsinfluxdbv2.config: { influx: { api_url: http://localhost:8086, api_org: theorganization, api_bucket: icinga2, api_token: some-api-token } })"
+                type: dict
+                required: false
