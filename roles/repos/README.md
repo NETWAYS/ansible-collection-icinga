@@ -37,7 +37,7 @@ In addition to the Icinga 2 related repositories NETWAYS repositories are also m
 
 To activate either the [Extras repository](https://packages.netways.de/extras/) or the [Plugins repository](https://packages.netways.de/plugins/) set the respective variable to `true`.
 
-```
+```yaml
 netways_repo_extras: false
 netways_repo_plugins: false
 ```
