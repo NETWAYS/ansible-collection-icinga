@@ -2,8 +2,10 @@ DOCUMENTATION:
   name: prefix
   author:
     - Lennart Betz <lennart.betz@netways.de>
-  short_description: Prefix dictionaries / strings
+  version_added: "0.1.0"
+  short_description: Adds a prefix to a list's string elements or dictionary's keys
   description:
+    - Adds a chosen prefix to each element/key of a list/dictionary.
     - Prefixes every key in dictionary with given string.
     - Prefixes every element in list of strings with given string.
   positional: _input
@@ -11,11 +13,11 @@ DOCUMENTATION:
     _input:
       description:
         - Input dictionary or list of strings.
-      type: dict/list
+      type: list / dict
       required: true
     prefix:
       description:
-        - The prefix to apply.
+        - The string that should be used as a prefix.
       type: string
       required: true
 
@@ -28,5 +30,5 @@ EXAMPLES: |
 
 RETURN:
   _value:
-    description: The prefixed dictionary / list
-    type: dict / list
+    description: The list entries / dict keys with prefix
+    type: list / dict

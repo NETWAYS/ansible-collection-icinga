@@ -1,0 +1,204 @@
+---
+
+argument_specs:
+  main:
+    short_description: Role to manage Icinga repositories
+    description:
+      - Role to manage Icinga repositories.
+      - Also manages the NETWAYS Extras and Plugins repositories.
+    author:
+      - Lennart Betz <lennart.betz@netways.de>
+      - Thilo Wening <thilo.wening@netways.de>
+      - Thomas Widhalm <thomas.widhalm@netways.de>
+    options:
+      icinga_repo_gpgkey:
+        description:
+          - The URL to the Icinga signing key.
+        type: str
+        default: https://packages.icinga.com/icinga.key
+      icinga_repo_apt_key:
+        description:
+          - The URL to the Icinga signing key for distributions using APT.
+        type: str
+        default: "{{ icinga_repo_gpgkey }}"
+      icinga_repo_yum_stable_key:
+        description:
+          - The URL to the Icinga signing key for EL distributions (stable repository).
+        type: str
+        default: "{{ icinga_repo_gpgkey }}"
+      icinga_repo_yum_testing_key:
+        description:
+          - The URL to the Icinga signing key for EL distributions (testing repository).
+        type: str
+        default: "{{ icinga_repo_gpgkey }}"
+      icinga_repo_yum_snapshot_key:
+        description:
+          - The URL to the Icinga signing key for EL distributions (snapshot repository).
+        type: str
+        default: "{{ icinga_repo_gpgkey }}"
+      icinga_repo_zypper_key:
+        description:
+          - The URL to the Icinga signing key for SUSE.
+        type: str
+        default: "{{ icinga_repo_gpgkey }}"
+      icinga_repo_yum_stable_url:
+        description:
+          - The base URL of the repository for EL distributions (stable repository).
+          - To use the Icinga subscription the URL should be changed to C(https://packages.icinga.com/subscription/rhel/$releasever/release/).
+        type: str
+        default: http://packages.icinga.com/epel/$releasever/release/
+      icinga_repo_yum_stable_description:
+        description:
+          - The description to be used for the repository definition (stable repository).
+        type: str
+        default: ICINGA (stable release for epel)
+      icinga_repo_yum_testing_url:
+        description:
+          - The base URL of the repository for EL distributions (testing repository).
+        type: str
+        default: http://packages.icinga.com/epel/$releasever/testing/
+      icinga_repo_yum_testing_description:
+        description:
+          - The description to be used for the repository definition (testing repository).
+        type: str
+        default: ICINGA (testing release for epel)
+      icinga_repo_yum_snapshot_url:
+        description:
+          - The base URL of the repository for EL distributions (snapshot repository).
+          - To use the Icinga subscription the URL should be changed to C(https://packages.icinga.com/subscription/rhel/$releasever/snapshot/).
+        type: str
+        default: http://packages.icinga.com/epel/$releasever/snapshot/
+      icinga_repo_yum_snapshot_description:
+        description:
+          - The description to be used for the repository definition (snapshot repository).
+        type: str
+        default: ICINGA (snapshot release for epel)
+      icinga_repo_zypper_stable_url:
+        description:
+          - The base URL of the repository for openSUSE (stable repository).
+          - To use the Icinga subscription (SLES) the URL should be changed to C(https://packages.icinga.com/subscription/sles/$releasever/release/).
+        type: str
+        default: https://packages.icinga.com/openSUSE/$releasever/release/
+      icinga_repo_zypper_snapshot_url:
+        description:
+          - The base URL of the repository for openSUSE (snapshot repository).
+          - To use the Icinga subscription (SLES) the URL should be changed to C(https://packages.icinga.com/subscription/sles/$releasever/snapshot/).
+        type: str
+        default: https://packages.icinga.com/openSUSE/$releasever/snapshot/
+      icinga_repo_apt_url:
+        description:
+          - The base URL of the repository for Debian-like distributions.
+        type: str
+        default: "http://packages.icinga.com/{{ ansible_facts['distribution'] | lower }}"
+      icinga_repo_apt_stable_deb:
+        description:
+          - The (deb) suite to use for the stable repository.
+        type: str
+        default: "icinga-{{ ansible_facts['distribution_release'] | lower }}"
+      icinga_repo_apt_testing_deb:
+        description:
+          - The (deb) suite to use for the testing repository.
+        type: str
+        default: "icinga-{{ ansible_facts['distribution_release'] | lower }}-testing"
+      icinga_repo_apt_snapshot_deb:
+        description:
+          - The (deb) suite to use for the snapshot repository.
+        type: str
+        default: "icinga-{{ ansible_facts['distribution_release'] | lower }}-snapshots"
+      icinga_repo_apt_keyring:
+        description:
+          - File path where the Icinga keyring should be deployed.
+        type: str
+        default: /etc/apt/keyrings/icinga-archive-keyring.asc
+      icinga_repo_stable:
+        description:
+          - Whether to activate the stable repository.
+        type: bool
+        default: true
+      icinga_repo_testing:
+        description:
+          - Whether to activate the testing repository.
+        type: bool
+        default: false
+      icinga_repo_snapshot:
+        description:
+          - Whether to activate the snapshot repository.
+        type: bool
+        default: false
+      icinga_repo_epel:
+        description:
+          - Whether to install the EPEL repository.
+            EPEL is required since the Icinga stack has some dependencies on packages from EPEL.
+        type: bool
+        default: false
+      icinga_repo_scl:
+        description:
+          - Whether to install the Software Collections repository.
+            Only relevant for EL distributions with major version < 8 needing Icinga Web 2.
+        type: bool
+        default: false
+      netways_repo_gpgkey:
+        description:
+          - The URL to the NETWAYS signing key.
+        type: str
+        default: https://packages.netways.de/netways-repo.asc
+      netways_repo_extras:
+        description:
+          - Whether to activate the NETWAYS Extras repository.
+        type: bool
+        default: false
+      netways_repo_plugins:
+        description:
+          - Whether to activate the NETWAYS Plugins repository.
+        type: bool
+        default: false
+      netways_repo_extras_yum_key:
+        description:
+          - The URL to the NETWAYS signing key for EL distributions (Extras repository).
+        type: str
+        default: "{{ netways_repo_gpgkey }}"
+      netways_repo_extras_yum_url:
+        description:
+          - The base URL of the NETWAYS Extras repository for EL distributions.
+        type: str
+        default: https://packages.netways.de/extras/epel/$releasever
+      netways_repo_extras_yum_description:
+        description:
+          - The description to be used for the NETWAYS Extras repository definition.
+        type: str
+        default: NETWAYS provided additional software - Enterprise Linux $releasever
+      netways_repo_plugins_yum_key:
+        description:
+          - The URL to the NETWAYS signing key for EL distributions (Plugins repository).
+        type: str
+        default: "{{ netways_repo_gpgkey }}"
+      netways_repo_plugins_yum_url:
+        description:
+          - The base URL of the NETWAYS Plugins repository for EL distributions.
+        type: str
+        default: https://packages.netways.de/plugins/epel/$releasever
+      netways_repo_plugins_yum_description:
+        description:
+          - The description to be used for the NETWAYS Plugins repository definition.
+        type: str
+        default: NETWAYS provided monitoring plugins - Enterprise Linux $releasever
+      netways_repo_apt_key:
+        description:
+          - The URL to the NETWAYS signing key for Debian-like distributions.
+        type: str
+        default: "{{ netways_repo_gpgkey }}"
+      netways_repo_apt_keyring:
+        description:
+          - File path where the NETWAYS keyring should be deployed.
+        type: str
+        default: /etc/apt/keyrings/netways.asc
+      netways_repo_extras_apt_url:
+        description:
+          - The base URL of the NETWAYS Extras repository for Debian-like distributions.
+        type: str
+        default: "https://packages.netways.de/extras/{{ ansible_facts['distribution'] | lower }}"
+      netways_repo_plugins_apt_url:
+        description:
+          - The base URL of the NETWAYS Plugins repository for Debian-like distributions.
+        type: str
+        default: "https://packages.netways.de/plugins/{{ ansible_facts['distribution'] | lower }}"

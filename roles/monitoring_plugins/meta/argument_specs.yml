@@ -1,0 +1,54 @@
+---
+
+argument_specs:
+  main:
+    short_description: Role to manage Monitoring Plugins
+    description:
+      - Role to install and remove Monitoring Plugins / Nagios Plugins.
+    author:
+      - Matthias Döhler <matthias.doehler@netways.de>
+    options:
+      icinga_monitoring_plugins_epel:
+        description:
+          - Whether to install the EPEL repository. Only used on RHEL-likes.
+        type: bool
+        default: false
+      icinga_monitoring_plugins_crb:
+        description:
+          - Whether to enable the CRB (or Powertools) repository during plugin installation.
+            Enabling CRB/Powertools may be necessary, depending on the plugins wanted and the repositories already enabled.
+        type: bool
+        default: false
+      icinga_monitoring_plugins_epel_package_name:
+        description:
+          - The name of the package containing the EPEL repository in order to install it.
+          - Defaults to C(epel-release) (or C(oracle-epel-release-el<version_major>) on OracleLinux).
+        type: str
+        default: epel-release
+      icinga_monitoring_plugins_remove:
+        description:
+          - Whether installed monitoring plugins should be removed if they are not listed in O(icinga_monitoring_plugins_check_commands).
+        type: bool
+        default: true
+      icinga_monitoring_plugins_autoremove:
+        description:
+          - Whether to automatically remove unneeded dependencies when removing monitoring plugins.
+        type: bool
+        default: false
+      icinga_monitoring_plugins_dependency_repos:
+        description:
+          - A list of additional repositories to enable during the installation of the given monitoring plugins.
+          - Defaults to C([]) if O(icinga_monitoring_plugins_crb=false).
+          - Defaults to C([crb]) (or C([powertools]) for older versions of the OS) if O(icinga_monitoring_plugins_crb=true).
+        type: list
+        elements: str
+        default: []
+      icinga_monitoring_plugins_check_commands:
+        description:
+          - A list of monitoring plugins to install.
+            This expects the short name of the plugin.
+            The role itself has a mapping from the plugin name to the name of the actual package that needs to be installed.
+          - "Example: C(icinga_monitoring_plugins_check_commands: [disk, load, snmp])"
+        type: list
+        elements: str
+        required: true
