@@ -567,39 +567,38 @@ argument_specs:
                         description:
                           - The Icinga custom variable with the "actual" check command obscured by e.g. check_by_ssh.
                         type: str
-          ### Disabled for now since another PR is needed for the monitoring module to even work.
-          #monitoring:
-          #  description:
-          #    - This configures the L(monitoring module, https://icinga.com/docs/icinga-web/latest/modules/monitoring/doc/03-Configuration/).
-          #  type: dict
-          #  options:
-          #    source: *module_source
-          #    enabled: *module_enabled
-          #    commandtransports: *common_commandtransports
-          #    backends:
-          #      description:
-          #        - Defines the database backends to use.
-          #        - Each key defines a backend. Each subkey defines an option to that backend.
-          #        - "Example: C(my_ido_backend: { type: ido, disabled: 0, resource: ido_resource })"
-          #      type: dict
-          #    config:
-          #      description:
-          #        - Defines the general module settings.
-          #        - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
-          #      type: dict
-          #      options:
-          #        security:
-          #          description:
-          #            - Defines the security settings.
-          #          type: dict
-          #          options:
-          #            protected_customvars:
-          #              description:
-          #                - Defines variable name patterns. The values of variables that match a given pattern are hidden from the user's view.
-          #                - "Example: C(protected_customvars: *pw*,*pass*,community)"
-          #              type: str
-          #        settings:
-          #          description:
-          #            - Defines the default settings for the module.
-          #            - "Example: C(settings: { acknowledge_sticky: 1 })"
-          #          type: dict
+          monitoring:
+            description:
+              - This configures the L(monitoring module, https://icinga.com/docs/icinga-web/latest/modules/monitoring/doc/03-Configuration/).
+            type: dict
+            options:
+              source: *module_source
+              enabled: *module_enabled
+              commandtransports: *common_commandtransports
+              backends:
+                description:
+                  - Defines the database backends to use.
+                  - Each key defines a backend. Each subkey defines an option to that backend.
+                  - "Example: C(my_ido_backend: { type: ido, disabled: 0, resource: ido_resource })"
+                type: dict
+              config:
+                description:
+                  - Defines the general module settings.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                type: dict
+                options:
+                  security:
+                    description:
+                      - Defines the security settings.
+                    type: dict
+                    options:
+                      protected_customvars:
+                        description:
+                          - Defines variable name patterns. The values of variables that match a given pattern are hidden from the user's view.
+                          - "Example: C(protected_customvars: *pw*,*pass*,community)"
+                        type: str
+                  settings:
+                    description:
+                      - Defines the default settings for the module.
+                      - "Example: C(settings: { acknowledge_sticky: 1 })"
+                    type: dict
