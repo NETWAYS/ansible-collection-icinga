@@ -206,13 +206,13 @@ options:
 '''
 
 EXAMPLES = '''
-- icinga.icinga.icinga2_service:
+- netways.icinga.icinga2_service:
     name: "myservice"
     file: "custom/service.conf"
     host_name: "host.example.com"
     check_command: "ping"
 
-- icinga.icinga.icinga2_service:
+- netways.icinga.icinga2_service:
     name: "myservice"
     file: "custom/service.conf"
     check_command: "disk"

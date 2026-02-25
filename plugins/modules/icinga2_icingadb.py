@@ -102,17 +102,17 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_icingadb:
-  name: "myicingadb"
-  ca_path: "/etc/pki/tls/certs/redis-ca.crt"
-  cert_path: "/etc/pki/tls/certs/local-icinga-host.crt"
-  connect_timeout: 30
-  enable_tls: true
-  host: "redis-host.localdomain"
-  insecure_noverify: false
-  key_path: "/etc/pki/tls/private/local-icinga-host.key"
-  password: "redis-password"
-  port: 6380
+- netways.icinga.icinga2_icingadb:
+    name: "myicingadb"
+    ca_path: "/etc/pki/tls/certs/redis-ca.crt"
+    cert_path: "/etc/pki/tls/certs/local-icinga-host.crt"
+    connect_timeout: 30
+    enable_tls: true
+    host: "redis-host.localdomain"
+    insecure_noverify: false
+    key_path: "/etc/pki/tls/private/local-icinga-host.key"
+    password: "redis-password"
+    port: 6380
 '''
 
 RETURN = '''

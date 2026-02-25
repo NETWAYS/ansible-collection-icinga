@@ -125,7 +125,7 @@ options:
 '''
 
 EXAMPLES = '''
-- icinga.icinga.icinga2_scheduleddowntime:
+- netways.icinga.icinga2_scheduleddowntime:
     name: "myscheduleddowntime"
     file: "custom/scheduleddowntime.conf"
     apply: true

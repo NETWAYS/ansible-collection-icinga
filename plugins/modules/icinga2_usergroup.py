@@ -48,7 +48,7 @@ options:
 '''
 
 EXAMPLES = '''
-- icinga.icinga.icinga2_usergroup:
+- netways.icinga.icinga2_usergroup:
     name: "myusergroup"
     file: "custom/usergroup.conf"
     display_name: "My UserGroup Display Name"

@@ -55,11 +55,11 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_endpoint:
-  name: "satellite1"
-  host: "192.168.2.75"
-  log_duration: "2d"
-  port: 5667
+- netways.icinga.icinga2_endpoint:
+    name: "satellite1"
+    host: "192.168.2.75"
+    log_duration: "2d"
+    port: 5667
 '''
 
 RETURN = '''

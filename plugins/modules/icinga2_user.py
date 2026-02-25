@@ -100,7 +100,7 @@ options:
 '''
 
 EXAMPLES = '''
-- icinga.icinga.icinga2_user:
+- netways.icinga.icinga2_user:
     name: "myuser"
     file: "custom/users.conf"
     display_name: "My User Display Name"

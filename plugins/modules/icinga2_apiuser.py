@@ -52,11 +52,11 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_apiuser:
-  name: "myapiuser"
-  permissions:
-    - "objects/query/Host"
-    - "objects/query/Service"
+- netways.icinga.icinga2_apiuser:
+    name: "myapiuser"
+    permissions:
+      - "objects/query/Host"
+      - "objects/query/Service"
 '''
 
 RETURN = '''

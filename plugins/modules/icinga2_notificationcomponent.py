@@ -43,9 +43,9 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_notificationcomponent:
-  name: "mynotificationcomponent"
-  enable_ha: true
+- netways.icinga.icinga2_notificationcomponent:
+    name: "mynotificationcomponent"
+    enable_ha: true
 '''
 
 RETURN = '''

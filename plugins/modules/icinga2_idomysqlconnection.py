@@ -142,9 +142,9 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_idomysqlconnection:
-  name: "myidomysqlconnection"
-  password: "super-secret-password"
+- netways.icinga.icinga2_idomysqlconnection:
+    name: "myidomysqlconnection"
+    password: "super-secret-password"
 '''
 
 RETURN = '''

@@ -87,18 +87,18 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_gelfwriter:
-  name: "mygelfwriter"
-  host: "gelf.localdomain"
-  port: 12201
-  source: "icinga"
-  ca_path: "/etc/pki/tls/certs/gelf-ca.crt"
-  cert_path: "/etc/pki/tls/certs/local-icinga-host.crt"
-  key_path: "/etc/pki/tls/private/local-icinga-host.key"
-  enable_ha: false
-  enable_send_perfdata: true
-  enable_tls: true
-  insecure_noverify: false
+- netways.icinga.icinga2_gelfwriter:
+    name: "mygelfwriter"
+    host: "gelf.localdomain"
+    port: 12201
+    source: "icinga"
+    ca_path: "/etc/pki/tls/certs/gelf-ca.crt"
+    cert_path: "/etc/pki/tls/certs/local-icinga-host.crt"
+    key_path: "/etc/pki/tls/private/local-icinga-host.key"
+    enable_ha: false
+    enable_send_perfdata: true
+    enable_tls: true
+    insecure_noverify: false
 '''
 
 RETURN = '''

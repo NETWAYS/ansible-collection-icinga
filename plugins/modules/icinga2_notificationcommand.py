@@ -76,12 +76,12 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_notificationcommand:
-  name: "mynotificationcommand"
-  file: "custom/notificationcommands.conf"
-  command:
-    - "ConfigDir"
-    - "/scripts/mail-service-notification.sh"
+- netways.icinga.icinga2_notificationcommand:
+    name: "mynotificationcommand"
+    file: "custom/notificationcommands.conf"
+    command:
+      - "ConfigDir"
+      - "/scripts/mail-service-notification.sh"
 '''
 
 RETURN = '''

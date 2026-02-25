@@ -134,9 +134,9 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_idopgsqlconnection:
-  name: "myidopgsqlconnection"
-  password: "super-secret-password"
+- netways.icinga.icinga2_idopgsqlconnection:
+    name: "myidopgsqlconnection"
+    password: "super-secret-password"
 '''
 
 RETURN = '''

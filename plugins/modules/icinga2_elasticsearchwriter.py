@@ -107,22 +107,22 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_elasticsearchwriter:
-  name: "es-writer"
-  ca_path: "/etc/pki/tls/certs/es-ca.crt"
-  cert_path: "/etc/pki/tls/certs/local-icinga-host.crt"
-  key_path: "/etc/pki/tls/private/local-icinga-host.crt"
-  enable_ha: false
-  enable_send_perfdata: true
-  enable_tls: true
-  insecure_noverify: false
-  flush_interval: "30s"
-  flush_threshold: 2048
-  host: "es.localdomain"
-  port: 9200
-  index: "icinga"
-  username: "es-icinga-user"
-  password: "es-icinga-user-password"
+- netways.icinga.icinga2_elasticsearchwriter:
+    name: "es-writer"
+    ca_path: "/etc/pki/tls/certs/es-ca.crt"
+    cert_path: "/etc/pki/tls/certs/local-icinga-host.crt"
+    key_path: "/etc/pki/tls/private/local-icinga-host.crt"
+    enable_ha: false
+    enable_send_perfdata: true
+    enable_tls: true
+    insecure_noverify: false
+    flush_interval: "30s"
+    flush_threshold: 2048
+    host: "es.localdomain"
+    port: 9200
+    index: "icinga"
+    username: "es-icinga-user"
+    password: "es-icinga-user-password"
 '''
 
 RETURN = '''

@@ -43,8 +43,8 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_externalcommandlistener:
-  name: "myexternalcommandlistener"
+- netways.icinga.icinga2_externalcommandlistener:
+    name: "myexternalcommandlistener"
 '''
 
 RETURN = '''

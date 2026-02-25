@@ -63,11 +63,11 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_timeperiod:
-  name: "mytimeperiod"
-  file: "custom/timeperiods.conf"
-  ranges:
-    monday: "08:00-09:00"
+- netways.icinga.icinga2_timeperiod:
+    name: "mytimeperiod"
+    file: "custom/timeperiods.conf"
+    ranges:
+      monday: "08:00-09:00"
 '''
 
 RETURN = '''

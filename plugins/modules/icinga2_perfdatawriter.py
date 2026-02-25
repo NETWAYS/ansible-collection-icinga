@@ -77,14 +77,14 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_perfdatawriter:
-  name: "myperfdatawriter"
-  enable_ha: true
-  host_perfdata_path: "/var/spool/icinga2/perfdata/host-perfdata"
-  host_temp_path: "/var/spool/icinga2/tmp/host-perfdata"
-  rotation_interval: 60
-  service_perfdata_path: "/var/spool/icinga2/perfdata/service-perfdata"
-  service_temp_path: "/var/spool/icinga2/tmp/service-perfdata"
+- netways.icinga.icinga2_perfdatawriter:
+    name: "myperfdatawriter"
+    enable_ha: true
+    host_perfdata_path: "/var/spool/icinga2/perfdata/host-perfdata"
+    host_temp_path: "/var/spool/icinga2/tmp/host-perfdata"
+    rotation_interval: 60
+    service_perfdata_path: "/var/spool/icinga2/perfdata/service-perfdata"
+    service_temp_path: "/var/spool/icinga2/tmp/service-perfdata"
 '''
 
 RETURN = '''

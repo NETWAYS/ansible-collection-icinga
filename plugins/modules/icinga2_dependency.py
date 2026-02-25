@@ -124,26 +124,26 @@ options:
 
 EXAMPLES = '''
 # A service depending on a parent's service
-icinga.icinga.icinga2_dependency:
-  name: "service-to-service-dependency"
-  file: "custom/dependencies.conf"
-  parent_host_name: "dbhost"
-  parent_service_name: "mysql-service"
-  child_host_name: "webserver"
-  child_service_name: "myapplication"
+- netways.icinga.icinga2_dependency:
+    name: "service-to-service-dependency"
+    file: "custom/dependencies.conf"
+    parent_host_name: "dbhost"
+    parent_service_name: "mysql-service"
+    child_host_name: "webserver"
+    child_service_name: "myapplication"
 
 
 # Multiple hosts depending on common parent host
-icinga.icinga.icinga2_dependency:
-  name: "apply-host-to-host-dependency"
-  file: "custom/dependencies.conf"
-  apply: true
-  apply_target: "Host"
-  parent_host_name: "example-router"
-  disable_checks: false
-  disable_notifications: true
-  assign:
-    - "example-router == host.vars.parent_router"
+- netways.icinga.icinga2_dependency:
+    name: "apply-host-to-host-dependency"
+    file: "custom/dependencies.conf"
+    apply: true
+    apply_target: "Host"
+    parent_host_name: "example-router"
+    disable_checks: false
+    disable_notifications: true
+    assign:
+      - "example-router == host.vars.parent_router"
 '''
 
 RETURN = '''

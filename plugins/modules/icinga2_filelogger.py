@@ -50,8 +50,8 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_filelogger:
-  name: "myfilelogger"
+- netways.icinga.icinga2_filelogger:
+    name: "myfilelogger"
 '''
 
 RETURN = '''

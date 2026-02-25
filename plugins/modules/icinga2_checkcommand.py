@@ -76,12 +76,12 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_checkcommand:
-  name: "mycheckcommand"
-  command:
-    - /usr/lib64/nagios/plugins
-    - /contrib
-    - /check_nwc_health
+- netways.icinga.icinga2_checkcommand:
+    name: "mycheckcommand"
+    command:
+      - /usr/lib64/nagios/plugins
+      - /contrib
+      - /check_nwc_health
 '''
 
 RETURN = '''

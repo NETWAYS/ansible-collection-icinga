@@ -134,8 +134,8 @@ options:
 '''
 
 EXAMPLES = r'''
-icinga.icinga.icinga2_apilistener:
-  name: "api"
+- netways.icinga.icinga2_apilistener:
+    name: "api"
 '''
 
 RETURN = r'''

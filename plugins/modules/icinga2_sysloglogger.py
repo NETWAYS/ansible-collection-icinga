@@ -51,10 +51,10 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_sysloglogger:
-  name: "mysysloglogger"
-  severity: "information"
-  facility: "LOG_USER"
+- netways.icinga.icinga2_sysloglogger:
+    name: "mysysloglogger"
+    severity: "information"
+    facility: "LOG_USER"
 '''
 
 RETURN = '''

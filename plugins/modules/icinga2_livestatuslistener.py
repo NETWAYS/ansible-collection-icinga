@@ -63,11 +63,11 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_livestatuslistener:
-  name: "mylivestatuslistener"
-  socket_type: "unix"
-  socket_path: "RunDir + /icinga2/cmd/livestatus"
-  compat_log_path: "LogDir + /compat"
+- netways.icinga.icinga2_livestatuslistener:
+    name: "mylivestatuslistener"
+    socket_type: "unix"
+    socket_path: "RunDir + /icinga2/cmd/livestatus"
+    compat_log_path: "LogDir + /compat"
 '''
 
 RETURN = '''

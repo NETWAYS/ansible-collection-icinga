@@ -52,15 +52,15 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_zone:
-  name: "myzone"
-  endpoints: "master1.example.com"
+- netways.icinga.icinga2_zone:
+    name: "myzone"
+    endpoints: "master1.example.com"
 
-icinga.icinga.icinga2_zone:
-  name: "myzone"
-  endpoints:
-    - "master1.example.com"
-    - "master2.example.com"
+- netways.icinga.icinga2_zone:
+    name: "myzone"
+    endpoints:
+      - "master1.example.com"
+      - "master2.example.com"
 '''
 
 RETURN = '''

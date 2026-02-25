@@ -158,7 +158,7 @@ options:
 '''
 
 EXAMPLES = '''
-- icinga.icinga.icinga2_notification:
+- netways.icinga.icinga2_notification:
     name: "mynotification"
     file: "custom/notification.conf"
     command: "mail-service-notification"
@@ -241,7 +241,6 @@ args:
         - Unknown
     types:
       description: The specified transition types for which to send notifications.
-      description: WIP
       returned: success
       type: list
       elements: str

@@ -77,14 +77,14 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_icingaapplication:
-  name: "myicingaapplication"
-  enable_host_checks: true
-  enable_service_checks: true
-  enable_event_handlers: false
-  enable_flapping: false
-  enable_notifications: true
-  enable_perfdata: true
+- netways.icinga.icinga2_icingaapplication:
+    name: "myicingaapplication"
+    enable_host_checks: true
+    enable_service_checks: true
+    enable_event_handlers: false
+    enable_flapping: false
+    enable_notifications: true
+    enable_perfdata: true
 '''
 
 RETURN = '''

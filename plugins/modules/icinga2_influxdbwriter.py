@@ -127,35 +127,35 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_influxdbwriter:
-  name: "myinfluxdbwriter"
-  host: "influx.localdomain"
-  port: 8086
-  database: "icinga"
-  username: "icinga-user"
-  password: "icinga-user-password"
-  basic_auth:
-    username: "icinga"
-    password: "password"
-  host_template:
-    measurement: "$host.check_command$"
-    tags:
-      hostname: "$host.name$"
-  service_template:
-    measurement: "$service.check_command$"
-    tags:
-      hostname: "$host.name$"
-      service: "$service.name$"
-  ssl_enable: true
-  ssl_insecure_noverify: false
-  ssl_ca_cert: "/etc/pki/tls/certs/influx-ca.crt"
-  ssl_cert: "/etc/pki/tls/certs/local-icinga-host.crt"
-  ssl_key: "/etc/pki/tls/private/local-icinga-host.key"
-  enable_ha: false
-  enable_send_metadata: true
-  enable_send_thresholds: true
-  flush_interval: "30s"
-  flush_threshold: 2048
+- netways.icinga.icinga2_influxdbwriter:
+    name: "myinfluxdbwriter"
+    host: "influx.localdomain"
+    port: 8086
+    database: "icinga"
+    username: "icinga-user"
+    password: "icinga-user-password"
+    basic_auth:
+      username: "icinga"
+      password: "password"
+    host_template:
+      measurement: "$host.check_command$"
+      tags:
+        hostname: "$host.name$"
+    service_template:
+      measurement: "$service.check_command$"
+      tags:
+        hostname: "$host.name$"
+        service: "$service.name$"
+    ssl_enable: true
+    ssl_insecure_noverify: false
+    ssl_ca_cert: "/etc/pki/tls/certs/influx-ca.crt"
+    ssl_cert: "/etc/pki/tls/certs/local-icinga-host.crt"
+    ssl_key: "/etc/pki/tls/private/local-icinga-host.key"
+    enable_ha: false
+    enable_send_metadata: true
+    enable_send_thresholds: true
+    flush_interval: "30s"
+    flush_threshold: 2048
 '''
 
 RETURN = '''

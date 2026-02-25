@@ -193,7 +193,7 @@ options:
 '''
 
 EXAMPLES = '''
-- icinga.icinga.icinga2_host:
+- netways.icinga.icinga2_host:
     name: "myhost"
     file: "custom/host.conf"
     display_name: "My Host Display Name"

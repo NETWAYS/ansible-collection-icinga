@@ -37,8 +37,8 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_checkercomponent:
-  name: "checker"
+- netways.icinga.icinga2_checkercomponent:
+    name: "checker"
 '''
 
 RETURN = '''

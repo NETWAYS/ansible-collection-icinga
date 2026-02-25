@@ -62,7 +62,7 @@ options:
 '''
 
 EXAMPLES = '''
-- icinga.icinga.icinga2_hostgroup:
+- netways.icinga.icinga2_hostgroup:
     name: "myhostgroup"
     file: "custom/hostgroup.conf"
     display_name: "My HostGroup Display Name"

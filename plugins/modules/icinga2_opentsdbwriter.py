@@ -71,19 +71,19 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_opentsdbwriter:
-  name: "myopentsdbwriter"
-  host: "opentsdb-host.localdomain"
-  port: 4242
-  enable_ha: false
-  host_template:
-    metric: "icinga.host"
-    tags:
-      zone: "$host.zone$"
-  service_template:
-    metric: "icinga.service.$service.check_command$"
-    tags:
-      zone: "$service.zone$"
+- netways.icinga.icinga2_opentsdbwriter:
+    name: "myopentsdbwriter"
+    host: "opentsdb-host.localdomain"
+    port: 4242
+    enable_ha: false
+    host_template:
+      metric: "icinga.host"
+      tags:
+        zone: "$host.zone$"
+    service_template:
+      metric: "icinga.service.$service.check_command$"
+      tags:
+        zone: "$service.zone$"
 '''
 
 RETURN = '''

@@ -62,7 +62,7 @@ options:
 '''
 
 EXAMPLES = '''
-- icinga.icinga.icinga2_servicegroup:
+- netways.icinga.icinga2_servicegroup:
     name: "myservicegroup"
     file: "custom/servicegroup.conf"
     display_name: "My ServiceGroup Display Name"

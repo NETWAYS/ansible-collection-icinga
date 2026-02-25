@@ -76,11 +76,11 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_eventcommand:
-  name: "restart-httpd-event"
-  file: "custom/eventcommands.conf"
-  command:
-    - /opt/bin/restart-httpd.sh
+- netways.icinga.icinga2_eventcommand:
+    name: "restart-httpd-event"
+    file: "custom/eventcommands.conf"
+    command:
+      - /opt/bin/restart-httpd.sh
 '''
 
 RETURN = '''

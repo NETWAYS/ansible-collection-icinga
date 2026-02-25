@@ -77,15 +77,15 @@ options:
 '''
 
 EXAMPLES = '''
-icinga.icinga.icinga2_graphitewriter:
-  name: "mygraphitewriter"
-  enable_ha: false
-  enable_send_metadata: true
-  enable_send_thresholds: true
-  host: "carbon.localdomain"
-  host_name_template: "icinga.$host.name$.host.$host.check_command$"
-  port: 2003
-  service_name_template: "icinga.$host.name$.services.$service.name$.$service.check_command$"
+- netways.icinga.icinga2_graphitewriter:
+    name: "mygraphitewriter"
+    enable_ha: false
+    enable_send_metadata: true
+    enable_send_thresholds: true
+    host: "carbon.localdomain"
+    host_name_template: "icinga.$host.name$.host.$host.check_command$"
+    port: 2003
+    service_name_template: "icinga.$host.name$.services.$service.name$.$service.check_command$"
 '''
 
 RETURN = '''

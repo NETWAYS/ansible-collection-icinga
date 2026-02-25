@@ -47,10 +47,10 @@ options:
 '''
 
 EXAMPLES = '''
-netways.icinga.icinga2_compatlogger:
-  name: "mycompatlogger"
-  log_dir: "LogDir + /compat"
-  rotation_method: "monthly"
+- netways.icinga.icinga2_compatlogger:
+    name: "mycompatlogger"
+    log_dir: "LogDir + /compat"
+    rotation_method: "monthly"
 '''
 
 RETURN = '''
