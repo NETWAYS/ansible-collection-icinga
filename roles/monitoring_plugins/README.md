@@ -3,7 +3,7 @@
 This role manages the installation/removal of many well known check plugins typically used in monitoring systems.<br>
 The list is based on the section *"Plugin Check Commands for Monitoring Plugins"* as seen in the [**Icinga Template Library** (ITL)](https://icinga.com/docs/icinga-2/latest/doc/10-icinga-template-library/#plugin-check-commands-for-monitoring-plugins).
 
-* [List of available check commands](check_command_list.md)
+* [List of available check commands](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-monitoring_plugins/check_command_list.md)
 
 > For Suse based systems you need the Ansible module `zypper`. Refer to the [getting started](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/getting-started.md#requirements) section.
 
@@ -32,7 +32,7 @@ The list is based on the section *"Plugin Check Commands for Monitoring Plugins"
 - `icinga_monitoring_plugins_check_commands: list`<br>
   Decides what check plugins will be installed. Default: `undefined`<br>
   An empty list will be accepted.<br>
-  If undefined, the role will fail. Also see [List of available check commands](check_command_list.md).
+  If undefined, the role will fail. Also see [List of available check commands](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-monitoring_plugins/check_command_list.md).
 
 ## Check Commands
 

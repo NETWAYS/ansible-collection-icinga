@@ -4,16 +4,16 @@ Collection to setup and manage components of the Icinga software stack.
 
 ## Documentation and Roles
 * [Getting Started](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/getting-started.md)
-* [Role: netways.icinga.repos](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-repos/README.md)
-* [Role: netways.icinga.icinga2](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icinga2/README.md)
+* [Role: netways.icinga.repos](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-repos/)
+* [Role: netways.icinga.icinga2](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icinga2/)
   * [Parser and Monitoring Objects](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icinga2/objects.md)
   * [Features](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icinga2/features.md)
-* [Role: netways.icinga.icingadb](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icingadb/README.md)
-* [Role: netways.icinga.icingadb_redis](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icingadb_redis/README.md)
-* [Role: netways.icinga.icingaweb2](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icingaweb2/README.md)
-* [Role: netways.icinga.monitoring_plugins](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-monitoring_plugins/README.md)
+* [Role: netways.icinga.icingadb](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icingadb/)
+* [Role: netways.icinga.icingadb_redis](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icingadb_redis/)
+* [Role: netways.icinga.icingaweb2](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icingaweb2/)
+* [Role: netways.icinga.monitoring_plugins](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-monitoring_plugins/)
   * [List of Available Check Commands](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-monitoring_plugins/check_command_list.md)
-* [Inventory Plugin: netways.icinga.icinga](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/plugins/inventory/README.md)
+* [Inventory Plugin: netways.icinga.icinga](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/plugins/inventory/icinga-inventory-plugin.md)
 
 
 ## Installation
