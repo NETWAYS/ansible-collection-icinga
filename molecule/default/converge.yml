@@ -59,6 +59,12 @@
           icinga2_ido_mysql:
             type: ido
             resource: icinga_ido
+        commandtransports:
+          icinga2-api:
+            transport: api
+            host: 127.0.0.1
+            username: root
+            password: root
     icingaweb2_db:
       type: mysql
       name: icingaweb

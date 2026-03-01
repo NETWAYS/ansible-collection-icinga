@@ -1,5 +1,5 @@
 ansible-core>=2.17,<2.18
 molecule
 ansible-lint
-molecule-docker
+molecule-plugins[docker]
 pytest-testinfra
