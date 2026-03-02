@@ -91,11 +91,6 @@ args:
       returned: success
       type: str
       sample: LogDir + /compat
-    compat_log_path:
-      description: The specified path to Icinga 1.x log files.
-      returned: success
-      type: str
-      sample: LogDir + /compat
     socket_path:
       description: The specified path to the UNIX socket file.
       returned: success

@@ -78,7 +78,7 @@ args:
       returned: success
       type: int
       sample: 5667
-    host:
+    log_duration:
       description: The specified log duration.
       returned: success
       type: str
