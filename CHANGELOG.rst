@@ -4,6 +4,35 @@ Icinga.Icinga Release Notes
 
 .. contents:: Topics
 
+v0.4.6
+======
+
+Release Summary
+---------------
+
+Besides some smaller fixes this release mostly contains enhancements to the documentation. It is now (more) compatible with Ansible Galaxy, properly rendering the collection README and the roles's README files. Links within the READMEs redirect to the repository for further documentation.
+Some roles now also use :code:`argument_specs`. This is used for input validation (role variables), and for documentation.
+You can run :code:`ansible-doc --type role netways.icinga.<role>` to read a short documentation about the role's variables locally.
+To see what roles already have :code:`argument_specs`, run :code:`ansible-doc --type role --list netways.icinga`.
+
+Minor Changes
+-------------
+
+- Add EL 10 to the :code:`monitoring_plugins` role.
+- Add templating support for :code:`url`, :code:`user` and :code:`password` variables in :code:`netways.icinga.icinga` inventory plugin to support loading them from :code:`ansible-vault`. Thanks @johannesst
+- Add the `Performance Data Graphs <https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs>`__ modules as available modules to the :code:`icingaweb2` role. They rely on the `NETWAYS Extras Repository <https://packages.netways.de/extras/>`__ being enabled.
+- Add the ability to add the `NETWAYS Extras <https://packages.netways.de/extras/>`__ and `NETWAYS Plugins <https://packages.netways.de/plugins/>`__ repositories to provide more packages. If the repositories :code:`netways-extras` / :code:`netways-plugins` already exist on the system, they are - by default - disabled by the role.
+- Change occurrences of :code:`ansible_<fact_name>` to :code:`ansible_facts["<fact_name>"]` in preparation of :code:`ansible-core=2.24`'s new :code:`INJECT_FACTS_AS_VARS` behavior.
+
+Bugfixes
+--------
+
+- Fix escaping of special characters within the generic INI writer (:code:`icingaweb2` role). Values are now enclosed by double quotes while using the :code:`to_json` filter for the escaping (#426).
+- The :code:`icinga2_object` plugin did not make use of the :code:`name` parameter passed to it when using :code:`apply_for`. If more than one service used the same :code:`apply_for`, this would result in multiple services with the same name, thus leading to failure (#434). The plugin now uses the :code:`name` as a prefix for the service name.
+- The IfW :code:`InstallCommand` now uses double quotes around the JSON to avoid timeouts during the task (#432). The JSON is also properly parsed and put into a single line to further avoid unwanted behavior. Thanks @afeefghannam89 for bringing up the topic again and testing the fix.
+- The package name for EPEL on OracleLinux is :code:`oracle-epel-release-el<version number>`. Some versions of OracleLinux provide a mapping from :code:`epel-release` to the appropriate package name while others do not. The :code:`repos` and :code:`monitoring_plugins` roles now use variables to handle the different names of the package correctly (#437).
+- Using the :code:`ifw` role in pre-existing Icinga for Windows installations would fail due to :code:`IfW-CustomHostname` potentially not being set at all. The role now defaults to comparing with :code:`null` if unset, avoiding failure in the process.
+
 v0.4.5
 ======
 

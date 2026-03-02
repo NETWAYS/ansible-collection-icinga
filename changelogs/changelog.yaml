@@ -506,3 +506,70 @@ releases:
     - fix_ifw_winrm_stuck_idle.yml
     - release_summary.yml
     release_date: '2025-11-10'
+  0.4.6:
+    changes:
+      bugfixes:
+      - Fix escaping of special characters within the generic INI writer (:code:`icingaweb2`
+        role). Values are now enclosed by double quotes while using the :code:`to_json`
+        filter for the escaping (#426).
+      - The :code:`icinga2_object` plugin did not make use of the :code:`name` parameter
+        passed to it when using :code:`apply_for`. If more than one service used the
+        same :code:`apply_for`, this would result in multiple services with the same
+        name, thus leading to failure (#434). The plugin now uses the :code:`name`
+        as a prefix for the service name.
+      - The IfW :code:`InstallCommand` now uses double quotes around the JSON to avoid
+        timeouts during the task (#432). The JSON is also properly parsed and put
+        into a single line to further avoid unwanted behavior. Thanks @afeefghannam89
+        for bringing up the topic again and testing the fix.
+      - The package name for EPEL on OracleLinux is :code:`oracle-epel-release-el<version
+        number>`. Some versions of OracleLinux provide a mapping from :code:`epel-release`
+        to the appropriate package name while others do not. The :code:`repos` and
+        :code:`monitoring_plugins` roles now use variables to handle the different
+        names of the package correctly (#437).
+      - Using the :code:`ifw` role in pre-existing Icinga for Windows installations
+        would fail due to :code:`IfW-CustomHostname` potentially not being set at
+        all. The role now defaults to comparing with :code:`null` if unset, avoiding
+        failure in the process.
+      minor_changes:
+      - Add EL 10 to the :code:`monitoring_plugins` role.
+      - Add templating support for :code:`url`, :code:`user` and :code:`password`
+        variables in :code:`netways.icinga.icinga` inventory plugin to support loading
+        them from :code:`ansible-vault`. Thanks @johannesst
+      - Add the `Performance Data Graphs <https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs>`__
+        modules as available modules to the `icingaweb2` role. They rely on the `NETWAYS
+        Extras Repository <https://packages.netways.de/extras/>`__ being enabled.
+      - Add the ability to add the `NETWAYS Extras <https://packages.netways.de/extras/>`__
+        and `NETWAYS Plugins <https://packages.netways.de/plugins/>`__ repositories
+        to provide more packages. If the repositories `netways-extras` / `netways-plugins`
+        already exist on the system, they are - by default - disabled by the role.
+      - Change occurrences of :code:`ansible_<fact_name>` to :code:`ansible_facts["<fact_name>"]`
+        in preparation of :code:`ansible-core=2.24`'s new :code:`INJECT_FACTS_AS_VARS`
+        behavior.
+      release_summary: 'Besides some smaller fixes this release mostly contains enhancements
+        to the documentation. It is now (more) compatible with Ansible Galaxy, properly
+        rendering the collection README and the roles''s README files. Links within
+        the READMEs redirect to the repository for further documentation.
+
+        Some roles now also use :code:`argument_specs`. This is used for input validation
+        (role variables), and for documentation.
+
+        You can run :code:`ansible-doc --type role netways.icinga.<role>` to read
+        a short documentation about the role''s variables locally.
+
+        To see what roles already have `argument_specs`, run :code:`ansible-doc --type
+        role --list netways.icinga`.
+
+        '
+    fragments:
+    - 422_el_10.yml
+    - 426-quotes-and-escaping-ini-writer.yml
+    - 428_icinga2_inventory-templating.yml
+    - 432_ifw_install_icinga_command.yml
+    - 435_existing_ifw_installation.yml
+    - 437_oraclelinux_epel.yml
+    - ansible_facts.yml
+    - feature_netways_repos.yml
+    - feature_perfdatagraphs.yml
+    - fix_434_apply_rule_names.yml
+    - release_summary.yml
+    release_date: '2026-03-02'
