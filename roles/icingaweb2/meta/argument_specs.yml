@@ -143,6 +143,19 @@ argument_specs:
                   - Defines where Icinga Web 2 modules are located on the filesystem.
                 type: str
                 required: true
+          security:
+            description:
+              - Defines security options for Icinga Web 2, currently only CSP.
+            type: dict
+            required: false
+            options:
+              use_strict_csp:
+                description:
+                  - Set this to 1 to enable strict Content Security Policy (CSP).
+                type: int
+                required: false
+                default: 0
+                choices: [ 0, 1 ]
           logging:
             description:
               - Defines the logging behavior of Icinga Web 2.
