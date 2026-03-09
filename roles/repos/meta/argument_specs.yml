@@ -137,6 +137,16 @@ argument_specs:
             Only relevant for EL distributions with major version < 8 needing Icinga Web 2.
         type: bool
         default: false
+      icinga_repo_subscription_username:
+        description:
+          - The username for the Icinga subscription.
+            This is used to access the password-protected repository.
+        type: str
+      icinga_repo_subscription_password:
+        description:
+          - The password for the Icinga subscription.
+            This is used to access the password-protected repository.
+        type: str
       netways_repo_gpgkey:
         description:
           - The URL to the NETWAYS signing key.
