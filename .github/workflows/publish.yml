@@ -21,7 +21,7 @@ jobs:
           ref: ${{ inputs.tag }}
 
       - name: build and publish collection
-        uses: artis3n/ansible_galaxy_collection@v2
+        uses: artis3n/ansible_galaxy_collection@v3
         with:
           api_key: '${{ secrets.GALAXY_API_KEY }}'
           build: true
