@@ -49,6 +49,11 @@ options:
       - Redis unix socket path.
     required: false
     type: str
+  username:
+    description:
+      - Redis auth username.
+    required: false
+    type: str
   password:
     description:
       - Redis auth password.
@@ -111,6 +116,7 @@ EXAMPLES = '''
     host: "redis-host.localdomain"
     insecure_noverify: false
     key_path: "/etc/pki/tls/private/local-icinga-host.key"
+    username: "redis-username"
     password: "redis-password"
     port: 6380
 '''
@@ -167,6 +173,11 @@ args:
       type: str
       sample: /etc/pki/tls/private/local-icinga-host.key
     password:
+      description: The specified username.
+      returned: success
+      type: str
+      sample: redis-username
+    password:
       description: The specified password.
       returned: success
       type: str
@@ -220,6 +231,7 @@ def main():
             host                 = dict(type='str'),
             port                 = dict(type='int'),
             path                 = dict(type='str'),
+            username             = dict(type='str'),
             password             = dict(type='str'),
             enable_tls           = dict(type='bool'),
             cert_path            = dict(type='str'),
