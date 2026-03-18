@@ -1,6 +1,9 @@
 ---
 - ansible.builtin.gather_facts:
 
+- name: Check deprecations
+  ansible.builtin.include_tasks: deprecations.yml
+
 - name: Include OS specific vars
   ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:

@@ -1,0 +1,26 @@
+---
+
+- name: Check for use of deprecated variables
+  ignore_errors: true
+  loop:
+    - name: Check if old 'ca_host' is used in api feature
+      cond: "{{ icinga2_features | selectattr('name', 'eq', 'api') | selectattr('ca_host', 'defined') | length == 0 }}"
+      msg: |
+        The use of 'ca_host' in the api feature is deprecated.
+        Please use 'parent_host' instead.
+
+    - name: Check if old 'ca_host_port' is used in api feature
+      cond: "{{ icinga2_features | selectattr('name', 'eq', 'api') | selectattr('ca_host_port', 'defined') | length == 0 }}"
+      msg: |
+        The use of 'ca_host_port' in the api feature is deprecated.
+        Please use 'parent_port' instead.
+
+    - name: Check if old 'ticket_salt' is used in api feature
+      cond: "{{ icinga2_features | selectattr('name', 'eq', 'api') | selectattr('ticket_salt', 'defined') | length == 0 }}"
+      msg: |
+        The use of 'ticket_salt' in the api feature is deprecated.
+        Please use 'ticket' instead.
+        With the 'netways.icinga.icinga2_ticket' filter plugin and the actual Icinga 2 `TicketSalt` you can create a valid ticket.
+  ansible.builtin.assert:
+    that: item.cond
+    fail_msg: "{{ item.msg }}"
