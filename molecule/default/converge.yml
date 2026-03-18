@@ -122,7 +122,7 @@
         auth_token: testtoken123
       - name: mainlog
       - name: api
-        ca_host: none
+        parent_host: none
         endpoints:
           - name: "{{ ansible_facts['fqdn'] }}"
         zones:

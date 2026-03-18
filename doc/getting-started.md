@@ -131,7 +131,7 @@ This is an example on how to install an Icinga 2 server/master instance.
       - zones.d/main/services
     icinga2_features:
       - name: api           # Enable Feature API
-        ca_host: none       # No CA host, CA will be created locally
+        parent_host: none       # No parent host, CA will be created locally
         endpoints:
           - name: NodeName
         zones:
@@ -169,7 +169,7 @@ This is an example on how to install an Icinga 2 agent instance.
     icinga2_purge_features: yes # Ansible will manage all features
     icinga2_features:
       - name: api           # Enable Feature API
-        ca_host: master.localdomain
+        parent_host: master.localdomain
         # Trusted Cert and Ticket will be gathered from this host.
         # Ticket will be "delegated" if the FQDN is not in your Ansible environment
         # use the variable icinga2_delegate_host in addition.
@@ -237,7 +237,7 @@ This is a example on how to install Icinga 2 server with Icinga Web 2 and Icinga
       - name: checker
       - name: mainlog
       - name: api
-        ca_host: none
+        parent_host: none
         endpoints:
           - name: "{{ ansible_facts['fqdn'] }}"
         zones:
