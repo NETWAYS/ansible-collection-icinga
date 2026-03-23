@@ -1,5 +1,6 @@
 ---
 - name: MySQL import Kubernetes schema
+  no_log: "{{ icinga_kubernetes_no_log | default(icinga_no_log) | default(true) }}"
   when: icinga_kubernetes_database_import_schema | default(False)
   block:
     - name: Build mysql command
@@ -15,6 +16,7 @@
           "{{ icinga_kubernetes_database_name | default('kubernetes') }}"
 
     - name: MySQL import Kubernetes schema
+      no_log: "{{ icinga_kubernetes_no_log | default(icinga_no_log) | default(true) }}"
       ansible.builtin.shell: >
         {{ mysqlcmd }}
         -Ns -e "select version from kubernetes_schema" ||

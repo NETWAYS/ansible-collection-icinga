@@ -5,6 +5,7 @@
     icinga2_import_schema: "{{ icinga2_dict_features.idomysql.import_schema| default(False) }}"
 
 - name: feature idomysql IdoMysqlConnection object
+  no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:
@@ -22,6 +23,7 @@
 - name: MySQL import IDO schema
   block:
     - name: build mysql command
+      no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
       set_fact:
         mysqlcmd: >-
           mysql {% if icinga2_dict_features.idomysql.host| default('localhost') != 'localhost'  %} -h "{{ icinga2_dict_features.idomysql.host }}" {%- endif %}
@@ -37,6 +39,7 @@
           "{{ icinga2_dict_features.idomysql.database | default('icinga2') }}"
 
     - name: MySQL check for IDO schema
+      no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
       shell: >
         {{ mysqlcmd }}
         -Ns -e "select version from icinga_dbversion"
@@ -46,6 +49,7 @@
       register: db_schema
 
     - name: MySQL import IDO schema
+      no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
       shell: >
         {{ mysqlcmd }}
         < /usr/share/icinga2-ido-mysql/schema/mysql.sql

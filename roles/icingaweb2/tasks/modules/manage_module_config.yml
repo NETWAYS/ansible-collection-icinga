@@ -1,4 +1,5 @@
 - name: Module {{ _module }} | Set file content as hash
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
     _i2_config_hash: "{{ lookup('list', icingaweb2_modules[_module][_file]) }}"
 

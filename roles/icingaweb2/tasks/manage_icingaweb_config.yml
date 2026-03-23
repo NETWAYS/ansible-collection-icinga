@@ -54,6 +54,7 @@
       resources: {}
 
 - name: Prepare config hash
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   when: icingaweb2_db is defined
   vars:
     _resources:
@@ -76,11 +77,13 @@
     _tmp_i2_config_hash: "{{ _tmp_i2_config_hash | combine({'resources': _resources}, recursive=true) }}"
 
 - name: Set resources facts
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   when: icingaweb2_resources is defined
   ansible.builtin.set_fact:
     _tmp_i2_config_hash: "{{ _tmp_i2_config_hash | combine({'resources': icingaweb2_resources}, recursive=true) }}"
 
 - name: Assemble roles.ini (adding default admin role)
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   when: icingaweb2_admin_username is defined and icingaweb2_admin_password is defined
   vars:
     _tmp_i2_config_hash_admin_role:
@@ -93,11 +96,13 @@
     _tmp_i2_config_hash: "{{ _tmp_i2_config_hash | combine({'roles': _tmp_i2_config_hash_admin_role}, recursive=true) }}"
 
 - name: Assemble roles.ini (adding icingaweb2_roles)
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   when: icingaweb2_roles is defined
   ansible.builtin.set_fact:
     _tmp_i2_config_hash: "{{ _tmp_i2_config_hash | combine({'roles': icingaweb2_roles}, recursive=true) }}"
 
 - name: Deploy configuration files
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   loop: "{{ _tmp_i2_config_hash | dict2items }}"
   vars:
     _i2_config_hash: "{{ _tmp_i2_config_hash[item.key] }}"

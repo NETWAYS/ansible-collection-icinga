@@ -5,6 +5,7 @@
     icinga2_import_schema: "{{ icinga2_dict_features.idopgsql.import_schema| default(False) }}"
 
 - name: feature idopgsql IdoPgsqlConnection object
+  no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:
@@ -20,6 +21,7 @@
 - name: PostgreSQL import IDO schema
   block:
     - name: build psql command
+      no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
       set_fact:
         psqlcmd: >-
           PGPASSWORD={{ icinga2_dict_features.idopgsql.password | quote }}
@@ -34,6 +36,7 @@
           {% if icinga2_dict_features.idopgsql.extra_options is defined %} {{ icinga2_dict_features.idopgsql.extra_options }} {%- endif %}"
 
     - name: PostgreSQL check for IDO schema
+      no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
       shell: >
         {{ psqlcmd }}
         -w -c "select version from icinga_dbversion"
@@ -43,6 +46,7 @@
       register: db_schema
 
     - name: PostgreSQL import IDO schema
+      no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
       shell: >
         {{ psqlcmd }}
         -w -f /usr/share/icinga2-ido-pgsql/schema/pgsql.sql

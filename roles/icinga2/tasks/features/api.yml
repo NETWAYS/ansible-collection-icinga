@@ -130,6 +130,7 @@
         {% if icinga2_ca_host != 'none' %} --cert "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.crt" {% else %} --csr "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.csr" {%- endif %}
 
     - name: delegate ticket request to master
+      no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
       shell: icinga2 pki ticket --cn "{{ icinga2_cert_name }}" {% if icinga2_ticket_salt is defined %} --salt "{{ icinga2_ticket_salt }}"{% endif %}
       delegate_to: "{{ icinga2_delegate_host | default(icinga2_ca_host) }}"
       register: icinga2_ticket

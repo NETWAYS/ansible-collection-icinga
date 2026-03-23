@@ -8,6 +8,7 @@
   when: icingaweb2_db_import_schema | default(false)
 
 - name: Add admin to users list
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
     icingaweb2_users: "{{ icingaweb2_users + [_current_user]}}"
   vars:

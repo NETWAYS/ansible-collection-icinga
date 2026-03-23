@@ -1,5 +1,6 @@
 ---
 - name: populate features (icinga2_dict_features)
+  no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
   set_fact:
     icinga2_dict_features: "{{ icinga2_dict_features|default({}) | combine({ item.name: item }) }}"
   with_items: "{{ icinga2_features }}"
@@ -15,6 +16,7 @@
   notify: check-and-reload-icinga2-service
 
 - name: merge defaults and user specified constants (set_fact icinga2_combined_constants)
+  no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
   set_fact:
     icinga2_combined_constants: "{{ icinga2_default_constants | combine(icinga2_constants) }}"
 
@@ -126,6 +128,7 @@
   notify: check-and-reload-icinga2-service
 
 - name: enable features
+  no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
   file:
     state: "{{ 'link' if (item.state is undefined or item.state != 'absent') else 'absent' }}"
     path: "{{ '/etc/icinga2/features-enabled/' + icinga2_feature_realname[item.name]|default(item.name) + '.conf' }}"

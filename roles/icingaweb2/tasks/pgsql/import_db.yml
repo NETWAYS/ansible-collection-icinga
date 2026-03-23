@@ -1,6 +1,7 @@
 ---
 
 - name: PostgreSQL check for icingaweb db schema
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.shell: >
     {{ _tmp_pgsqlcmd }}
     -w -c "select * from icingaweb_user" ||
