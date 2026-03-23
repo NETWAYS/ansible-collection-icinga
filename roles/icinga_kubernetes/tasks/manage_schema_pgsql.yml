@@ -2,6 +2,7 @@
 # temporarily disabled, pgsql at the moment is not available for icinga kubernetes
 
 # - name: PgSQL import Kubernetes schema
+#   no_log: "{{ icinga_kubernetes_no_log | default(icinga_no_log) | default(true) }}"
 #   when: icinga_kubernetes_database_import_schema| default(False)
 #   block:
 #     - name: Build pgsql command
@@ -20,6 +21,7 @@
 #           {% if icinga_kubernetes_database_ssl_extra_options is defined %} {{ icinga_kubernetes_database_ssl_extra_options }} {%- endif %}"
 
 #     - name: PgSQL import Kubernetes schema
+#       no_log: "{{ icinga_kubernetes_no_log | default(icinga_no_log) | default(true) }}"
 #       ansible.builtin.shell: >
 #         {{ _tmp_pgsqlcmd }}
 #         -w -c "select version from kubernetes_schema" ||

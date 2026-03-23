@@ -1,5 +1,6 @@
 ---
 - name: MySQL import IcingaDB schema
+  no_log: "{{ icingadb_no_log | default(icinga_no_log) | default(true) }}"
   when: icingadb_database_import_schema | default(False)
   block:
     - name: Build mysql command
@@ -16,6 +17,7 @@
           "{{ icingadb_database_name | default('icingadb') }}"
 
     - name: MySQL import IcingaDB schema
+      no_log: "{{ icingadb_no_log | default(icinga_no_log) | default(true) }}"
       ansible.builtin.shell: >
         {{ mysqlcmd }}
         -Ns -e "select version from icingadb_schema" ||

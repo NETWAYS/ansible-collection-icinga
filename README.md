@@ -44,3 +44,17 @@ To use the collection in your playbooks, add the collection and then use the rol
     - netways.icinga.icingadb_redis
     - netways.icinga.monitoring_plugins
 ```
+
+## Secrets and no_log
+
+Some tasks in these roles make use of sensitive information (e.g. passwords).
+To avoid leaking this information the tasks in question use Ansible's `no_log: true` option.<br>
+This however can make troubleshooting cumbersome.
+**If** you need to and you are fine with secrets being present in Ansible's logs, you can turn logging back on.
+Be sure though to [**deactivate logging to syslog**](https://docs.ansible.com/projects/ansible/latest/reference_appendices/config.html#default-no-target-syslog) to avoid leaking secrets on your target hosts.
+
+Example to turn on logging for the `icinga2` role while not logging to syslog:
+
+```
+ANSIBLE_NO_TARGET_SYSLOG=True ansible-playbook </path/to/playbook> -e '{ "icinga2_no_log": false }'
+```

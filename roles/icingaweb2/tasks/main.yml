@@ -14,15 +14,14 @@
 
 - name: Check each icingaweb2_modules key against known modules
   when: not icingaweb2_ignore_unknown_modules
-  loop: "{{ icingaweb2_modules | default({}) | dict2items }}"
-  loop_control:
-    label: "{{ item.key }}"
+  loop: "{{ (icingaweb2_modules | default({})).keys() }}"
   ansible.builtin.assert:
     that:
-      - item.key in icingaweb2_module_packages.keys()
-    fail_msg: "'{{ item.key }}' is an unknown module. Set 'icingaweb2_ignore_unknown_modules' to 'true' if you want to simply skip unknown modules"
+      - item in icingaweb2_module_packages.keys()
+    fail_msg: "'{{ item }}' is an unknown module. Set 'icingaweb2_ignore_unknown_modules' to 'true' if you want to simply skip unknown modules"
 
 - name: Gather module packages
+  no_log: true
   ansible.builtin.set_fact:
     icingaweb2_packages: "{{ icingaweb2_packages + [ icingaweb2_module_packages[item.key] ] }}"
   loop: "{{ icingaweb2_modules | dict2items }}"
@@ -32,7 +31,6 @@
     - icingaweb2_modules is defined
     - icingaweb2_module_packages[item.key] is defined
     - item.value.source == "package"
-  no_log: true
 
 - name: Check supported operatingsystems
   vars:
@@ -59,6 +57,7 @@
     - (icingaweb2_db_import_schema | default(false)) or (icingaweb2_users is defined) or (icingaweb2_admin_username is defined)
 
 - name: Manage module states
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.file:
     src: "{{ icingaweb2_config.global.module_path + '/' + item.key if item.value.enabled|bool == true else omit }}"
     dest: "{{ icingaweb2_config_dir }}/enabledModules/{{ item.key }}"
@@ -84,6 +83,7 @@
 
 # Many daemons fail before e.g. the resource is set up or the schema hasn't been migrated. This is a workaround.
 - name: Manage enabled module daemons
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.service:
     name: "icinga-{{ item.key }}"
     state: restarted

@@ -9,12 +9,14 @@
   when: icingaweb2_priv_db_password is undefined and icingaweb2_priv_db_user is undefined
 
 - name: Set db user with admin privileges
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
     _priv_db_user: "{{ icingaweb2_priv_db_user }}"
     _priv_db_pass: "{{ icingaweb2_priv_db_password }}"
   when: icingaweb2_priv_db_password is defined and icingaweb2_priv_db_user is defined
 
 - name: Build mysql command
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
     _tmp_mysqlcmd: >-
       mysql {% if icingaweb2_db['host'] | default('localhost') != 'localhost'  %} -h "{{ icingaweb2_db['host'] }}" {%- endif %}

@@ -9,6 +9,7 @@
   when: icingaweb2_priv_db_password is undefined and icingaweb2_priv_db_user is undefined
 
 - name: Build psql command
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
     _tmp_pgsqlcmd: >-
       PGPASSWORD={{ icingaweb2_priv_db_password | default(icingaweb2_db['password']) | quote }}

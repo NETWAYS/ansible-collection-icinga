@@ -1,5 +1,6 @@
 ---
 - name: PgSQL import IcingaDB schema
+  no_log: "{{ icingadb_no_log | default(icinga_no_log) | default(true) }}"
   when: icingadb_database_import_schema| default(False)
   block:
     - name: Build pgsql command
@@ -18,6 +19,7 @@
           {% if icingadb_database_ssl_extra_options is defined %} {{ icingadb_database_ssl_extra_options }} {%- endif %}"
 
     - name: PgSQL import IcingaDB schema
+      no_log: "{{ icingadb_no_log | default(icinga_no_log) | default(true) }}"
       ansible.builtin.shell: >
         {{ _tmp_pgsqlcmd }}
         -w -c "select version from icingadb_schema" ||
