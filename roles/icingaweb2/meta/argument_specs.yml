@@ -56,6 +56,11 @@ argument_specs:
               - O(icingaweb2_priv_db_password) works in conjunction with O(icingaweb2_priv_db_user).
             type: str
             required: true
+          charset:
+            description:
+              - The database character set to be used.
+            type: str
+            required: false
           ssl_mode:
             description:
               - If O(icingaweb2_db.type=mysql), the value for C(--ssl-mode) to be passed to the C(mysql) command when interacting with the database.
