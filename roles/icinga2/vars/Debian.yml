@@ -4,6 +4,7 @@ icinga2_user: nagios
 icinga2_group: nagios
 icinga2_config_path: /etc/icinga2
 icinga2_log_path: /var/log/icinga2
+icinga2_data_path: /var/lib/icinga2
 icinga2_ca_path: /var/lib/icinga2/ca
 icinga2_cert_path: /var/lib/icinga2/certs
 icinga2_fragments_path: /var/tmp/icinga

@@ -8,5 +8,15 @@
       - name: icingadb
         type: IcingaDB
         file: features-available/icingadb.conf
-        args: "{{ icinga2_dict_features.icingadb }}"
+        args: "{{ icinga2_dict_features.icingadb | combine({'environment_id': omit}) }}"
   register: result
+
+- name: Set Icinga DB environment ID
+  when: icinga2_dict_features.icingadb.environment_id is defined
+  ansible.builtin.copy:
+    dest: "{{ icinga2_data_path }}/icingadb.env"
+    content: "\"{{ icinga2_dict_features.icingadb.environment_id }}\""
+    owner: "{{ icinga2_user }}"
+    group: "{{ icinga2_group }}"
+    mode: "0600"
+  notify: check-and-reload-icinga2-service
