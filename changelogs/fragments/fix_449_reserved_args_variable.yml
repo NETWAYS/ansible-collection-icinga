@@ -1,0 +1,2 @@
+bugfixes:
+  - Avoid warnings about the reserved variable name :code:`args` in the :code:`icinga2` role. (#449)
