@@ -52,6 +52,3 @@
         -w -f /usr/share/icinga2-ido-pgsql/schema/pgsql.sql
       when: db_schema.rc != 0
   when: icinga2_dict_features.idopgsql.import_schema| default(False)
-
-- set_fact:
-    args: None
