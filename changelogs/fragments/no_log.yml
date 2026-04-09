@@ -1,0 +1,5 @@
+security_fixes:
+  - |
+    Add :code:`no_log: true` to some tasks that previously leaked secrets to Ansible's log (e.g. the terminal output).
+    Some of those tasks also leaked secrets to the target hosts' syslog if not disabled in the Ansible configuration.
+    Even though the impact is expected to be low, you might sill want to rotate your passwords (mostly database passwords) to be on the safe side.
