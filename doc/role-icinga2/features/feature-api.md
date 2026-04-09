@@ -10,6 +10,8 @@ All non Icinga attributes to configure the feature are explained below.
 
 Example how to install an Agent:
 
+> Replace `<PLACEHOLDERS>` according to your environment.
+
 ```yaml
 icinga2_features:
   - name: api
@@ -17,10 +19,16 @@ icinga2_features:
     ca_host: icinga-server.localdomain
     endpoints:
       - name: NodeName
+      - name: <ParentNodeName>
+        host: <ParentIPAddress>
     zones:
       - name: ZoneName
+        parent: <ParentZoneName>
         endpoints:
           - NodeName
+      - name: <ParentZoneName>
+        endpoints:
+          - <ParentNodeName>
 ```
 
 Example how to install a master/server instance:
