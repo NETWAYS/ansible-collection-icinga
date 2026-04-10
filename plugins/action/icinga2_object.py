@@ -107,7 +107,10 @@ class ActionModule(ActionBase):
                 #
                 if 'imports' in obj:
                     for item in obj['imports']:
-                        object_content += '  import "' + str(item) + '"\n'
+                        if item.startswith('host.vars'):
+                            object_content += '  import ' + str(item) + '\n'
+                        else:
+                            object_content += '  import "' + str(item) + '"\n'
                     object_content += '\n'
 
                 #

@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Fix object import rendering in the `icinga2_object` action plugin to avoid quoting imports that start with `host.vars` while keeping string imports quoted. (#317)
