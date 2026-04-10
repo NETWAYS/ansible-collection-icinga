@@ -117,6 +117,44 @@ The fingerprint can be retrieved with OpenSSL:
 openssl x509 -noout -fingerprint -sha256 -inform pem -in /path/to/ca.crt
 ```
 
+### Reverse-connect PKI bootstrap
+
+Use `delegate_pki: true` when the agent cannot initiate a connection to the CA host/master
+on `tcp/5665`, but the parent/master can connect inbound to the agent on `tcp/5665`.
+
+In this mode, the role:
+
+- fetches `ca.crt` from the delegated CA host via Ansible and copies it to the agent
+- generates a self-signed certificate on the agent
+- creates a ticket on the CA host via `delegate_to`
+- writes the ticket to `{{ icinga2_cert_path }}/ticket`
+
+Icinga then completes certificate signing automatically when the parent connects inbound and
+the cluster handshake starts. This is not a fully offline/disconnected workflow.
+
+```yaml
+icinga2_features:
+  - name: api
+    ca_host: icinga-master.localdomain
+    delegate_pki: true
+    endpoints:
+      - name: NodeName
+      - name: icinga-master.localdomain
+        # no host here: agent must not try outbound connection
+    zones:
+      - name: ZoneName
+        endpoints:
+          - NodeName
+        parent: main
+      - name: main
+        endpoints:
+          - icinga-master.localdomain
+```
+
+> [!IMPORTANT]
+> The master's `zones.conf` must define the agent endpoint with a `host` attribute so the
+> parent can actively connect to the child.
+
 ### Use your own ready-made certificate
 
 If you want to use certificates which aren't created by **Icinga 2 CA**, then use
@@ -161,6 +199,9 @@ icinga2_features:
 
 * `force_newcert: boolean`
   * Force new certificates on the destination hosts.
+
+* `delegate_pki: boolean`
+  * Skip outbound `pki save-cert` and `pki request` on the agent. Provision `ca.crt` and ticket through Ansible delegation and rely on Icinga CSR auto-signing when the parent connects inbound.
 
 * `cert_name: string`
   * Common name of Icinga client/server instance. Default is **ansible_facts['fqdn']**.
