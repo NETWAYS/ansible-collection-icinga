@@ -55,6 +55,3 @@
         < /usr/share/icinga2-ido-mysql/schema/mysql.sql
       when: db_schema.rc != 0
   when: icinga2_dict_features.idomysql.import_schema| default(False)
-
-- set_fact:
-    args: None

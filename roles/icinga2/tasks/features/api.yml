@@ -22,7 +22,7 @@
 
 - name: api feature cleanup arguments list
   set_fact:
-    args: "{{ args|default({}) | combine({idx.key: idx.value}) }}"
+    icinga2_api_listener_args: "{{ icinga2_api_listener_args | default({}) | combine({idx.key: idx.value}) }}"
   when: idx.key not in ['ca_host', 'ca_host_port', 'cert_name', 'ca_fingerprint', 'force_newcert', 'zones', 'endpoints', 'ssl_cacert', 'ssl_key', 'ssl_cert', 'ssl_remote_source', 'ticket_salt' ]
   loop: "{{ icinga2_dict_features.api | dict2items }}"
   loop_control:
@@ -36,7 +36,7 @@
       - name: api
         type: ApiListener
         file: features-available/api.conf
-        args: "{{ args }}"
+        args: "{{ icinga2_api_listener_args }}"
 
 - name: feature api Endpoint objects
   ansible.builtin.set_fact:
@@ -198,4 +198,4 @@
     - icinga2_ssl_cert_path.stat.exists == false or icinga2_ssl_key_path.stat.exists == false or icinga2_force_newcert 
 
 - set_fact:
-    args: None
+    icinga2_api_listener_args: None
