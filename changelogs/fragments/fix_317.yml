@@ -1,0 +1,4 @@
+bugfixes:
+  - Fix rendering of :code:`host.vars.xyz` within :code:`imports` when using :code:`icinga2_object`.
+    Previously, all list entries passed to `imports` were treated as plain strings and thus were quoted in the resulting configuration.
+    The values are now checked against the :code:`<obj>.vars` pattern and all defined constants to decide whether the values should be quoted or not. (#317)

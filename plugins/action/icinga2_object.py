@@ -106,9 +106,10 @@ class ActionModule(ActionBase):
                 # imports?
                 #
                 if 'imports' in obj:
-                    for item in obj['imports']:
-                        object_content += '  import "' + str(item) + '"\n'
-                    object_content += '\n'
+                    # Push the 'imports' key to front index to be processed first
+                    tmp_items = list(obj['args'].items())
+                    tmp_items.insert(0, ('imports', obj['imports']))
+                    obj['args'] = dict(tmp_items)
 
                 #
                 # parser
