@@ -47,6 +47,19 @@ To use the collection in your playbooks, add the collection and then use the rol
     - netways.icinga.monitoring_plugins
 ```
 
+## Dependencies
+
+None of the roles handle creating databases.
+If you need to create databases using Ansible, the roles
+[geerlingguy.mysql](https://github.com/geerlingguy/ansible-role-mysql)
+and [geerlingguy.postgresql](https://github.com/geerlingguy/ansible-role-postgresql)
+are great choices.
+
+Further, the `icingaweb2` role does not handle configuration of web servers.
+For this you can try using
+[geerlingguy.apache](https://github.com/geerlingguy/ansible-role-apache)
+or [geerlingguy.nginx](https://github.com/geerlingguy/ansible-role-nginx).
+
 ## Secrets and no_log
 
 Some tasks in these roles make use of sensitive information (e.g. passwords).
