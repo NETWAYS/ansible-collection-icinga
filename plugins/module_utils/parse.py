@@ -177,8 +177,11 @@ class Icinga2Parser(object):
         op = ''
 
         for attr, value in attrs.items():
+            if attr == 'imports':
+                for x in value:
+                    config += "%s%s %s\n" % (' '*indent, 'import', parser(x))
             # if re.search(r'^(assign|ignore) where$', attr):
-            if attr == 'assign' or attr == 'ignore':
+            elif attr == 'assign' or attr == 'ignore':
                 for x in value:
                     config += "%s%s %s\n" % (' '*indent, attr+' where', parser(x))
             elif attr == 'vars':
