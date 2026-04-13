@@ -797,9 +797,9 @@ argument_specs:
                           - Defines the default backend to be used.
                         type: str
                         choices:
-                          - Graphite
-                          - InfluxDBv1
-                          - InfluxDBv2
+                          - graphite
+                          - influxdbv1
+                          - influxdbv2
                       default_timerange:
                         description:
                           - Defines the default timerange to visualize.
