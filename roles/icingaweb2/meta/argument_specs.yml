@@ -858,3 +858,17 @@ argument_specs:
             options:
               enabled: *module_enabled
               source: *module_source
+          vspheredb:
+            description:
+              - This configures the L(Icinga vSphereDB module, https://icinga.com/docs/icinga-vsphere-integration/latest/).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              config:
+                description:
+                  - Defines the general module settings.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                  - "Example: C(icingaweb2_modules.vspheredb.config: { db: { resource: vspheredb_db } })"
+                type: dict
+                required: false

@@ -11,6 +11,7 @@ The role icingaweb2 installs and configures Icinga Web 2 and its modules.
 * [Kubernetes](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-kubernetes.md)
 * [Graphite](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-graphite.md)
 * [Cube](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-cube.md)
+* [vSphereDB](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-vspheredb.md)
 
 
 ## Databases

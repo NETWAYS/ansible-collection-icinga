@@ -12,6 +12,7 @@ icingaweb2_module_packages:
   setup: icingaweb2
   translation: icingaweb2
   cube: icinga-cube
+  vspheredb: icinga-vspheredb
   perfdatagraphs: icingaweb2-module-perfdatagraphs
   perfdatagraphsgraphite: icingaweb2-module-perfdatagraphs-graphite
   perfdatagraphsinfluxdbv1: icingaweb2-module-perfdatagraphs-influxdbv1

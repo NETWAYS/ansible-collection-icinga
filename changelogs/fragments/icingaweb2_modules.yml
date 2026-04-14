@@ -1,2 +1,5 @@
 minor_changes:
   - Add the `Cube module https://icinga.com/docs/icinga-cube/latest/doc/01-About/` to the :code:`icingaweb2` role.
+
+minor_changes:
+  - Add the `vSphereDB module https://icinga.com/docs/icinga-vsphere-integration/latest/doc/01-Installation/` to the :code:`icingaweb2` role.
