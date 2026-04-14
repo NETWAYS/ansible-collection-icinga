@@ -573,3 +573,58 @@ releases:
     - fix_434_apply_rule_names.yml
     - release_summary.yml
     release_date: '2026-03-02'
+  0.4.7:
+    changes:
+      bugfixes:
+      - Avoid warnings about the reserved variable name :code:`args` in the :code:`icinga2`
+        role. (#449)
+      - Fix rendering of :code:`host.vars.xyz` within :code:`imports` when using :code:`icinga2_object`.
+        Previously, all list entries passed to `imports` were treated as plain strings
+        and thus were quoted in the resulting configuration. The values are now checked
+        against the :code:`<obj>.vars` pattern and all defined constants to decide
+        whether the values should be quoted or not. (#317)
+      - The :code:`icingadb` feature for Icinga 2 can now work with the :code:`username`
+        attribute. This can be used when working with Redis ACLs. (#447)
+      minor_changes:
+      - Add :code:`delegate_pki` option to the Icinga 2 API feature for reverse-connected
+        environments where the agent cannot reach the parent / CA host but connections
+        to the agent are possible. (#392) Thanks @lucagubler
+      - 'Add option :code:`environment_id` to the :code:`icingadb` feature (role :code:`icinga2`).
+
+        This allows users to specify the content of :code:`/var/lib/icinga2/icingadb.env`.
+
+        Messing with this option can lead to duplicate entries in the database, so
+        be sure to first read the `documentation <https://icinga.com/docs/icinga-db/latest/doc/05-Distributed-Setups/#environment-id>`__
+        in case you really need to make use of this option.
+
+        '
+      - Add the `Cube module <https://icinga.com/docs/icinga-cube/latest/doc/01-About/>`__
+        to the :code:`icingaweb2` role.
+      - Add the `vSphereDB module <https://icinga.com/docs/icinga-vsphere-integration/latest/doc/01-Installation/>`__
+        to the :code:`icingaweb2` role.
+      release_summary: 'Small bugfix release, also brining in a few smaller features.
+
+        '
+      security_fixes:
+      - 'Add :code:`no_log: true` to some tasks that previously leaked secrets to
+        Ansible''s log (e.g. the terminal output).
+
+        Some of those tasks also leaked secrets to the target hosts'' syslog if not
+        disabled in the Ansible configuration.
+
+        Even though the impact is expected to be low, you might sill want to rotate
+        your passwords (mostly database passwords) to be on the safe side.
+
+        Thanks @oxzi for the input and for testing
+
+        '
+    fragments:
+    - feature_392_delegate_pki.yml
+    - fix_317.yml
+    - fix_447_icingadb_feature_username.yml
+    - fix_449_reserved_args_variable.yml
+    - fix_450_icingadb_environment.yml
+    - icingaweb2_modules.yml
+    - no_log.yml
+    - release_summary.yml
+    release_date: '2026-04-14'

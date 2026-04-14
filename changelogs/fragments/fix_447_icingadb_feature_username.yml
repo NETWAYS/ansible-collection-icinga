@@ -1,3 +1,0 @@
-bugfixes:
-  - The :code:`icingadb` feature for Icinga 2 can now work with the :code:`username` attribute.
-    This can be used when working with Redis ACLs. (#447)

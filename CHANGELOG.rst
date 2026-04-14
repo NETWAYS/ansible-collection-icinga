@@ -4,6 +4,39 @@ Icinga.Icinga Release Notes
 
 .. contents:: Topics
 
+v0.4.7
+======
+
+Release Summary
+---------------
+
+Small bugfix release, also brining in a few smaller features.
+
+Minor Changes
+-------------
+
+- Add :code:`delegate_pki` option to the Icinga 2 API feature for reverse-connected environments where the agent cannot reach the parent / CA host but connections to the agent are possible. (#392) Thanks @lucagubler
+- Add option :code:`environment_id` to the :code:`icingadb` feature (role :code:`icinga2`).
+  This allows users to specify the content of :code:`/var/lib/icinga2/icingadb.env`.
+  Messing with this option can lead to duplicate entries in the database, so be sure to first read the `documentation <https://icinga.com/docs/icinga-db/latest/doc/05-Distributed-Setups/#environment-id>`__ in case you really need to make use of this option.
+- Add the `Cube module <https://icinga.com/docs/icinga-cube/latest/doc/01-About/>`__ to the :code:`icingaweb2` role.
+- Add the `vSphereDB module <https://icinga.com/docs/icinga-vsphere-integration/latest/doc/01-Installation/>`__ to the :code:`icingaweb2` role.
+
+Security Fixes
+--------------
+
+- Add :code:`no_log: true` to some tasks that previously leaked secrets to Ansible's log (e.g. the terminal output).
+  Some of those tasks also leaked secrets to the target hosts' syslog if not disabled in the Ansible configuration.
+  Even though the impact is expected to be low, you might sill want to rotate your passwords (mostly database passwords) to be on the safe side.
+  Thanks @oxzi for the input and for testing
+
+Bugfixes
+--------
+
+- Avoid warnings about the reserved variable name :code:`args` in the :code:`icinga2` role. (#449)
+- Fix rendering of :code:`host.vars.xyz` within :code:`imports` when using :code:`icinga2_object`. Previously, all list entries passed to `imports` were treated as plain strings and thus were quoted in the resulting configuration. The values are now checked against the :code:`<obj>.vars` pattern and all defined constants to decide whether the values should be quoted or not. (#317)
+- The :code:`icingadb` feature for Icinga 2 can now work with the :code:`username` attribute. This can be used when working with Redis ACLs. (#447)
+
 v0.4.6
 ======
 
@@ -13,15 +46,15 @@ Release Summary
 Besides some smaller fixes this release mostly contains enhancements to the documentation. It is now (more) compatible with Ansible Galaxy, properly rendering the collection README and the roles's README files. Links within the READMEs redirect to the repository for further documentation.
 Some roles now also use :code:`argument_specs`. This is used for input validation (role variables), and for documentation.
 You can run :code:`ansible-doc --type role netways.icinga.<role>` to read a short documentation about the role's variables locally.
-To see what roles already have :code:`argument_specs`, run :code:`ansible-doc --type role --list netways.icinga`.
+To see what roles already have `argument_specs`, run :code:`ansible-doc --type role --list netways.icinga`.
 
 Minor Changes
 -------------
 
 - Add EL 10 to the :code:`monitoring_plugins` role.
 - Add templating support for :code:`url`, :code:`user` and :code:`password` variables in :code:`netways.icinga.icinga` inventory plugin to support loading them from :code:`ansible-vault`. Thanks @johannesst
-- Add the `Performance Data Graphs <https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs>`__ modules as available modules to the :code:`icingaweb2` role. They rely on the `NETWAYS Extras Repository <https://packages.netways.de/extras/>`__ being enabled.
-- Add the ability to add the `NETWAYS Extras <https://packages.netways.de/extras/>`__ and `NETWAYS Plugins <https://packages.netways.de/plugins/>`__ repositories to provide more packages. If the repositories :code:`netways-extras` / :code:`netways-plugins` already exist on the system, they are - by default - disabled by the role.
+- Add the `Performance Data Graphs <https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs>`__ modules as available modules to the `icingaweb2` role. They rely on the `NETWAYS Extras Repository <https://packages.netways.de/extras/>`__ being enabled.
+- Add the ability to add the `NETWAYS Extras <https://packages.netways.de/extras/>`__ and `NETWAYS Plugins <https://packages.netways.de/plugins/>`__ repositories to provide more packages. If the repositories `netways-extras` / `netways-plugins` already exist on the system, they are - by default - disabled by the role.
 - Change occurrences of :code:`ansible_<fact_name>` to :code:`ansible_facts["<fact_name>"]` in preparation of :code:`ansible-core=2.24`'s new :code:`INJECT_FACTS_AS_VARS` behavior.
 
 Bugfixes
