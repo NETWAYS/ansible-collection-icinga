@@ -1,0 +1,491 @@
+---
+
+# Debian family
+- name: Database Setup
+  become: true
+  hosts: "{{ _target }}"
+
+  tasks:
+    - name: Import InfluxDB GPG signing key
+      ansible.builtin.get_url:
+        url: "https://repos.influxdata.com/influxdata-archive.key"
+        dest: "/etc/apt/trusted.gpg.d/influxdb.asc"
+
+    - name: Add InfluxDB repository
+      ansible.builtin.deb822_repository:
+        state: present
+        name: influxdb
+        types: deb
+        uris: "https://repos.influxdata.com/{{ ansible_facts['distribution'] | lower }}"
+        suites:
+          - "{{ ansible_facts['distribution_release'] | lower }}"
+        components:
+          - "stable"
+        signed_by: "/etc/apt/trusted.gpg.d/influxdb.asc"
+
+    - name: Install InfluxDB
+      ansible.builtin.apt:
+        state: present
+        name:
+          - "influxdb"
+          - "influxdb-client"
+          # Dependency
+          - "curl"
+
+    - name: Start InfluxDB
+      ansible.builtin.systemd_service:
+        state: started
+        name: "influxdb"
+
+    - name: Create InfluxDB database
+      ansible.builtin.command:
+        cmd: "influx -execute 'CREATE DATABASE icinga2'"
+
+    - name: Databases
+      ansible.builtin.include_role:
+        name: geerlingguy.mysql
+
+    - name: Repos
+      ansible.builtin.include_role:
+        name: netways.icinga.repos
+
+    - name: Icinga2
+      ansible.builtin.include_role:
+        name: netways.icinga.icinga2
+
+    - name: Icinga DB Redis
+      ansible.builtin.include_role:
+        name: netways.icinga.icingadb_redis
+
+    - name: Icinga DB
+      ansible.builtin.include_role:
+        name: netways.icinga.icingadb
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Icinga Web 2
+      tags: icingaweb
+      ansible.builtin.include_role:
+        name: netways.icinga.icingaweb2
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Monitoring Plugins
+      ansible.builtin.include_role:
+        name: netways.icinga.monitoring_plugins
+
+    - name: Check for Director hosts
+      changed_when: false
+      ansible.builtin.command:
+        cmd: "icingacli director hosts list"
+      register: _director_hosts
+
+    - name: Add some initial demo configuration
+      when: _director_hosts.stdout == ""
+      block:
+        - name: Add templates
+          ansible.builtin.shell:
+            cmd: |
+              icingacli director host create --json '{
+                  "object_type": "template",
+                  "object_name": "Default Host",
+                  "check_command": "hostalive4"
+              }'
+              icingacli director host create --json '{
+                  "object_type": "template",
+                  "object_name": "Agent Host",
+                  "imports": "Default Host",
+                  "has_agent": true,
+                  "master_should_connect": false,
+                  "accept_config": true
+              }'
+              icingacli director host create --json '{
+                  "object_type": "template",
+                  "object_name": "Linux Agent",
+                  "imports": "Agent Host"
+              }'
+              icingacli director service create --json '{
+                  "object_name": "Default Service",
+                  "object_type": "template",
+                  "check_command": "dummy"
+              }'
+              icingacli director service create --json '{
+                  "object_name": "Agent Service",
+                  "object_type": "template",
+                  "imports": [
+                      "Default Service"
+                  ],
+                  "use_agent": true
+              }'
+              icingacli director service create --json '{
+                  "object_name": "Check Icinga",
+                  "object_type": "template",
+                  "imports": [
+                      "Agent Service"
+                  ],
+                  "check_command": "icinga"
+              }'
+              icingacli director service create --json '{
+                  "object_name": "Check IcingaDB",
+                  "object_type": "template",
+                  "imports": [
+                      "Agent Service"
+                  ],
+                  "check_command": "icingadb"
+              }'
+              icingacli director service create --json '{
+                  "object_name": "Check Disk",
+                  "object_type": "template",
+                  "imports": [
+                      "Agent Service"
+                  ],
+                  "check_command": "disk"
+              }'
+              icingacli director service create --json '{
+                  "object_name": "Check Load",
+                  "object_type": "template",
+                  "imports": [
+                      "Agent Service"
+                  ],
+                  "check_command": "load"
+              }'
+              icingacli director service create --json '{
+                  "object_name": "Check Curl",
+                  "object_type": "template",
+                  "imports": [
+                      "Default Service"
+                  ],
+                  "check_command": "curl"
+
+              }'
+        - name: Add hosts
+          ansible.builtin.shell:
+            cmd: |
+              icingacli director host create --json '{
+                  "object_type": "object",
+                  "object_name": "{{ icinga2_constants.NodeName }}",
+                  "imports": "Linux Agent",
+                  "address": "127.0.0.1"
+              }'
+              icingacli director host create --json '{
+                  "object_type": "object",
+                  "object_name": "netways.de",
+                  "imports": "Default Host",
+                  "address": "netways.de"
+              }'
+        - name: Add services
+          ansible.builtin.shell:
+            cmd: |
+              icingacli director service create --json '{
+                  "object_name": "IcingaDB",
+                  "object_type": "object",
+                  "host": "{{ icinga2_constants.NodeName }}",
+                  "imports": [
+                      "Check IcingaDB"
+                  ]
+              }'
+              icingacli director service create --json '{
+                  "object_name": "HTTP",
+                  "object_type": "object",
+                  "host": "netways.de",
+                  "imports": [
+                      "Check Curl"
+                  ]
+              }'
+              icingacli director serviceset create --json '{
+                  "assign_filter": "\"Linux Agent\"=host.templates",
+                  "description": "Checks to be run by every Linux Icinga agent.",
+                  "object_name": "Linux Agents",
+                  "object_type": "template",
+                  "services": [
+                      {
+                          "imports": [
+                              "Check Disk"
+                          ],
+                          "object_name": "Disk",
+                          "object_type": "object"
+                      },
+                      {
+                          "imports": [
+                              "Check Icinga"
+                          ],
+                          "object_name": "Icinga",
+                          "object_type": "object"
+                      },
+                      {
+                          "imports": [
+                              "Check Load"
+                          ],
+                          "object_name": "Load",
+                          "object_type": "object"
+                      }
+                  ]
+              }'
+        - name: Add dependencies
+          ansible.builtin.shell:
+            cmd: |
+              icingacli director dependency create --json '{
+                  "object_name": "Service To Service",
+                  "object_type": "template",
+                  "states": [
+                      "OK",
+                      "Warning"
+                  ]
+              }'
+              icingacli director dependency create --json '{
+                  "object_name": "Icinga 2 Agent",
+                  "object_type": "apply",
+                  "apply_to": "service",
+                  "imports": [
+                      "Service To Service"
+                  ],
+                  "parent_service_by_name": "Icinga",
+                  "assign_filter": "service.command_endpoint=true&service.name!=%22Icinga%22"
+              }'
+        - name: Deploy configuration
+          ansible.builtin.shell:
+            cmd: "icingacli director config deploy"
+
+  vars:
+    # Credentials for Icinga Web 2
+    icingaweb2_admin_username: "admin"
+    icingaweb2_admin_password: "admin"
+
+    ### Install MariaDB as DBMS
+    mysql_daemon: "mariadb"
+    mysql_packages:
+      - "mariadb-client"
+      - "mariadb-server"
+      - "python3-pymysql"
+
+    mysql_databases_icingadb:
+      name: "icingadb"
+      username: "icingadb_user"
+      password: "icingadb_password"
+
+    mysql_databases_icingaweb2:
+      name: "icingaweb2"
+      username: "icingaweb2_user"
+      password: "icingaweb2_password"
+
+    mysql_databases_director:
+      name: "director"
+      username: "director_user"
+      password: "director_password"
+      encoding: "utf8"
+
+    #mysql_databases_vspheredb:
+    #  name: "vspheredb"
+    #  username: "vspheredb_user"
+    #  password: "vspheredb_password"
+    #  encoding: "utf8mb4"
+    #  collation: "utf8mb4_bin"
+
+    mysql_databases:
+      - name: "{{ mysql_databases_icingadb.name }}"
+        encoding: "{{ mysql_databases_icingadb.encoding | default(omit) }}"
+        collation: "{{ mysql_databases_icingadb.collation | default(omit) }}"
+      - name: "{{ mysql_databases_icingaweb2.name }}"
+        encoding: "{{ mysql_databases_icingaweb2.encoding | default(omit) }}"
+        collation: "{{ mysql_databases_icingaweb2.collation | default(omit) }}"
+      - name: "{{ mysql_databases_director.name }}"
+        encoding: "{{ mysql_databases_director.encoding | default(omit) }}"
+        collation: "{{ mysql_databases_director.collation | default(omit) }}"
+      #- name: "{{ mysql_databases_vspheredb.name }}"
+      #  encoding: "{{ mysql_databases_vspheredb.encoding | default(omit) }}"
+      #  collation: "{{ mysql_databases_vspheredb.collation | default(omit) }}"
+    mysql_users:
+      - name: "{{ mysql_databases_icingadb.username }}"
+        host: "localhost"
+        password: "{{ mysql_databases_icingadb.password }}"
+        priv: "{{ mysql_databases_icingadb.name }}.*:ALL"
+      - name: "{{ mysql_databases_icingaweb2.username }}"
+        host: "localhost"
+        password: "{{ mysql_databases_icingaweb2.password }}"
+        priv: "{{ mysql_databases_icingaweb2.name }}.*:ALL"
+      - name: "{{ mysql_databases_director.username }}"
+        host: "localhost"
+        password: "{{ mysql_databases_director.password }}"
+        priv: "{{ mysql_databases_director.name }}.*:ALL"
+      #- name: "{{ mysql_databases_vspheredb.username }}"
+      #  host: "localhost"
+      #  password: "{{ mysql_databases_vspheredb.password }}"
+      #  priv: "{{ mysql_databases_vspheredb.name }}.*:ALL"
+
+    ### Icinga2
+    netways_repo_extras: true
+    netways_repo_plugins: true
+
+    ### Icinga2
+    icinga2_confd: "local.d"
+    icinga2_config_directories:
+      - "local.d/"
+
+    icinga2_constants:
+      NodeName: "{{ inventory_hostname }}"
+      ZoneName: "master"
+
+    icinga2_features:
+      - name: checker
+      - name: mainlog
+      - name: notification
+      - name: icingadb
+        environment_id: "df29d078f1fdeffddf3bcce81a8194397d326e11" # just something fixed, so destroy/build work right away
+      - name: api
+        ca_host: none
+        cert_name: "{{ icinga2_constants.NodeName }}"
+        endpoints:
+          - name: "{{ icinga2_constants.NodeName }}"
+        zones:
+          - name: "{{ icinga2_constants.ZoneName }}"
+            endpoints:
+              - "{{ icinga2_constants.NodeName }}"
+          - name: "director-global"
+            global: true
+          - name: "global-templates"
+            global: true
+          - name: "linux-agents"
+            global: true
+          - name: "windows-agents"
+            global: true
+      - name: influxdb
+        host: "127.0.0.1"
+        port: 8086
+        database: "icinga2"
+        host_template:
+          measurement: "$host.check_command$"
+          tags:
+            hostname: "$host.name$"
+        service_template:
+          measurement: "$service.check_command$"
+          tags:
+            hostname: "$host.name$"
+            service: "$service.name$"
+
+    icinga2_objects:
+      - name: "icingadb"
+        type: ApiUser
+        file: "local.d/apiusers.conf"
+        password: "icingadb"
+        permissions:
+          - "actions/*"
+          - "status/query"
+          - "objects/modify/*"
+          - "objects/query/*"
+      - name: director
+        type: ApiUser
+        file: "local.d/apiusers.conf"
+        password: "director"
+        permissions:
+          - "*"
+
+    ### IcingaDB
+    icingadb_database_import_schema: true
+    icingadb_database_host: "127.0.0.1"
+    icingadb_database_type: mysql
+    icingadb_database_name: "{{ mysql_databases_icingadb.name }}"
+    icingadb_database_user: "{{ mysql_databases_icingadb.username }}"
+    icingadb_database_password: "{{ mysql_databases_icingadb.password }}"
+
+    ### Icinga Web 2
+    icingaweb2_db_import_schema: true
+
+    icingaweb2_db:
+      type: mysql
+      name: "{{ mysql_databases_icingaweb2.name }}"
+      host: "127.0.0.1"
+      user: "{{ mysql_databases_icingaweb2.username }}"
+      password: "{{ mysql_databases_icingaweb2.password }}"
+
+    icingaweb2_resources:
+      icingadb_db:
+        type: db
+        db: mysql
+        host: "localhost"
+        dbname: "{{ mysql_databases_icingadb.name }}"
+        username: "{{ mysql_databases_icingadb.username }}"
+        password: "{{ mysql_databases_icingadb.password }}"
+        use_ssl: 0
+        charset: utf8
+      director_db:
+        type: db
+        db: mysql
+        host: "localhost"
+        dbname: "{{ mysql_databases_director.name }}"
+        username: "{{ mysql_databases_director.username }}"
+        password: "{{ mysql_databases_director.password }}"
+        use_ssl: 0
+        charset: utf8
+      #vspheredb_db:
+      #  type: db
+      #  db: mysql
+      #  host: "localhost"
+      #  dbname: "{{ mysql_databases_vspheredb.name }}"
+      #  username: "{{ mysql_databases_vspheredb.username }}"
+      #  password: "{{ mysql_databases_vspheredb.password }}"
+      #  use_ssl: 0
+      #  charset: "utf8mb4"
+
+    icingaweb2_modules:
+      icingadb:
+        enabled: true
+        source: package
+        commandtransports:
+          instance01:
+            transport: api
+            host: "127.0.0.1"
+            username: "{{ icinga2_objects[0].name }}"
+            password: "{{ icinga2_objects[0].password }}"
+        config:
+          icingadb:
+            resource: "icingadb_db"
+          redis:
+            tls: "0"
+        redis:
+          redis1:
+            host: "127.0.0.1"
+      director:
+        enabled: true
+        source: package
+        run_kickstart: true
+        kickstart:
+          config:
+            endpoint: "{{ icinga2_constants.NodeName }}"
+            host: "127.0.0.1"
+            username: "{{ icinga2_objects[1].name }}"
+            password: "{{ icinga2_objects[1].password }}"
+        config:
+          db:
+            resource: director_db
+      perfdatagraphs:
+        enabled: true
+        source: package
+        config:
+          perfdatagraphs:
+            default_backend: influxdbv1
+      perfdatagraphsinfluxdbv1:
+        enabled: true
+        source: package
+        config:
+          influx:
+            api_url: "http://localhost:8086"
+            api_database: "icinga2"
+            api_tls_insecure: "0"
+      #vspheredb:
+      #  enabled: true
+      #  source: package
+      #  config:
+      #    db:
+      #      resource: "vspheredb_db"
+      cube:
+        enabled: true
+        source: package
+      businessprocess:
+        enabled: true
+        source: package
+
+    ### Monitoring Plugins
+    icinga_monitoring_plugins_check_commands:
+      - all
