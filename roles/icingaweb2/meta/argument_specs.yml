@@ -851,3 +851,10 @@ argument_specs:
                   - "Example: C(icingaweb2_modules.perfdatagraphsinfluxdbv2.config: { influx: { api_url: http://localhost:8086, api_org: theorganization, api_bucket: icinga2, api_token: some-api-token } })"
                 type: dict
                 required: false
+          cube:
+            description:
+              - This installs the L(Icinga Cube module, https://icinga.com/docs/icinga-cube/latest/).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source

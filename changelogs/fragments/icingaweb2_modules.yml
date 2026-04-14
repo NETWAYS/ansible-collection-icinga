@@ -1,0 +1,2 @@
+minor_changes:
+  - Add the `Cube module https://icinga.com/docs/icinga-cube/latest/doc/01-About/` to the :code:`icingaweb2` role.
