@@ -13,10 +13,10 @@ icinga2_features:
       - name: icinga-agent
         host: "{{ hostvars['icinga-agent']['ansible_default_ipv4']['address'] }}"
     zones:
-      - name: main
+      - name: master
         endpoints:
           - icinga-master
       - name: agent
         endpoints:
           - icinga-agent
-        parent: main
+        parent: master
