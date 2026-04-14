@@ -48,3 +48,10 @@ build_ignore:
   - .idea
   - '*.tar.gz'
   - PUBLISH.md
+  - TESTING.md
+  - 'requirements*.txt'
+  - CONTRIBUTING.md
+  - CHANGELOG.rst
+  - .ansible
+  - .ansible-lint
+  - .yamllint
