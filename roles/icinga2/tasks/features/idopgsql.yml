@@ -1,10 +1,10 @@
 ---
 
-- name: set api feature facts
-  set_fact:
-    icinga2_import_schema: "{{ icinga2_dict_features.idopgsql.import_schema| default(False) }}"
+- name: Set api feature facts
+  ansible.builtin.set_fact:
+    icinga2_import_schema: "{{ icinga2_dict_features.idopgsql.import_schema | default(false) }}"
 
-- name: feature idopgsql IdoPgsqlConnection object
+- name: Feature idopgsql IdoPgsqlConnection object
   no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
@@ -15,21 +15,21 @@
         file: features-available/ido-pgsql.conf
         args: "{{ icinga2_dict_features.idopgsql }}"
 
-- name: "install on {{ ansible_facts['os_family'] }}"
-  include_tasks: "features/idopgsql/install_on_{{ ansible_facts['os_family'] }}.yml"
+- name: "Install on {{ ansible_facts['os_family'] }}"
+  ansible.builtin.include_tasks: "features/idopgsql/install_on_{{ ansible_facts['os_family'] }}.yml"
 
 - name: PostgreSQL import IDO schema
   block:
-    - name: build psql command
+    - name: Build psql command
       no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-      set_fact:
+      ansible.builtin.set_fact:
         psqlcmd: >-
           PGPASSWORD={{ icinga2_dict_features.idopgsql.password | quote }}
           psql
-          "host={{ icinga2_dict_features.idopgsql.host| default('localhost') }}
-          port={{ icinga2_dict_features.idopgsql.port| default('5432') }}
-          user={{ icinga2_dict_features.idopgsql.user| default('icinga2') }}
-          dbname={{ icinga2_dict_features.idopgsql.database |default('icinga2') }}
+          "host={{ icinga2_dict_features.idopgsql.host | default('localhost') }}
+          port={{ icinga2_dict_features.idopgsql.port | default('5432') }}
+          user={{ icinga2_dict_features.idopgsql.user | default('icinga2') }}
+          dbname={{ icinga2_dict_features.idopgsql.database | default('icinga2') }}
           {% if icinga2_dict_features.idopgsql.ssl_mode is defined %} sslmode={{ icinga2_dict_features.idopgsql.ssl_mode | default('require') }} {%- endif %}
           {% if icinga2_dict_features.idopgsql.ssl_cert is defined %} sslcert={{ icinga2_dict_features.idopgsql.ssl_cert  }} {%- endif %}
           {% if icinga2_dict_features.idopgsql.ssl_key is defined %} sslkey={{ icinga2_dict_features.idopgsql.ssl_key }} {%- endif %}
@@ -37,7 +37,7 @@
 
     - name: PostgreSQL check for IDO schema
       no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-      shell: >
+      ansible.builtin.shell: >
         {{ psqlcmd }}
         -w -c "select version from icinga_dbversion"
       failed_when: false
@@ -47,8 +47,8 @@
 
     - name: PostgreSQL import IDO schema
       no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-      shell: >
+      ansible.builtin.shell: >
         {{ psqlcmd }}
         -w -f /usr/share/icinga2-ido-pgsql/schema/pgsql.sql
       when: db_schema.rc != 0
-  when: icinga2_dict_features.idopgsql.import_schema| default(False)
+  when: icinga2_dict_features.idopgsql.import_schema | default(false)

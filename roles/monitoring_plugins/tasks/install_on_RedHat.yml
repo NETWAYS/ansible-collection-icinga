@@ -1,13 +1,13 @@
 ---
 - name: Activate epel repository
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name: "{{ icinga_monitoring_plugins_epel_package_name }}"
     state: present
-  when: icinga_monitoring_plugins_epel|bool
+  when: icinga_monitoring_plugins_epel | bool
 
 - name: Yum - install requested packages
   become: yes
-  yum:
+  ansible.builtin.dnf:
     state: present
     name: "{{ needed_packages }}"
     update_cache: true
@@ -18,7 +18,7 @@
 
 - name: Dnf - install requested packages
   become: yes
-  dnf:
+  ansible.builtin.dnf:
     state: present
     name: "{{ needed_packages }}"
     update_cache: true
@@ -30,7 +30,7 @@
 
 - name: Yum - remove non-requested packages
   become: yes
-  yum:
+  ansible.builtin.dnf:
     state: absent
     name: "{{ (unwanted_packages | difference(['nagios-plugins'])) if icinga_monitoring_plugins_check_commands | length > 0 else unwanted_packages }}"
     autoremove: "{{ icinga_monitoring_plugins_autoremove }}"

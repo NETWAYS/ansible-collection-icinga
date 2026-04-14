@@ -23,15 +23,15 @@
   ansible.builtin.shell:
     cmd: icingacli director migration pending
   register: _pending
-  changed_when: _pending.rc|int == 0
-  failed_when: _pending.stdout|length > 0
+  changed_when: _pending.rc | int == 0
+  failed_when: _pending.stdout | length > 0
   notify: "run_director_migrations"
 
 - name: Module Director | Check if kickstart is required  # noqa: command-instead-of-shell
   ansible.builtin.shell:
     cmd: icingacli director kickstart required
   register: _required
-  changed_when: (_required.rc|int == 0) or (".icinga_host' doesn't exist" in _required.stderr)
-  failed_when: _required.rc|int >= 2
+  changed_when: (_required.rc | int == 0) or (".icinga_host' doesn't exist" in _required.stderr)
+  failed_when: _required.rc | int >= 2
   when: icingaweb2_modules['director']['run_kickstart'] is defined and icingaweb2_modules.director.run_kickstart and icingaweb2_modules['director']['kickstart'] is defined
   notify: "run_director_kickstart"

@@ -1,6 +1,6 @@
 ---
 
-- name: feature debuglog FileLogger object
+- name: Feature debuglog FileLogger object
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:

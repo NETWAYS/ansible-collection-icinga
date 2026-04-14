@@ -3,4 +3,4 @@
   ansible.builtin.apt:
     name: "{{ icingaweb2_packages + icingaweb2_packages_dependencies }}"
     state: present
-    update_cache: True
+    update_cache: true

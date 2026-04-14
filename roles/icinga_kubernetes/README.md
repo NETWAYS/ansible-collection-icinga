@@ -41,7 +41,7 @@ The following variables are used for the Icinga Kubernetes setup. Normally, you 
 | `icinga_kubernetes_prometheus_url` | `String` | Defines optional url of a Prometheus instance to connect for metrics |  |
 | `icinga_kubernetes_prometheus_insecure` | `String` | Defines an insecure connection to the Prometheus instance | `false` |
 | `icinga_kubernetes_prometheus_username` | `String` | Defines optional username to access the Prometheus instance |  |
-| `icinga_kubernetes_prometheus_password` | `String` | Defines optional password to access the Prometheus instance|  |
+| `icinga_kubernetes_prometheus_password` | `String` | Defines optional password to access the Prometheus instance |  |
 
 ## Examples
 

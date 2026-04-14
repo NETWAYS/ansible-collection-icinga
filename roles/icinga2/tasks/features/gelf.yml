@@ -1,6 +1,6 @@
 ---
 
-- name: feature influxdb GelfWriter object
+- name: Feature influxdb GelfWriter object
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:

@@ -1,7 +1,7 @@
 ---
 - name: MySQL import Kubernetes schema
   no_log: "{{ icinga_kubernetes_no_log | default(icinga_no_log) | default(true) }}"
-  when: icinga_kubernetes_database_import_schema | default(False)
+  when: icinga_kubernetes_database_import_schema | default(false)
   block:
     - name: Build mysql command
       ansible.builtin.set_fact:

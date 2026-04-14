@@ -1,6 +1,6 @@
 ---
 
-- name: feature syslog SyslogLogger object
+- name: Feature syslog SyslogLogger object
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:
@@ -9,4 +9,4 @@
         type: SyslogLogger
         file: features-available/syslog.conf
         args: "{{ icinga2_dict_features.syslog }}"
-    register: result
+  register: result

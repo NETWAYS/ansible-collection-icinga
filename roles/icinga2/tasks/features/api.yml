@@ -1,13 +1,13 @@
 ---
 
-- name: set api feature facts
-  set_fact:
+- name: Set api feature facts
+  ansible.builtin.set_fact:
     icinga2_cert_name: "{{ icinga2_dict_features.api.cert_name | default(ansible_facts['fqdn']) }}"
     icinga2_ca_host: "{{ icinga2_dict_features.api.ca_host | default(omit) }}"
     icinga2_ca_host_port: "{{ icinga2_dict_features.api.ca_host_port | default(omit) }}"
     icinga2_ca_fingerprint: "{{ icinga2_dict_features.api.ca_fingerprint | default(omit) }}"
-    icinga2_force_newcert: "{{ icinga2_dict_features.api.force_newcert | default(False) }}"
-    icinga2_endpoints: "{{ icinga2_dict_features.api.endpoints |default([]) }}"
+    icinga2_force_newcert: "{{ icinga2_dict_features.api.force_newcert | default(false) }}"
+    icinga2_endpoints: "{{ icinga2_dict_features.api.endpoints | default([]) }}"
     icinga2_zones: "{{ icinga2_dict_features.api.zones | default([]) }}"
     icinga2_ssl_cert: "{{ icinga2_dict_features.api.ssl_cert | default(omit) }}"
     icinga2_ssl_cacert: "{{ icinga2_dict_features.api.ssl_cacert | default(omit) }}"
@@ -16,20 +16,21 @@
     icinga2_ticket_salt: "{{ icinga2_dict_features.api.ticket_salt | default(omit) }}"
     icinga2_delegate_pki: "{{ icinga2_dict_features.api.delegate_pki | default(false) }}"
 
-- assert:
+- name: Check if necessary variables are defined
+  ansible.builtin.assert:
     that: ((icinga2_ssl_cacert is defined and icinga2_ssl_cert is defined and icinga2_ssl_key is defined) or (icinga2_ssl_cacert is undefined and icinga2_ssl_cert is undefined and icinga2_ssl_key is undefined and icinga2_ca_host is defined))
     fail_msg: ca_host is mandatory or ssl_cacert/cert/key have to be set at the same time
     success_msg: API Feature is configured correctly
 
-- name: api feature cleanup arguments list
-  set_fact:
+- name: Api feature cleanup arguments list
+  ansible.builtin.set_fact:
     icinga2_api_listener_args: "{{ icinga2_api_listener_args | default({}) | combine({idx.key: idx.value}) }}"
   when: idx.key not in ['ca_host', 'ca_host_port', 'cert_name', 'ca_fingerprint', 'force_newcert', 'zones', 'endpoints', 'ssl_cacert', 'ssl_key', 'ssl_cert', 'ssl_remote_source', 'ticket_salt', 'delegate_pki' ]
   loop: "{{ icinga2_dict_features.api | dict2items }}"
   loop_control:
     loop_var: idx
 
-- name: feature api ApiListener object
+- name: Feature api ApiListener object
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:
@@ -39,7 +40,7 @@
         file: features-available/api.conf
         args: "{{ icinga2_api_listener_args }}"
 
-- name: feature api Endpoint objects
+- name: Feature api Endpoint objects
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:
@@ -51,7 +52,7 @@
     loop_var: idx
   register: result
 
-- name: feature api Zone objects
+- name: Feature api Zone objects
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:
@@ -63,50 +64,50 @@
     loop_var: idx
   register: result
 
-- name: create new CA
+- name: Create new CA
   block:
-    - name: check ca key already exists
-      stat:
+    - name: Check ca key already exists
+      ansible.builtin.stat:
         path: "{{ icinga2_ca_path }}/ca.key"
       register: icinga2_ca_key_path
 
-    - name: check ca cert already exists
-      stat:
+    - name: Check ca cert already exists
+      ansible.builtin.stat:
         path: "{{ icinga2_ca_path }}/ca.crt"
       register: icinga2_ca_cert_path
 
-    - name: create CA
-      shell: >
+    - name: Create CA
+      ansible.builtin.shell: >
         icinga2 pki new-ca
-      when: icinga2_ca_cert_path.stat.exists == false and icinga2_ca_key_path.stat.exists == false
+      when: not icinga2_ca_cert_path.stat.exists and not icinga2_ca_key_path.stat.exists
   when: icinga2_ca_host is defined and icinga2_ca_host == 'none'
 
-- name: check cert key already exists
-  stat:
+- name: Check cert key already exists
+  ansible.builtin.stat:
     path: "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.key"
   register: icinga2_ssl_key_path
 
-- name: check certificate already exists
-  stat:
+- name: Check certificate already exists
+  ansible.builtin.stat:
     path: "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.crt"
   register: icinga2_ssl_cert_path
 
-- name: certificate request
+- name: Certificate request
   when:
-    - icinga2_ssl_cert_path.stat.exists == false or icinga2_ssl_key_path.stat.exists == false or icinga2_force_newcert
+    - not icinga2_ssl_cert_path.stat.exists or not icinga2_ssl_key_path.stat.exists or icinga2_force_newcert
     - icinga2_ssl_cacert is not defined
     - not (icinga2_delegate_pki | bool)
   block:
-    - name: create cert path
-      file:
+    - name: Create cert path
+      ansible.builtin.file:
         path: "{{ icinga2_cert_path }}"
         state: directory
         owner: "{{ icinga2_user }}"
         group: "{{ icinga2_group }}"
         mode: "0750"
 
-    - name: save trusted-master.crt
-      shell: >-
+    - name: Save trusted-master.crt
+      ansible.builtin.shell: >-
         icinga2 pki save-cert
         --host "{{ icinga2_ca_host }}"
         --port "{{ icinga2_ca_host_port | default('5665') }}"
@@ -114,34 +115,34 @@
       when: icinga2_ca_host != 'none'
       register: _trusted_master_cert
 
-    - name: normalize ca fingerprint
-      set_fact:
+    - name: Normalize ca fingerprint
+      ansible.builtin.set_fact:
         _ca_fingerprint_normalized: "{{ icinga2_ca_fingerprint | upper | replace(':', ' ') }}"
       when: icinga2_ca_fingerprint is defined
 
-    - name: validate ca certificate fingerprint
-      fail:
+    - name: Validate ca certificate fingerprint
+      ansible.builtin.fail:
         msg: "CA certificate identity not verified. Fingerprint did not match."
       when:
         - icinga2_ca_fingerprint is defined
-        - _trusted_master_cert.stdout | regex_search(_ca_fingerprint_normalized, multiline=True) is none
+        - _trusted_master_cert.stdout | regex_search(_ca_fingerprint_normalized, multiline=true) is none
 
-    - name: generate private and public key
-      shell: >-
+    - name: Generate private and public key
+      ansible.builtin.shell: >-
         icinga2 pki new-cert
         --cn "{{ icinga2_cert_name }}"
         --key "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.key"
         {% if icinga2_ca_host != 'none' %} --cert "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.crt" {% else %} --csr "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.csr" {%- endif %}
 
-    - name: delegate ticket request to master
+    - name: Delegate ticket request to master
       no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-      shell: icinga2 pki ticket --cn "{{ icinga2_cert_name }}" {% if icinga2_ticket_salt is defined %} --salt "{{ icinga2_ticket_salt }}"{% endif %}
+      ansible.builtin.shell: icinga2 pki ticket --cn "{{ icinga2_cert_name }}" {% if icinga2_ticket_salt is defined %} --salt "{{ icinga2_ticket_salt }}"{% endif %}
       delegate_to: "{{ icinga2_delegate_host | default(icinga2_ca_host) }}"
       register: icinga2_ticket
       when: icinga2_ca_host != 'none'
 
-    - name: get certificate
-      shell: >-
+    - name: Get certificate
+      ansible.builtin.shell: >-
         icinga2 pki {% if icinga2_ca_host != 'none' %} request
         --ticket "{{ icinga2_ticket.stdout }}"
         --host "{{ icinga2_ca_host }}"
@@ -153,8 +154,8 @@
         --cert "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.crt"
       notify: check-and-reload-icinga2-service
 
-    - name: copy CA root certificate
-      copy:
+    - name: Copy CA root certificate
+      ansible.builtin.copy:
         src: "{{ icinga2_ca_path }}/ca.crt"
         dest: "{{ icinga2_cert_path }}/ca.crt"
         owner: "{{ icinga2_user }}"
@@ -164,7 +165,7 @@
 
 - name: Delegated certificate bootstrap
   when:
-    - icinga2_ssl_cert_path.stat.exists == false or icinga2_ssl_key_path.stat.exists == false or icinga2_force_newcert
+    - not icinga2_ssl_cert_path.stat.exists or not icinga2_ssl_key_path.stat.exists or icinga2_force_newcert
     - icinga2_ssl_cacert is not defined
     - icinga2_delegate_pki | bool
     - icinga2_ca_host != 'none'
@@ -215,7 +216,7 @@
 
 - name: Use self generated certificates
   block:
-    - set_fact:
+    - ansible.builtin.set_fact:
         _tmp_crt:
           - src: "{{ icinga2_ssl_cacert }}"
             dest: "{{ icinga2_cert_path }}/ca.crt"
@@ -228,7 +229,7 @@
             mode: "0644"
 
     - name: Ensure icinga2 certificate directory
-      file:
+      ansible.builtin.file:
         path: "{{ icinga2_cert_path }}"
         state: directory
         owner: "{{ icinga2_user }}"
@@ -236,7 +237,7 @@
         mode: "0750"
 
     - name: Copy self generated certificates to icinga2 certificate directory
-      copy:
+      ansible.builtin.copy:
         remote_src: "{{ icinga2_ssl_remote_source }}"
         src: "{{ _crt.src }}"
         dest: "{{ _crt.dest }}"
@@ -250,7 +251,8 @@
 #  when: ( icinga2_ssl_cacert is defined and icinga2_ssl_cert is defined and icinga2_ssl_key is defined )
   when:
     - icinga2_ssl_cacert is defined
-    - icinga2_ssl_cert_path.stat.exists == false or icinga2_ssl_key_path.stat.exists == false or icinga2_force_newcert
+    - not icinga2_ssl_cert_path.stat.exists or not icinga2_ssl_key_path.stat.exists or icinga2_force_newcert
 
-- set_fact:
+- name: Reset temporary variable
+  ansible.builtin.set_fact:
     icinga2_api_listener_args: None

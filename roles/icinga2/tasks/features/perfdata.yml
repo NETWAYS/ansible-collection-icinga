@@ -1,6 +1,6 @@
 ---
 
-- name: feature perfdata PerfdataWriter object
+- name: Feature perfdata PerfdataWriter object
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:

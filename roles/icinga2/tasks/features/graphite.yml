@@ -1,6 +1,6 @@
 ---
 
-- name: feature graphite GraphiteWriter object
+- name: Feature graphite GraphiteWriter object
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:

@@ -2,6 +2,7 @@
 - name: MySQL create Icinga Web 2 user
   no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.shell: >
+    set -o pipefail &&
     {{ _tmp_mysqlcmd }}
     -Ns -e "select name from icingaweb_user where name like '{{ _current_user.username }}'"
     | grep '{{ _current_user.username }}' ||
@@ -20,6 +21,7 @@
 - name: MySQL recreate Icinga Web 2 user
   no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.shell: >
+    set -o pipefail &&
     echo "INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('{{ _current_user.username }}', 1,
     '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"')
     ON DUPLICATE KEY UPDATE active = 1, password_hash = '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"'" |  {{ _tmp_mysqlcmd }} -Ns

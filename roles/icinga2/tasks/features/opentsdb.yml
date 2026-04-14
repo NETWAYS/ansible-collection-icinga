@@ -1,6 +1,6 @@
 ---
 
-- name: feature influxdb OpenTsdbWriter object
+- name: Feature influxdb OpenTsdbWriter object
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:

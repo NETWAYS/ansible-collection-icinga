@@ -1,26 +1,26 @@
 ---
-- name: populate features (icinga2_dict_features)
+- name: Populate features (icinga2_dict_features)
   no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-  set_fact:
-    icinga2_dict_features: "{{ icinga2_dict_features|default({}) | combine({ item.name: item }) }}"
+  ansible.builtin.set_fact:
+    icinga2_dict_features: "{{ icinga2_dict_features | default({}) | combine({item.name: item}) }}"
   with_items: "{{ icinga2_features }}"
   loop_control:
     label: "{{ item.name }}"
 
-- name: main config file {{ icinga2_config_path + '/icinga2.conf' }}
-  template:
+- name: Main config file {{ icinga2_config_path + '/icinga2.conf' }}
+  ansible.builtin.template:
     src: icinga2.conf.j2
     dest: "{{ icinga2_config_path + '/icinga2.conf' }}"
     owner: "{{ icinga2_user }}"
     group: "{{ icinga2_group }}"
   notify: check-and-reload-icinga2-service
 
-- name: merge defaults and user specified constants (set_fact icinga2_combined_constants)
+- name: Merge defaults and user specified constants (set_fact icinga2_combined_constants)
   no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-  set_fact:
+  ansible.builtin.set_fact:
     icinga2_combined_constants: "{{ icinga2_default_constants | combine(icinga2_constants) }}"
 
-- name: set constants in {{ icinga2_config_path + '/constants.conf' }}
+- name: Set constants in {{ icinga2_config_path + '/constants.conf' }}
   ansible.builtin.template:
     src: constants.conf.j2
     dest: "{{ icinga2_config_path + '/constants.conf' }}"
@@ -28,13 +28,13 @@
     group: "{{ icinga2_group }}"
   notify: check-and-reload-icinga2-service
 
-- name: features
-  include_tasks: features.yml
+- name: Features
+  ansible.builtin.include_tasks: features.yml
 
-- name: objects
-  include_tasks: objects.yml
+- name: Objects
+  ansible.builtin.include_tasks: objects.yml
 
-- name: ensure monitoring config directories
+- name: Ensure monitoring config directories
   ansible.builtin.file:
     path: "{{ icinga2_config_path }}/{{ item }}"
     state: directory
@@ -52,15 +52,15 @@
     #  - my_own_config.d
     #- item.split('/')[0] in icinga2_local_config or item.split('/')[0] == 'zones.d'
 
-- name: collect config fragments (icinga2_fragments_path)
-  find:
+- name: Collect config fragments (icinga2_fragments_path)
+  ansible.builtin.find:
     path: "{{ icinga2_fragments_path }}"
     recurse: yes
     file_type: file
   register: result_frag
 
-- name: cleanup config files (icinga2_fragments_path)
-  file:
+- name: Cleanup config files (icinga2_fragments_path)
+  ansible.builtin.file:
     state: absent
     dest: "{{ item.path }}"
   loop: "{{ result_frag.files }}"
@@ -106,19 +106,19 @@
     state: absent
     dest: "{{ item }}"
 
-- name: collect config files
-  find:
+- name: Collect config files
+  ansible.builtin.find:
     path: "{{ icinga2_fragments_path }}"
     recurse: yes
     file_type: file
     pattern: '*.conf'
   register: result
 
-- name: assemble config files
+- name: Assemble config files
   ansible.builtin.copy:
     src: "{{ item.path }}"
     remote_src: true
-    dest: "{{ item.path | regex_replace('^'+icinga2_fragments_path, icinga2_config_path) }}"
+    dest: "{{ item.path | regex_replace('^' + icinga2_fragments_path, icinga2_config_path) }}"
     owner: "{{ icinga2_user }}"
     group: "{{ icinga2_group }}"
     mode: 0644
@@ -127,12 +127,12 @@
     label: "{{ item.path }}"
   notify: check-and-reload-icinga2-service
 
-- name: enable features
+- name: Enable features
   no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-  file:
+  ansible.builtin.file:
     state: "{{ 'link' if (item.state is undefined or item.state != 'absent') else 'absent' }}"
-    path: "{{ '/etc/icinga2/features-enabled/' + icinga2_feature_realname[item.name]|default(item.name) + '.conf' }}"
-    src: "{{ '../features-available/' + icinga2_feature_realname[item.name]|default(item.name) + '.conf' if (item.state is undefined or item.state != 'absent') else omit }}"
+    path: "{{ '/etc/icinga2/features-enabled/' + icinga2_feature_realname[item.name] | default(item.name) + '.conf' }}"
+    src: "{{ '../features-available/' + icinga2_feature_realname[item.name] | default(item.name) + '.conf' if (item.state is undefined or item.state != 'absent') else omit }}"
   loop: "{{ icinga2_features }}"
   loop_control:
     label: "{{ item.name }}"

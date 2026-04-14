@@ -9,7 +9,7 @@
 - name: Build mysql command
   ansible.builtin.set_fact:
     _tmp_mysqlcmd: >-
-      mysql {% if _db['host'] | default('localhost') != 'localhost'  %} -h "{{ _db['host'] }}" {%- endif %}
+      mysql {% if _db['host'] | default('localhost') != 'localhost' %} -h "{{ _db['host'] }}" {%- endif %}
       {% if _db['port'] is defined %} -P "{{ _db['port'] }}" {%- endif %}
       {% if _db['ssl_mode'] is defined %} --ssl-mode "{{ _db['ssl_mode'] }}" {%- endif %}
       {% if _db['ssl_ca'] is defined %} --ssl-ca "{{ _db['ssl_ca'] }}" {%- endif %}

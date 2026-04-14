@@ -1,5 +1,6 @@
 ---
-- name: icingadb-redis-restart
+- name: IcingaDB Redis restart
+  listen: icingadb-redis-restart
   ansible.builtin.service:
     name: "{{ icingadb_redis_service_name }}"
     state: restarted

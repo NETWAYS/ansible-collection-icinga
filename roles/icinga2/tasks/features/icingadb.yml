@@ -1,6 +1,6 @@
 ---
 
-- name: feature icingadb IcingaDB object
+- name: Feature icingadb IcingaDB object
   no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"

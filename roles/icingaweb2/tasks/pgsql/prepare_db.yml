@@ -19,6 +19,6 @@
       user={{ icingaweb2_priv_db_user | default(icingaweb2_db['user']) }}
       dbname={{ icingaweb2_db['name'] }}
       {% if icingaweb2_db['ssl_mode'] is defined %} sslmode={{ icingaweb2_db['ssl_mode'] | default('require') }} {%- endif %}
-      {% if icingaweb2_db['ssl_cert'] is defined %} sslcert={{ icingaweb2_db['ssl_cert']  }} {%- endif %}
+      {% if icingaweb2_db['ssl_cert'] is defined %} sslcert={{ icingaweb2_db['ssl_cert'] }} {%- endif %}
       {% if icingaweb2_db['ssl_key'] is defined %} sslkey={{ icingaweb2_db['ssl_key'] }} {%- endif %}
       {% if icingaweb2_db['ssl_extra_options'] is defined %} {{ icingaweb2_db['ssl_extra_options'] }} {%- endif %}"

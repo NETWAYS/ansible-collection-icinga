@@ -23,7 +23,7 @@
 - name: Gather module packages
   no_log: true
   ansible.builtin.set_fact:
-    icingaweb2_packages: "{{ icingaweb2_packages + [ icingaweb2_module_packages[item.key] ] }}"
+    icingaweb2_packages: "{{ icingaweb2_packages + [icingaweb2_module_packages[item.key]] }}"
   loop: "{{ icingaweb2_modules | dict2items }}"
   loop_control:
     label: "{{ item.key }}"
@@ -59,18 +59,18 @@
 - name: Manage module states
   no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.file:
-    src: "{{ icingaweb2_config.global.module_path + '/' + item.key if item.value.enabled|bool == true else omit }}"
+    src: "{{ icingaweb2_config.global.module_path + '/' + item.key if item.value.enabled | bool else omit }}"
     dest: "{{ icingaweb2_config_dir }}/enabledModules/{{ item.key }}"
     owner: "{{ icingaweb2_httpd_user }}"
     group: "{{ icingaweb2_group }}"
-    state: "{{ 'link' if item.value.enabled|bool == true else 'absent' }}"
+    state: "{{ 'link' if item.value.enabled | bool else 'absent' }}"
     force: yes
   when:
     - icingaweb2_modules is defined
     - item.key in icingaweb2_module_packages.keys()
   loop: "{{ icingaweb2_modules | dict2items }}"
   loop_control:
-    label: "Ensure {{ item.key }} is {{ 'enabled' if item.value.enabled|default(false)|bool == true else 'disabled' }}"
+    label: "Ensure {{ item.key }} is {{ 'enabled' if item.value.enabled | default(false) | bool else 'disabled' }}"
 
 - name: Configure modules
   ansible.builtin.include_tasks: "modules/{{ item.key }}.yml"
@@ -87,7 +87,7 @@
   ansible.builtin.service:
     name: "icinga-{{ item.key }}"
     state: restarted
-  when: icingaweb2_modules is defined and item.value.enabled|default(false)|bool == true and item.key in ['vspheredb', 'x509']
+  when: icingaweb2_modules is defined and item.value.enabled | default(false) | bool and item.key in ['vspheredb', 'x509']
   loop: "{{ icingaweb2_modules | dict2items }}"
   loop_control:
     label: "{{ item.key }}"

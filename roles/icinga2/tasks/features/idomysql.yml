@@ -1,10 +1,10 @@
 ---
 
-- name: set api feature facts
-  set_fact:
-    icinga2_import_schema: "{{ icinga2_dict_features.idomysql.import_schema| default(False) }}"
+- name: Set api feature facts
+  ansible.builtin.set_fact:
+    icinga2_import_schema: "{{ icinga2_dict_features.idomysql.import_schema | default(false) }}"
 
-- name: feature idomysql IdoMysqlConnection object
+- name: Feature idomysql IdoMysqlConnection object
   no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
@@ -15,18 +15,18 @@
         file: features-available/ido-mysql.conf
         args: "{{ icinga2_dict_features.idomysql }}"
 
-- name: "install on {{ ansible_facts['os_family'] }}"
-  include_tasks: "features/idomysql/install_on_{{ ansible_facts['os_family'] }}.yml"
+- name: "Install on {{ ansible_facts['os_family'] }}"
+  ansible.builtin.include_tasks: "features/idomysql/install_on_{{ ansible_facts['os_family'] }}.yml"
 
 # Hint: For MySQL the client-side --ssl option is deprecated as of MySQL 5.7.11 and is removed in MySQL 8.0. For client programs, use --ssl-mode instead
 # However, MariaDB currently does not offer a --ssl-mode option, MariaDB enables --ssl automatically with other flags
 - name: MySQL import IDO schema
   block:
-    - name: build mysql command
+    - name: Build mysql command
       no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-      set_fact:
+      ansible.builtin.set_fact:
         mysqlcmd: >-
-          mysql {% if icinga2_dict_features.idomysql.host| default('localhost') != 'localhost'  %} -h "{{ icinga2_dict_features.idomysql.host }}" {%- endif %}
+          mysql {% if icinga2_dict_features.idomysql.host | default('localhost') != 'localhost'  %} -h "{{ icinga2_dict_features.idomysql.host }}" {%- endif %}
           {% if icinga2_dict_features.idomysql.port is defined %} -P "{{ icinga2_dict_features.idomysql.port }}" {%- endif %}
           {% if icinga2_dict_features.idomysql.ssl_mode is defined %} --ssl-mode "{{ icinga2_dict_features.idomysql.ssl_mode }}" {%- endif %}
           {% if icinga2_dict_features.idomysql.ssl_ca is defined %} --ssl-ca "{{ icinga2_dict_features.idomysql.ssl_ca }}" {%- endif %}
@@ -40,7 +40,7 @@
 
     - name: MySQL check for IDO schema
       no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-      shell: >
+      ansible.builtin.shell: >
         {{ mysqlcmd }}
         -Ns -e "select version from icinga_dbversion"
       failed_when: false
@@ -50,8 +50,8 @@
 
     - name: MySQL import IDO schema
       no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-      shell: >
+      ansible.builtin.shell: >
         {{ mysqlcmd }}
         < /usr/share/icinga2-ido-mysql/schema/mysql.sql
       when: db_schema.rc != 0
-  when: icinga2_dict_features.idomysql.import_schema| default(False)
+  when: icinga2_dict_features.idomysql.import_schema | default(false)

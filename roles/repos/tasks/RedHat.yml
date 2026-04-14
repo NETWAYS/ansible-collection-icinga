@@ -54,16 +54,16 @@
     enabled: "{{ netways_repo_plugins }}"
 
 - name: Yum - add EPEL repository
-  yum:
+  ansible.builtin.dnf:
     name: "{{ icinga_repo_epel_package_name }}"
     state: present
-  when: icinga_repo_epel|bool == true
+  when: icinga_repo_epel | bool
 
 - name: Yum - add SCL repositories
-  yum:
+  ansible.builtin.dnf:
     name: centos-release-scl
     state: present
   when:
-    - icinga_repo_scl|bool == true
+    - icinga_repo_scl | bool
     - ansible_facts["distribution"] == "CentOS"
     - ansible_facts["distribution_major_version"] < "8"

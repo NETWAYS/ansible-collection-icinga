@@ -19,7 +19,7 @@
   no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
     _tmp_mysqlcmd: >-
-      mysql {% if icingaweb2_db['host'] | default('localhost') != 'localhost'  %} -h "{{ icingaweb2_db['host'] }}" {%- endif %}
+      mysql {% if icingaweb2_db['host'] | default('localhost') != 'localhost' %} -h "{{ icingaweb2_db['host'] }}" {%- endif %}
       {% if icingaweb2_db['port'] is defined %} -P "{{ icingaweb2_db['port'] }}" {%- endif %}
       {% if icingaweb2_db['ssl_mode'] is defined %} --ssl-mode "{{ icingaweb2_db['ssl_mode'] }}" {%- endif %}
       {% if icingaweb2_db['ssl_ca'] is defined %} --ssl-ca "{{ icingaweb2_db['ssl_ca'] }}" {%- endif %}

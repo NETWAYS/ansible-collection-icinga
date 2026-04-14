@@ -1,6 +1,6 @@
 ---
 
-- name: feature influxdb InfluxdbWriter object
+- name: Feature influxdb InfluxdbWriter object
   no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"

@@ -1,6 +1,6 @@
 ---
 
-- name: feature notification NotificationComponent object
+- name: Feature notification NotificationComponent object
   ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + objects }}"
   vars:

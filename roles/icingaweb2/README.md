@@ -38,16 +38,16 @@ icingaweb2_db:
 ```
 
 * `icingaweb2_db_import_schema: boolean`
-  * Decides whether the schema should be imported in the database defined at `icingaweb2_db`. **Default: False**
+  * Decides whether the schema should be imported in the database defined at `icingaweb2_db`. **Default: false**
 
 * `icingaweb2_admin_<username|password>: string`
   * Set the username and password for the first admin user for Icinga Web 2.
 
 * `icingaweb2_admin_recreate: boolean`
-  * Recreate can be used to change the password of the admin. **Default: False**
+  * Recreate can be used to change the password of the admin. **Default: false**
 
 In addition to the Icinga Web 2 Admin, other users can be configured by defining `icingaweb2_users`.<br>
-The `recreate` parameter can be used to change passwords or to enable the user if he has been disabled. **Default: False**
+The `recreate` parameter can be used to change passwords or to enable the user if he has been disabled. **Default: false**
 
 ```yaml
 icingaweb2_users:

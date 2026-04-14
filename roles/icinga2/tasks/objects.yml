@@ -1,14 +1,14 @@
 ---
-- name: collect all config objects for myself (from all inventory hosts)
+- name: Collect all config objects for myself (from all inventory hosts)
   no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-  set_fact:
-    tmp_objects: "{{ tmp_objects| default([]) + lookup('list', hostvars[item]['icinga2_objects'][icinga2_config_host]) }}"
+  ansible.builtin.set_fact:
+    tmp_objects: "{{ tmp_objects | default([]) + lookup('list', hostvars[item]['icinga2_objects'][icinga2_config_host]) }}"
   with_items: "{{ groups['all'] }}"
   when: hostvars[item]['icinga2_objects'][icinga2_config_host] is defined
 
-- name: collect all config objects for myself (from myself if list)
+- name: Collect all config objects for myself (from myself if list)
   no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-  set_fact:
+  ansible.builtin.set_fact:
     tmp_objects: "{{ tmp_objects | default([]) + lookup('list', hostvars[inventory_hostname]['icinga2_objects']) }}"
   when:
     - hostvars[inventory_hostname]['icinga2_objects'] is defined
@@ -16,10 +16,10 @@
     - hostvars[inventory_hostname]['icinga2_objects'] is not string
     - hostvars[inventory_hostname]['icinga2_objects'] is not mapping
 
-- name: collect all config objects in play vars
+- name: Collect all config objects in play vars
   no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-  set_fact:
-    tmp_objects: "{{ tmp_objects| default([]) + lookup('list', icinga2_objects) }}"
+  ansible.builtin.set_fact:
+    tmp_objects: "{{ tmp_objects | default([]) + lookup('list', icinga2_objects) }}"
   when:
     - icinga2_objects is defined
     - icinga2_objects is iterable
@@ -31,38 +31,40 @@
   ansible.builtin.set_fact:
     tmp_objects: "{{ (tmp_objects | default([])) | unique }}"
 
-- no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-  icinga2_object:
+- name: Write objects
+  no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
+  netways.icinga.icinga2_object:
     objects: "{{ tmp_objects }}"
   when: tmp_objects is defined
   register: result
 
-- set_fact:
+- name: Collect objects' file paths
+  ansible.builtin.set_fact:
     icinga2_local_objects: "{{ icinga2_local_objects | default([]) + result.destinations }}"
   when: result.destinations is defined
 
-- name: prepare custom config
-  when: icinga2_custom_config is defined and icinga2_custom_config|length > 0
+- name: Prepare custom config
+  when: icinga2_custom_config is defined and icinga2_custom_config | length > 0
   block:
-    - name: construct _icinga2_custom_conf_paths
-      set_fact:
+    - name: Construct _icinga2_custom_conf_paths
+      ansible.builtin.set_fact:
         _icinga2_custom_conf_paths: "{{ _icinga2_custom_conf_paths + [[icinga2_fragments_path, item.path] | path_join] }}"
       loop: "{{ icinga2_custom_config }}"
 
-    - name: prepare custom config paths
+    - name: Prepare custom config paths
       loop: "{{ icinga2_custom_config }}"
       loop_control:
         label: "Creating '{{ _directory_path }}'"
       vars:
         _directory_path: "{{ [icinga2_fragments_path, item.path] | path_join | dirname }}"
-      file:
+      ansible.builtin.file:
         state: directory
         owner: root
         group: root
         mode: 0755
         path: "{{ _directory_path }}"
 
-    - name: add custom config to assemble
+    - name: Add custom config to assemble
       ansible.builtin.copy:
         owner: root
         group: root
