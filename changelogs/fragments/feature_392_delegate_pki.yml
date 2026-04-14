@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Add :code:`delegate_pki` option to the Icinga 2 API feature for reverse-connected environments where the agent cannot reach the parent / CA host but connections to the agent are possible. (#392) Thanks @lucagubler 

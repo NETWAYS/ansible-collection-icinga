@@ -1,5 +1,0 @@
-minor_changes:
-  - |
-    Add option :code:`environment_id` to the :code:`icingadb` feature (role :code:`icinga2`).
-    This allows users to specify the content of :code:`/var/lib/icinga2/icingadb.env`.
-    Messing with this option can lead to duplicate entries in the database, so be sure to first read the `documentation <https://icinga.com/docs/icinga-db/latest/doc/05-Distributed-Setups/#environment-id>`__ in case you really need to make use of this option.
