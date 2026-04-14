@@ -148,6 +148,3 @@ dmypy.json
 
 # Trunk
 .trunk
-
-# Don't version external roles
-roles/geerlingguy.mysql/
