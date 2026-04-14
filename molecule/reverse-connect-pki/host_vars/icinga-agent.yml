@@ -14,10 +14,10 @@ icinga2_features:
       - name: icinga-master
       - name: icinga-agent
     zones:
-      - name: main
+      - name: master
         endpoints:
           - icinga-master
       - name: agent
         endpoints:
           - icinga-agent
-        parent: main
+        parent: master
