@@ -14,6 +14,7 @@
     icinga2_ssl_key: "{{ icinga2_dict_features.api.ssl_key | default(omit) }}"
     icinga2_ssl_remote_source: "{{ icinga2_dict_features.api.ssl_remote_source | default(false) }}"
     icinga2_ticket_salt: "{{ icinga2_dict_features.api.ticket_salt | default(omit) }}"
+    icinga2_delegate_pki: "{{ icinga2_dict_features.api.delegate_pki | default(false) }}"
 
 - assert:
     that: ((icinga2_ssl_cacert is defined and icinga2_ssl_cert is defined and icinga2_ssl_key is defined) or (icinga2_ssl_cacert is undefined and icinga2_ssl_cert is undefined and icinga2_ssl_key is undefined and icinga2_ca_host is defined))
@@ -23,7 +24,7 @@
 - name: api feature cleanup arguments list
   set_fact:
     icinga2_api_listener_args: "{{ icinga2_api_listener_args | default({}) | combine({idx.key: idx.value}) }}"
-  when: idx.key not in ['ca_host', 'ca_host_port', 'cert_name', 'ca_fingerprint', 'force_newcert', 'zones', 'endpoints', 'ssl_cacert', 'ssl_key', 'ssl_cert', 'ssl_remote_source', 'ticket_salt' ]
+  when: idx.key not in ['ca_host', 'ca_host_port', 'cert_name', 'ca_fingerprint', 'force_newcert', 'zones', 'endpoints', 'ssl_cacert', 'ssl_key', 'ssl_cert', 'ssl_remote_source', 'ticket_salt', 'delegate_pki' ]
   loop: "{{ icinga2_dict_features.api | dict2items }}"
   loop_control:
     loop_var: idx
@@ -91,7 +92,10 @@
   register: icinga2_ssl_cert_path
 
 - name: certificate request
-  when: (icinga2_ssl_cert_path.stat.exists == false or icinga2_ssl_key_path.stat.exists == false or icinga2_force_newcert) and icinga2_ssl_cacert is not defined
+  when:
+    - icinga2_ssl_cert_path.stat.exists == false or icinga2_ssl_key_path.stat.exists == false or icinga2_force_newcert
+    - icinga2_ssl_cacert is not defined
+    - not (icinga2_delegate_pki | bool)
   block:
     - name: create cert path
       file:
@@ -158,6 +162,57 @@
         remote_src: yes
       when: icinga2_ca_host == 'none'
 
+- name: Delegated certificate bootstrap
+  when:
+    - icinga2_ssl_cert_path.stat.exists == false or icinga2_ssl_key_path.stat.exists == false or icinga2_force_newcert
+    - icinga2_ssl_cacert is not defined
+    - icinga2_delegate_pki | bool
+    - icinga2_ca_host != 'none'
+  block:
+    - name: Create cert path
+      ansible.builtin.file:
+        path: "{{ icinga2_cert_path }}"
+        state: directory
+        owner: "{{ icinga2_user }}"
+        group: "{{ icinga2_group }}"
+        mode: "0750"
+
+    - name: Fetch CA certificate from delegated host
+      ansible.builtin.slurp:
+        src: "{{ icinga2_ca_path }}/ca.crt"
+      delegate_to: "{{ icinga2_delegate_host | default(icinga2_ca_host) }}"
+      register: _delegated_ca_cert
+
+    - name: Save CA certificate
+      ansible.builtin.copy:
+        dest: "{{ icinga2_cert_path }}/ca.crt"
+        content: "{{ _delegated_ca_cert['content'] | b64decode }}"
+        owner: "{{ icinga2_user }}"
+        group: "{{ icinga2_group }}"
+        mode: "0644"
+
+    - name: Generate private and public key
+      ansible.builtin.command: >-
+        icinga2 pki new-cert
+        --cn "{{ icinga2_cert_name }}"
+        --key "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.key"
+        --cert "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.crt"
+
+    - name: Delegate ticket request to master
+      no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
+      ansible.builtin.command: icinga2 pki ticket --cn "{{ icinga2_cert_name }}" {% if icinga2_ticket_salt is defined %} --salt "{{ icinga2_ticket_salt }}"{% endif %}
+      delegate_to: "{{ icinga2_delegate_host | default(icinga2_ca_host) }}"
+      register: _icinga2_ticket
+
+    - name: Write ticket file
+      ansible.builtin.copy:
+        dest: "{{ icinga2_cert_path }}/ticket"
+        content: "{{ _icinga2_ticket.stdout }}"
+        owner: "{{ icinga2_user }}"
+        group: "{{ icinga2_group }}"
+        mode: "0600"
+      notify: check-and-reload-icinga2-service
+
 - name: Use self generated certificates
   block:
     - set_fact:
@@ -195,7 +250,7 @@
 #  when: ( icinga2_ssl_cacert is defined and icinga2_ssl_cert is defined and icinga2_ssl_key is defined )
   when:
     - icinga2_ssl_cacert is defined
-    - icinga2_ssl_cert_path.stat.exists == false or icinga2_ssl_key_path.stat.exists == false or icinga2_force_newcert 
+    - icinga2_ssl_cert_path.stat.exists == false or icinga2_ssl_key_path.stat.exists == false or icinga2_force_newcert
 
 - set_fact:
     icinga2_api_listener_args: None

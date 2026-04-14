@@ -1,0 +1,22 @@
+---
+icinga2_confd: false
+icinga2_constants:
+  TicketSalt: "molecule-reverse-connect-pki"
+icinga2_features:
+  - name: notification
+  - name: checker
+  - name: mainlog
+  - name: api
+    ca_host: none
+    endpoints:
+      - name: icinga-master
+      - name: icinga-agent
+        host: "{{ hostvars['icinga-agent']['ansible_default_ipv4']['address'] }}"
+    zones:
+      - name: master
+        endpoints:
+          - icinga-master
+      - name: agent
+        endpoints:
+          - icinga-agent
+        parent: master
