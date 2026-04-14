@@ -35,32 +35,3 @@
   failed_when: _required.rc|int >= 2
   when: icingaweb2_modules['director']['run_kickstart'] is defined and icingaweb2_modules.director.run_kickstart and icingaweb2_modules['director']['kickstart'] is defined
   notify: "run_director_kickstart"
-
-- name: Module Director | Ensure installation from source is complete
-  when: icingaweb2_modules['director']['source'] == 'git'
-  block:
-    - name: Module Director | Ensure daemon user exists
-      ansible.builtin.user:
-        name: icingadirector
-        state: present
-        shell: /bin/nologin
-        system: yes
-        home: /var/lib/icingadirector
-        group: "{{ icingaweb2_group }}"
-
-    - name: Module Director | Ensure home directory exists
-      ansible.builtin.file:
-        state: directory
-        dest: /var/lib/icingadirector
-        owner: icingadirector
-        group: "{{ icingaweb2_group }}"
-        mode: "0750"
-
-    - name: Module Director | Ensure systemd unit file exists
-      ansible.builtin.copy:
-        src: "{{ icingaweb2_config.global.module_path }}/director/contrib/systemd/icinga-director.service"
-        dest: /etc/systemd/system/icingadirector.service
-        owner: root
-        group: root
-        mode: "0644"
-        remote_src: yes
