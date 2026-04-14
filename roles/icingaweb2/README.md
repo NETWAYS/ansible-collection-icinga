@@ -12,6 +12,10 @@ The role icingaweb2 installs and configures Icinga Web 2 and its modules.
 * [Graphite](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-graphite.md)
 * [Cube](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-cube.md)
 * [vSphereDB](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-vspheredb.md)
+* [Performance Data Graphs](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-perfdatagraphs.md)
+* [Performance Data Graphs Graphite](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-perfdatagraphsgraphite.md)
+* [Performance Data Graphs InfluxDB v1](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-perfdatagraphsinfluxdbv1.md)
+* [Performance Data Graphs InfluxDB v2](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-perfdatagraphsinfluxdbv2.md)
 
 
 ## Databases
