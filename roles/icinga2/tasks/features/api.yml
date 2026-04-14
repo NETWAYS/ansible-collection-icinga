@@ -162,52 +162,52 @@
         remote_src: yes
       when: icinga2_ca_host == 'none'
 
-- name: delegated certificate bootstrap
+- name: Delegated certificate bootstrap
   when:
     - icinga2_ssl_cert_path.stat.exists == false or icinga2_ssl_key_path.stat.exists == false or icinga2_force_newcert
     - icinga2_ssl_cacert is not defined
     - icinga2_delegate_pki | bool
     - icinga2_ca_host != 'none'
   block:
-    - name: create cert path
-      file:
+    - name: Create cert path
+      ansible.builtin.file:
         path: "{{ icinga2_cert_path }}"
         state: directory
         owner: "{{ icinga2_user }}"
         group: "{{ icinga2_group }}"
         mode: "0750"
 
-    - name: fetch CA certificate from delegated host
-      slurp:
+    - name: Fetch CA certificate from delegated host
+      ansible.builtin.slurp:
         src: "{{ icinga2_ca_path }}/ca.crt"
       delegate_to: "{{ icinga2_delegate_host | default(icinga2_ca_host) }}"
       register: _delegated_ca_cert
 
-    - name: save delegated CA certificate
-      copy:
+    - name: Save CA certificate
+      ansible.builtin.copy:
         dest: "{{ icinga2_cert_path }}/ca.crt"
         content: "{{ _delegated_ca_cert['content'] | b64decode }}"
         owner: "{{ icinga2_user }}"
         group: "{{ icinga2_group }}"
         mode: "0644"
 
-    - name: generate private and public key
-      shell: >-
+    - name: Generate private and public key
+      ansible.builtin.command: >-
         icinga2 pki new-cert
         --cn "{{ icinga2_cert_name }}"
         --key "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.key"
         --cert "{{ icinga2_cert_path }}/{{ icinga2_cert_name }}.crt"
 
-    - name: delegate ticket request to master
+    - name: Delegate ticket request to master
       no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
-      shell: icinga2 pki ticket --cn "{{ icinga2_cert_name }}" {% if icinga2_ticket_salt is defined %} --salt "{{ icinga2_ticket_salt }}"{% endif %}
+      ansible.builtin.command: icinga2 pki ticket --cn "{{ icinga2_cert_name }}" {% if icinga2_ticket_salt is defined %} --salt "{{ icinga2_ticket_salt }}"{% endif %}
       delegate_to: "{{ icinga2_delegate_host | default(icinga2_ca_host) }}"
-      register: icinga2_ticket
+      register: _icinga2_ticket
 
-    - name: write ticket file
-      copy:
+    - name: Write ticket file
+      ansible.builtin.copy:
         dest: "{{ icinga2_cert_path }}/ticket"
-        content: "{{ icinga2_ticket.stdout }}"
+        content: "{{ _icinga2_ticket.stdout }}"
         owner: "{{ icinga2_user }}"
         group: "{{ icinga2_group }}"
         mode: "0600"
