@@ -148,3 +148,6 @@ dmypy.json
 
 # Trunk
 .trunk
+
+# External dependencies
+geerlingguy.mysql
