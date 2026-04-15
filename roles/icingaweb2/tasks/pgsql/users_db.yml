@@ -14,6 +14,8 @@
       SET active = 1, password_hash = '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"'" | {{ _tmp_pgsqlcmd }} -w &&
       echo "User created"
     )
+  args:
+    executable: /bin/bash
   register: _icingaweb2_db_user
   when: _current_user.recreate is false
   changed_when:
@@ -28,5 +30,7 @@
     '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"')
     ON CONFLICT (name) DO UPDATE
     SET active = 1, password_hash = '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"'" | {{ _tmp_pgsqlcmd }} -w
+  args:
+    executable: /bin/bash
   when: _current_user.recreate is true
   throttle: 1

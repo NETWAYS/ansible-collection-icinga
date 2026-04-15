@@ -12,6 +12,8 @@
       ON DUPLICATE KEY UPDATE active = 1, password_hash = '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"'" |  {{ _tmp_mysqlcmd }} -Ns &&
       echo "User created"
     )
+  args:
+    executable: /bin/bash
   register: _icingaweb2_db_user
   when: (_current_user.recreate | default(false)) is false
   changed_when:
@@ -25,5 +27,7 @@
     echo "INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('{{ _current_user.username }}', 1,
     '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"')
     ON DUPLICATE KEY UPDATE active = 1, password_hash = '"`php -r 'echo password_hash("{{ _current_user.password }}", PASSWORD_DEFAULT);'`"'" |  {{ _tmp_mysqlcmd }} -Ns
+  args:
+    executable: /bin/bash
   when: (_current_user.recreate | default(false)) is true
   throttle: 1
