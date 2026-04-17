@@ -4,6 +4,20 @@ Icinga.Icinga Release Notes
 
 .. contents:: Topics
 
+v0.4.8
+======
+
+Release Summary
+---------------
+
+Quick version bump to have a working tag release.
+
+Bugfixes
+--------
+
+- Remove use of :code:`pipefail` for now since it is not necessarily supported by the default shells.
+  It might be reintroduced at a later point if the :code:`dash` shell widely supports it on systems also supported by Icinga.
+
 v0.4.7
 ======
 

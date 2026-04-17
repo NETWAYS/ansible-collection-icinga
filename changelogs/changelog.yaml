@@ -628,3 +628,19 @@ releases:
     - no_log.yml
     - release_summary.yml
     release_date: '2026-04-14'
+  0.4.8:
+    changes:
+      bugfixes:
+      - 'Remove use of :code:`pipefail` for now since it is not necessarily supported
+        by the default shells.
+
+        It might be reintroduced at a later point if the :code:`dash` shell widely
+        supports it on systems also supported by Icinga.
+
+        '
+      release_summary: 'Quick version bump to have a working tag release.
+
+        '
+    fragments:
+    - pipefail.yml
+    release_date: '2026-04-17'
