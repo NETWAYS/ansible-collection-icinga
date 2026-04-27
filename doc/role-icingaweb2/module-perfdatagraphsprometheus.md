@@ -13,6 +13,8 @@ The general module parameter like `enabled` and `source` can be applied here.
 For every config file, create a dictionary with sections as keys and the parameters as values.
 For parameters please check the [module documentation](https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs-prometheus) or make manual changes in Icinga Web and have a look at the resulting configuration files.
 
+Example - Basic auth:
+
 ```yaml
 icingaweb2_modules:
   perfdatagraphsprometheus:
@@ -21,7 +23,25 @@ icingaweb2_modules:
     config:
       prometheus:
         api_url: "http://localhost:9090"
-        api_username: "icinga2-user"
-        api_password: "icinga2-password"
+        api_auth_method: "basic"
+        api_auth_username: "icinga2-user"
+        api_auth_password: "icinga2-password"
+        api_tls_insecure: "0"
+```
+
+
+Example - Token auth:
+
+```yaml
+icingaweb2_modules:
+  perfdatagraphsprometheus:
+    enabled: true
+    source: package
+    config:
+      prometheus:
+        api_url: "http://localhost:9090"
+        api_auth_method: "token"
+        api_auth_tokentype: "Bearer"
+        api_auth_tokenvalue: "super-secret-bearer-token"
         api_tls_insecure: "0"
 ```

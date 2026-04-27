@@ -4,7 +4,7 @@ To enable the feature **otlpmetrics** use the following block in the variable `i
 
 **INFO** For detailed information and instructions see the Icinga 2 Docs. [Feature OTLPMetricsWriter](https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#otlpmetricswriter)
 
-**NOTE** The `otlpmetrics` feature requires Icinga 2 `2.15` or later.
+**NOTE** The `otlpmetrics` feature requires Icinga 2 `2.16` or later.
 
 ```yaml
 icinga2_features:
@@ -32,20 +32,20 @@ icinga2_features:
 * `basic_auth: dictionary`
   * Optional HTTP basic auth credentials with the keys `username` and `password`.
 
-* `ssl_enable: boolean`
+* `enable_tls: boolean`
   * Whether to use a TLS stream. Defaults to false.
 
-* `ssl_insecure_noverify: boolean`
+* `tls_insecure_noverify: boolean`
   * Disable TLS peer verification.
 
-* `ssl_ca_cert: string`
+* `tls_ca_file: string`
   * Path to CA certificate to validate the remote host.
 
-* `ssl_cert: string`
+* `tls_cert_file: string`
   * Path to host certificate to present to the remote host for mutual verification.
 
-* `ssl_key: string`
-  * Path to host key to accompany the ssl_cert.
+* `tls_key_file: string`
+  * Path to host key to accompany the `tls_cert_file`.
 
 * `enable_send_thresholds: boolean`
   * Whether to send threshold values (warn, crit, min, max) as `state_check.threshold` metric points. Defaults to false.

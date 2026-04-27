@@ -64,29 +64,29 @@ options:
       - Optional HTTP basic auth credentials with the keys username and password.
     required: false
     type: dict
-  ssl_enable:
+  enable_tls:
     description:
       - Whether to use a TLS stream.
     required: false
     type: bool
-  ssl_insecure_noverify:
+  tls_insecure_noverify:
     description:
       - Disable TLS peer verification.
     required: false
     type: bool
-  ssl_ca_cert:
+  tls_ca_file:
     description:
       - Path to CA certificate to validate the remote host.
     required: false
     type: str
-  ssl_cert:
+  tls_cert_file:
     description:
       - Path to host certificate to present to the remote host for mutual verification.
     required: false
     type: str
-  ssl_key:
+  tls_key_file:
     description:
-      - Path to host key to accompany the ssl_cert.
+      - Path to host key to accompany the O(tls_cert_file).
     required: false
     type: str
   enable_send_thresholds:
@@ -121,7 +121,7 @@ EXAMPLES = '''
     basic_auth:
       username: "icinga"
       password: "secret"
-    ssl_enable: false
+    enable_enable: false
     enable_send_thresholds: true
     host_resource_attributes:
       environment: "prod"
@@ -162,27 +162,27 @@ args:
       returned: success
       type: dict
       sample: { "username": "icinga", "password": "secret" }
-    ssl_enable:
+    enable_tsl:
       description: Whether TLS is used.
       returned: success
       type: bool
       sample: false
-    ssl_insecure_noverify:
+    tls_insecure_noverify:
       description: Whether TLS peer verification is disabled.
       returned: success
       type: bool
       sample: false
-    ssl_ca_cert:
+    tls_ca_file:
       description: The specified path to the ca.
       returned: success
       type: str
       sample: /etc/pki/tls/certs/otlp-ca.crt
-    ssl_cert:
+    tls_cert_file:
       description: The specified path to the certificate.
       returned: success
       type: str
       sample: /etc/pki/tls/certs/local-icinga-host.crt
-    ssl_key:
+    tls_key_file:
       description: The specified path to the key.
       returned: success
       type: str
@@ -242,11 +242,11 @@ def main():
             metrics_endpoint            = dict(default='/v1/metrics', type='str'),
             service_namespace           = dict(default='icinga', type='str'),
             basic_auth                  = dict(type='dict'),
-            ssl_enable                  = dict(type='bool'),
-            ssl_insecure_noverify       = dict(type='bool'),
-            ssl_ca_cert                 = dict(type='str'),
-            ssl_cert                    = dict(type='str'),
-            ssl_key                     = dict(type='str'),
+            enable_tls                  = dict(type='bool'),
+            tls_insecure_noverify       = dict(type='bool'),
+            tls_ca_file                 = dict(type='str'),
+            tls_cert_file               = dict(type='str'),
+            tls_key_file                = dict(type='str'),
             enable_send_thresholds      = dict(type='bool'),
             host_resource_attributes    = dict(type='dict'),
             service_resource_attributes = dict(type='dict'),
