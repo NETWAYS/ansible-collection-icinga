@@ -5,7 +5,7 @@ name: icinga2_otlpmetricswriter
 short_description: Creates information for OTLPMetricsWriter object.
 description:
   - Returns information used to create a OTLPMetricsWriter object.
-  - Requires Icinga 2 2.15 or later.
+  - Requires Icinga 2 2.16 or later.
 version_added: 0.1.0
 author:
   - NETWAYS GmbH <info@netways.de>
