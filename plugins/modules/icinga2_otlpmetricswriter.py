@@ -241,7 +241,7 @@ def main():
             port                        = dict(default=4318, type='int'),
             metrics_endpoint            = dict(default='/v1/metrics', type='str'),
             service_namespace           = dict(default='icinga', type='str'),
-            basic_auth                  = dict(type='dict', no_log=True),
+            basic_auth                  = dict(type='dict'),
             ssl_enable                  = dict(type='bool'),
             ssl_insecure_noverify       = dict(type='bool'),
             ssl_ca_cert                 = dict(type='str'),
