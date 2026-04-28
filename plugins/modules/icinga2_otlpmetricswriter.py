@@ -121,7 +121,7 @@ EXAMPLES = '''
     basic_auth:
       username: "icinga"
       password: "secret"
-    enable_enable: false
+    enable_tls: false
     enable_send_thresholds: true
     host_resource_attributes:
       environment: "prod"
@@ -162,7 +162,7 @@ args:
       returned: success
       type: dict
       sample: { "username": "icinga", "password": "secret" }
-    enable_tsl:
+    enable_tls:
       description: Whether TLS is used.
       returned: success
       type: bool
