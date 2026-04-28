@@ -795,11 +795,15 @@ argument_specs:
                       default_backend:
                         description:
                           - Defines the default backend to be used.
+                          - The Icinga Web 2 module compares this value case-insensitively at runtime,
+                            but the configuration form's dropdown only pre-selects the entry when
+                            the value matches the lowercase backend key.
                         type: str
                         choices:
                           - graphite
                           - influxdbv1
                           - influxdbv2
+                          - prometheus
                       default_timerange:
                         description:
                           - Defines the default timerange to visualize.
@@ -849,6 +853,20 @@ argument_specs:
                   - Defines the general module settings.
                   - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
                   - "Example: C(icingaweb2_modules.perfdatagraphsinfluxdbv2.config: { influx: { api_url: http://localhost:8086, api_org: theorganization, api_bucket: icinga2, api_token: some-api-token } })"
+                type: dict
+                required: false
+          perfdatagraphsprometheus:
+            description:
+              - This configures the L(NETWAYS Perfdata Graphs Prometheus module, https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs-prometheus).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              config:
+                description:
+                  - Defines the general module settings.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                  - "Example: C(icingaweb2_modules.perfdatagraphsprometheus.config: { prometheus: { api_url: http://localhost:9090, api_auth_method: basic, api_auth_username: icinga2-user, api_auth_password: icinga2-password, api_tls_insecure: 0 } })"
                 type: dict
                 required: false
           cube:

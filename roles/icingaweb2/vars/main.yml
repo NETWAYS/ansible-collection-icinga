@@ -17,3 +17,4 @@ icingaweb2_module_packages:
   perfdatagraphsgraphite: icingaweb2-module-perfdatagraphs-graphite
   perfdatagraphsinfluxdbv1: icingaweb2-module-perfdatagraphs-influxdbv1
   perfdatagraphsinfluxdbv2: icingaweb2-module-perfdatagraphs-influxdbv2
+  perfdatagraphsprometheus: icingaweb2-module-perfdatagraphs-prometheus

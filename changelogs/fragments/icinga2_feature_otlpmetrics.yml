@@ -1,0 +1,2 @@
+minor_changes:
+  - Add the `OTLPMetrics <https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#otlpmetricswriter>`__ feature to the :code:`icinga2` role. Requires Icinga 2 2.16 or later.

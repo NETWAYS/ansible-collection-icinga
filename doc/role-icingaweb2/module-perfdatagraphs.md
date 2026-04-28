@@ -23,9 +23,10 @@ icingaweb2_modules:
     source: package
     config:
       perfdatagraphs:
-        default_backend: "Graphite"
+        default_backend: "graphite"
         default_timerange: "PT3H"
         cache_lifetime: "800"
 ```
 
-> Currently the backend name is case sensitive, e.g. `Graphite`, `InfluxDBv1`, `InfluxDBv2`.
+> The backend name should be written **lowercase** (`graphite`, `influxdbv1`, `influxdbv2`, `prometheus`).
+> The runtime backend lookup is case-insensitive, but the module's configuration form only pre-selects the dropdown entry when the value matches the lowercase backend key.
