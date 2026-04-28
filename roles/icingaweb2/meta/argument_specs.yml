@@ -866,7 +866,7 @@ argument_specs:
                 description:
                   - Defines the general module settings.
                   - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
-                  - "Example: C(icingaweb2_modules.perfdatagraphsprometheus.config: { prometheus: { api_url: http://localhost:9090, api_auth_method: basic, api_username: icinga2-user, api_password: icinga2-password, api_tls_insecure: 0 } })"
+                  - "Example: C(icingaweb2_modules.perfdatagraphsprometheus.config: { prometheus: { api_url: http://localhost:9090, api_auth_method: basic, api_auth_username: icinga2-user, api_auth_password: icinga2-password, api_tls_insecure: 0 } })"
                 type: dict
                 required: false
           cube:
