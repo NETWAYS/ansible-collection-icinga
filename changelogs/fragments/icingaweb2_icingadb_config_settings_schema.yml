@@ -1,0 +1,2 @@
+minor_changes:
+  - Allow :code:`icingaweb2_modules.icingadb.config.settings` and :code:`icingaweb2_modules.icingadb.config.security.protected_customvars` in the :code:`icingaweb2` role argument spec.
