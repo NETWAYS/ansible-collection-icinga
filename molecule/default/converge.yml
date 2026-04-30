@@ -49,6 +49,10 @@
             resource: icingadb
           redis:
             tls: '0'
+          settings:
+            acknowledge_expire: "1"
+            acknowledge_expire_time: P1D
+            hostdowntime_all_services: "1"
         redis:
           redis1:
             host: "127.0.0.1"

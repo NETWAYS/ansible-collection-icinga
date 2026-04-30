@@ -380,6 +380,11 @@ argument_specs:
                         description:
                           - Sets the module's database resource.
                         type: str
+                  settings:
+                    description:
+                      - Defines the default settings for the module.
+                    type: dict
+                    required: false
                   redis:
                     description:
                       - Defines the C(redis) section of the configuration file.
