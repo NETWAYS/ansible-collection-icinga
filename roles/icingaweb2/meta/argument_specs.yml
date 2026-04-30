@@ -385,16 +385,6 @@ argument_specs:
                       - Defines the default settings for the module.
                     type: dict
                     required: false
-                  security:
-                    description:
-                      - Defines the security settings.
-                    type: dict
-                    options:
-                      protected_customvars:
-                        description:
-                          - Defines variable name patterns. The values of variables that match a given pattern are hidden from the user's view.
-                          - "Example: C(protected_customvars: *pw*,*pass*,community)"
-                        type: str
                   redis:
                     description:
                       - Defines the C(redis) section of the configuration file.
