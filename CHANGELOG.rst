@@ -4,6 +4,22 @@ Icinga.Icinga Release Notes
 
 .. contents:: Topics
 
+v0.4.9
+======
+
+Release Summary
+---------------
+
+This release adds some minor features.
+
+Minor Changes
+-------------
+
+- Add :code:`prometheus` to the :code:`default_backend` choices for the :code:`perfdatagraphs` module.
+- Add the `OTLPMetrics <https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#otlpmetricswriter>`__ feature to the :code:`icinga2` role. Requires Icinga 2 2.16 or later.
+- Add the `Performance Data Graphs Prometheus module <https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs-prometheus>`__ to the :code:`icingaweb2` role.
+- Allow :code:`icingaweb2_modules.icingadb.config.settings` in the :code:`icingaweb2` role argument spec.
+
 v0.4.8
 ======
 
