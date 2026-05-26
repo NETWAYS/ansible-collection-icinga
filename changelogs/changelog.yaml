@@ -644,3 +644,23 @@ releases:
     fragments:
     - pipefail.yml
     release_date: '2026-04-17'
+  0.4.9:
+    changes:
+      minor_changes:
+      - Add :code:`prometheus` to the :code:`default_backend` choices for the :code:`perfdatagraphs`
+        module.
+      - Add the `OTLPMetrics <https://icinga.com/docs/icinga-2/latest/doc/09-object-types/#otlpmetricswriter>`__
+        feature to the :code:`icinga2` role. Requires Icinga 2 2.16 or later.
+      - Add the `Performance Data Graphs Prometheus module <https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs-prometheus>`__
+        to the :code:`icingaweb2` role.
+      - Allow :code:`icingaweb2_modules.icingadb.config.settings` in the :code:`icingaweb2`
+        role argument spec.
+      release_summary: 'This release adds some minor features.
+
+        '
+    fragments:
+    - icinga2_feature_otlpmetrics.yml
+    - icingaweb2_icingadb_config_settings_schema.yml
+    - icingaweb2_module_perfdatagraphsprometheus.yml
+    - release_summary.yml
+    release_date: '2026-05-26'
