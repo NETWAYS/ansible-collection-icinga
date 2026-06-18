@@ -66,21 +66,22 @@ Manual signing on the master instance is necessary.
 For this, pass an empty ticket `ticket: ""`.  
 The `netways.icinga.icinga2_api` module used here will report changes with each execution until the certificate is signed.
 
-**Auto-signing with ticket:**  
+**Auto-signing, providing a ticket:**  
 The agent can pass a ticket which the master instance can validate.  
 If the validation is successful, the agent receives its signed certificate.  
 You can use the `netways.icinga.icinga2_ticket` filter to create a valid ticket if you know the secret `TicketSalt`.  
 Example: `ticket: "{{ <common_name> | netways.icinga.icinga2_ticket(ticketsalt='<secret_ticket_salt>') }}"`
 
-**Auto-signing without ticket:**  
+**Auto-signing, without providing a ticket:**  
 Before the agent requests its certificate, the ticket is generated on the master instance.  
 For this to work `parent_host` must be the master since ticket creation is delegated to `parent_host`.  
 If the `parent_host` is not the master, `icinga2_delegate_host: <inventory_hostname of master>` can be set to delegate there instead.  
 
-**Auto-signing with reverse connection:**  
+**Auto-signing, with reverse connection:**  
 Used in environments where the agent cannot connect to its parent but the parent can connect to the agent.  
-Here delegation to `parent_host` (or `icinga2_delegate_host`) is used to retrieve the CA certificate and generate a ticket.  
-This is used if `delegate_pki: true`.
+Here delegation to `parent_host` (or `icinga2_delegate_host`) is used to retrieve the CA certificate and generate a ticket,
+so some tasks will be run on `parent_host` (or `icinga2_delegate_host`) directly.  
+This requires `delegate_pki: true` to be set.
 
 ### Generate Certificate Signing Requests
 
@@ -120,6 +121,9 @@ icinga2_delegate_host: icinga-master.localdomain
 
 By default the FQDN is used as certificate common name, to put a name yourself:
 
+> This is not recommended! Apart from endpoints in the master zone and satellite zones (due to the option for high availability)
+> every endpoint should use its FQDN as the `cert_name`. This is considered best practice.
+
 ```yaml
 cert_name: myown-commonname.fqdn
 ```
@@ -144,6 +148,9 @@ The fingerprint can be retrieved with OpenSSL:
 
 ```bash
 openssl x509 -noout -fingerprint -sha256 -inform pem -in /path/to/ca.crt
+
+# Verbose example for use on the master
+openssl x509 -noout -fingerprint -sha256 -inform pem -in /var/lib/icinga2/ca/ca.crt | cut -d '=' -f 2 | tr '[A-Z]' '[a-z]' | tr -d ':'
 ```
 
 ### Top-down connections
@@ -216,7 +223,7 @@ icinga2_features:
 ### Feature variables
 
 * `parent_host: string`
-  * Use to decide where to gather the certificates. When set to **none**, Ansible will create a local Certificate Authority on the Host. Use **hostname** or **ipaddress** as value.
+  * Use to decide where to gather the certificates. When set to **none**, Ansible will create a local Certificate Authority on the Host. Use **FQDN**, **hostname** or **ipaddress** as value.
 
 * `force_newcert: boolean`
   * Force new certificates on the destination hosts.
