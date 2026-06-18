@@ -46,7 +46,7 @@ class ActionModule(ActionBase):
                 tmp=tmp
             )
 
-            if 'failed' in obj:
+            if 'failed' in obj and obj['failed']:
                 raise AnsibleError('Call to module failed: %s' % obj['msg'])
             if 'skipped' in obj and obj['skipped']:
                 raise AnsibleError('Call to module was skipped: %s' % obj['msg'])
@@ -101,6 +101,8 @@ class ActionModule(ActionBase):
                 else:
                     object_content = 'object ' + object_type + ' ' + object_name
                 object_content += ' {\n'
+
+
 
                 #
                 # imports?
