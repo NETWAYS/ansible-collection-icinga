@@ -309,6 +309,15 @@ def configure(module, cn, zones, enable_feature, sysconf_directory):
     ret = dict(
         changed = False,
     )
+    # Sort zones by global attribute, parent attribute, and alphabetically by name
+    zones = sorted(
+        zones,
+        key=lambda zone: (
+            zone.get('_global', False),
+            0 if zone.get('parent') is None else 1,
+            zone.get('name')
+        )
+    )
 
     ### Ensure const NodeName is set to given CN
     with open(os.path.join(sysconf_directory, 'constants.conf'), 'r') as constants:
@@ -369,8 +378,7 @@ def configure(module, cn, zones, enable_feature, sysconf_directory):
             # Add zone
             zones_conf.append('object Zone "{}" {{'.format(zone['name']))
             zones_conf.append('  endpoints = [')
-            for endpoint in zone['endpoints']:
-                zones_conf.append('    "{}",'.format(endpoint['cn']))
+            zones_conf.append(',\n'.join('    "{}"'.format(endpoint['cn']) for endpoint in zone["endpoints"]))
             zones_conf.append('  ]')
             if zone['parent']:
                 zones_conf.append('  parent = "{}"'.format(zone['parent']))
