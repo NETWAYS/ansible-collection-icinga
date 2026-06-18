@@ -630,7 +630,7 @@ def main():
     if not cn:
         cn = socket.getfqdn()
 
-    if mode == 'agent':
+    if mode in ['agent', 'satellite']:
         host               = module.params['host']
         port               = module.params['port']
         ticket             = module.params['ticket']
@@ -677,7 +677,7 @@ def main():
     mode_ret = dict()
     config_ret = dict()
 
-    if mode == 'agent':
+    if mode in ['agent', 'satellite']:
         mode_ret = agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint, certs_directory, force_new_cert)
     elif mode == 'master':
         mode_ret = master_setup(module, cn, ca_directory, certs_directory, force_new_ca)
