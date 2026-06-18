@@ -74,6 +74,7 @@
     enable_feature: false
     force_new_ca: "{{ icinga2_force_newca }}"
     force_new_cert: "{{ icinga2_force_newcert }}"
+  notify: check-and-reload-icinga2-service
 
 - name: Check cert key already exists
   ansible.builtin.stat:
@@ -128,6 +129,7 @@
         ignore_fingerprint: "{{ _ca_fingerprint_normalized | default(false) | ternary(false, true) }}"
         ticket: "{{ icinga2_ticket | default(_icinga2_ticket.stdout) | default(omit, true) }}"
         force_new_cert: "{{ icinga2_force_newcert }}"
+      notify: check-and-reload-icinga2-service
 
 - name: Delegated certificate bootstrap
   when:
@@ -143,6 +145,7 @@
         enable_feature: false
         force_new_ca: "{{ icinga2_force_newca }}"
         force_new_cert: "{{ icinga2_force_newcert }}"
+      notify: check-and-reload-icinga2-service
 
     - name: Fetch CA certificate from delegated host
       ansible.builtin.slurp:
