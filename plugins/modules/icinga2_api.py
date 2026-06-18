@@ -9,7 +9,7 @@ description:
   - Ensures correct C(NodeName) constant.
   - Manages C(zones.conf).
   - Does not manage the C(ApiListener) object / C(api) feature.
-version_added: WIP
+version_added: 0.5.0
 author: |
   Matthias Döhler <matthias.doehler@netways.de>
 options:
@@ -496,7 +496,8 @@ def agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint,
         '--port', str(port),
         '--trustedcert', os.path.join(certs_directory, 'trusted-parent.crt'),
     ]
-    if force_new_cert or not glob.glob(os.path.join(certs_directory, 'trusted-parent.crt')):
+    # Get parent cert on demand, when missing, or when fingerprint mismatch
+    if force_new_cert or not glob.glob(os.path.join(certs_directory, 'trusted-parent.crt')) or fingerprint != get_fingerprint(module, os.path.join(certs_directory, 'ca.crt')):
         rc, stdout, stderr= module.run_command(
             cmd,
             executable=None,
@@ -511,19 +512,18 @@ def agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint,
             return ret
         ret['changed'] = True
 
-
     ### Talk to master
     # This one also makes the node receive the new certificate once it's signed
 
     # Potential answers
     # information/cli: Writing CA certificate to file '/var/lib/icinga2/certs/ca.crt'.
     # information/cli: Writing signed certificate to file '/var/lib/icinga2/certs/<node_name>.crt'.
-    #   → RC X
+    #   → RC 0
     #   → First connection after certificate is signed
     #
     # Could not fetch valid response. Please check the master log.
-    #   → RC X 
-    #   → If parent is available but does not know the own node's endpoint
+    #   → RC 1 
+    #   → If parent is available but does not know the own node's endpoint (child provides valid cert in this case)
     #
     # The certificates for CN '<node_name>' and its root CA are valid and uptodate. Skipping automated renewal.
     #   → RC 1
@@ -556,14 +556,12 @@ def agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint,
         )
         ret['changed'] = True
 
-    # WIP: Trusted parent cert could be wrong at this point because parent might have forcefully created a new cert
-    # critical/cli: Peer certificate does not match trusted certificate.
-
     # Validate fingerprint
     present_fingerprint = get_fingerprint(module, os.path.join(certs_directory, 'ca.crt'))
     if not ignore_fingerprint and fingerprint != present_fingerprint:
-        ret['fail_msg'] = 'CA fingerprint \'{}\' on host did not match provided fingerprint \'{}\'.'.format(
+        ret['fail_msg'] = 'CA fingerprint \'{}\' on host (path: \'{}\') did not match provided fingerprint \'{}\'.'.format(
             present_fingerprint,
+            os.path.join(certs_directory, 'ca.crt'),
             fingerprint,
         )
 
