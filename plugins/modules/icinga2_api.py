@@ -114,6 +114,10 @@ options:
             description:
               - Defines the endpoint object's C(port) attribute.
             type: int
+          log_duration:
+            description:
+              - Defines the endpoint object's C(log_duration) attribute.
+            type: str
   force_new_ca:
     description:
       - If O(mode=master) and O(force_new_ca=true), enforces the recreation of the CA certificate and key.
@@ -372,6 +376,8 @@ def configure(module, cn, zones, enable_feature, sysconf_directory):
                     zones_conf.append('  host = "{}"'.format(endpoint['host']))
                 if endpoint['port']:
                     zones_conf.append('  port = "{}"'.format(endpoint['port']))
+                if endpoint['log_duration']:
+                    zones_conf.append('  log_duration = {}'.format(endpoint['log_duration']))
                 zones_conf.append('}')
                 zones_conf.append('')
 
@@ -602,6 +608,7 @@ def main():
                             cn=dict(required=True, type='str', aliases=['name']),
                             host=dict(default=None, type='str'),
                             port=dict(default=None, type='int'),
+                            log_duration=dict(default=None, type='str'),
                         ),
                     ),
                 ),
