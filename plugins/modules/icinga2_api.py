@@ -319,9 +319,16 @@ def configure(module, cn, zones, enable_feature, sysconf_directory):
         key=lambda zone: (
             zone.get('_global', False),
             0 if zone.get('parent') is None else 1,
-            zone.get('name')
+            zone.get('cn')
         )
     )
+    # Sort endpoints by cn
+    for i, zone in enumerate(zones):
+        if zone['endpoints']:
+            zones[i]['endpoints'] = sorted(
+                zone['endpoints'],
+                key=lambda endpoint: endpoint['cn']
+            )
 
     ### Ensure const NodeName is set to given CN
     with open(os.path.join(sysconf_directory, 'constants.conf'), 'r') as constants:
