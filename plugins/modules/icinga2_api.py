@@ -511,12 +511,14 @@ def master_setup(module, cn, ca_directory, certs_directory, force_new_ca=False):
     return ret
 
 
-def agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint, certs_directory, force_new_cert=False):
+def agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint, certs_directory, force_new_ca=False, force_new_cert=False):
     ret = dict(
         changed = False,
     )
 
     ### Get parent certificate
+    parent_cert_exists = os.path.isfile(os.path.join(certs_directory, 'trusted-parent.crt'))
+
     cmd = [
         'icinga2',
         'pki',
@@ -525,21 +527,35 @@ def agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint,
         '--port', str(port),
         '--trustedcert', os.path.join(certs_directory, 'trusted-parent.crt'),
     ]
-    # Get parent cert on demand, when missing, or when fingerprint mismatch
-    if force_new_cert or not glob.glob(os.path.join(certs_directory, 'trusted-parent.crt')) or fingerprint != get_fingerprint(module, os.path.join(certs_directory, 'ca.crt')):
-        rc, stdout, stderr= module.run_command(
-            cmd,
-            executable=None,
-            use_unsafe_shell=False,
-            encoding=None,
-            data=None,
-            binary_data=True,
-            expand_user_and_vars=True,
-        )
-        if 'Failed to fetch certificate from host.' in str(stdout):
-            ret['fail_msg'] = stdout.decode().strip()
-            return ret
+
+    rc, stdout, stderr= module.run_command(
+        cmd,
+        executable=None,
+        use_unsafe_shell=False,
+        encoding=None,
+        data=None,
+        binary_data=True,
+        expand_user_and_vars=True,
+    )
+
+    # Consider connection errors okay, if 'trusted-parent.crt' already exists
+    if 'Failed to fetch certificate from host.' in str(stdout) and not parent_cert_exists:
+        ret['fail_msg'] = stdout.decode().strip()
+        return ret
+    elif not parent_cert_exists:
         ret['changed'] = True
+
+    # Validate parent cert against ca if already present
+    if not force_new_ca and os.path.isfile(os.path.join(certs_directory, 'ca.crt')) and not verify_cert(module, os.path.join(certs_directory, 'ca.crt'), os.path.join(certs_directory, 'trusted-parent.crt')):
+        ret['fail_msg'] = ' '.join([
+            'The \'trusted-parent.crt\' is not signed by the CA.',
+            'This could be a man-in-the-middle or the CA might have been recreated.',
+            'If you want to trust the certificate with fingerprint \'{}\', pass \'force_new_ca: true\' to the module call.'.format(
+                get_fingerprint(module, os.path.join(certs_directory, 'trusted-parent.crt')),
+                os.path.join(certs_directory, 'trusted-parent.crt')
+            )
+        ])
+        return ret
 
     ### Talk to master
     # This one also makes the node receive the new certificate once it's signed
@@ -573,7 +589,7 @@ def agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint,
         cmd.extend(['--ticket', ticket])
 
     # Make new request only if own cert not valid
-    if not verify_cert(module, os.path.join(certs_directory, 'ca.crt'), os.path.join(certs_directory, cn + '.crt')):
+    if force_new_ca or not verify_cert(module, os.path.join(certs_directory, 'ca.crt'), os.path.join(certs_directory, cn + '.crt')):
         rc, stdout, stderr = module.run_command(
             cmd,
             executable=None,
@@ -583,6 +599,9 @@ def agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint,
             binary_data=True,
             expand_user_and_vars=True,
         )
+        if 'Cannot connect to host' in str(stdout):
+            ret['fail_msg'] = stdout.decode().strip()
+            return ret
         ret['changed'] = True
 
     # Validate fingerprint
@@ -706,7 +725,7 @@ def main():
     config_ret = dict()
 
     if mode in ['agent', 'satellite']:
-        mode_ret = agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint, certs_directory, force_new_cert)
+        mode_ret = agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint, certs_directory, force_new_ca, force_new_cert)
     elif mode == 'master':
         mode_ret = master_setup(module, cn, ca_directory, certs_directory, force_new_ca)
 
