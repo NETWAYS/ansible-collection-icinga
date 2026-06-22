@@ -239,6 +239,12 @@ cert_fingerprint:
   type: str
   returned: always
   sample: 53f33316caacd4342a12c130e5fa6d7a619565bd730ac58ef98f8b38a7e03e37
+parent_cert_fingerprint:
+  description:
+    - The sha256 fingerprint of the parent host's certificate.
+  type: str
+  returned: always
+  sample: ab497bcf34d3656f86b37805e0c88fa653aa523806060a440997a3ead0368107
 '''
 
 import filecmp
@@ -303,9 +309,11 @@ def get_return_values(module, cn, ca_directory, certs_directory):
         cn = cn,
         ca_fingerprint = None,
         cert_fingerprint = None,
+        parent_cert_fingerprint = None,
     )
     rv['ca_fingerprint'] = get_fingerprint(module, os.path.join(certs_directory, 'ca.crt'))
     rv['cert_fingerprint'] = get_fingerprint(module, os.path.join(certs_directory, cn + '.crt'))
+    rv['parent_cert_fingerprint'] = get_fingerprint(module, os.path.join(certs_directory, 'trusted-parent.crt'))
     return rv
 
 
