@@ -16,7 +16,7 @@ jobs:
       COLLECTION_NAMESPACE: netways
       COLLECTION_NAME: icinga
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.tag }}
 
