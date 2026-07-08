@@ -1,0 +1,54 @@
+DOCUMENTATION:
+  name: items2dict
+  author:
+    - Matthias Döhler <matthias.doehler@netways.de>
+  short_description: Converts a list of dictionaries into a dictionary
+  description:
+    - Converts a list of dictionaries into a single dictionary.
+    - Uses the value of a specific key of each dictionary in the list as the key for the new dictionary.
+      The values of this key must be unique throughout the given list of dictionaries.
+    - "Converts e.g. C([{'name': 'first', 'param': 1}, {'name': 'second', 'param': 2}]) to C({'first': {'name': 'first', 'param': 1}, 'second': {'name': 'second', 'param': 2}})."
+    - Optionally omits the chosen key from the new dictionary.
+  positional: _input
+  options:
+    _input:
+      description:
+        - List of dictionaries sharing a common key with unique values throughout the list.
+      type: string
+      required: true
+    key:
+      description:
+        - The common key that holds unique values throughout the list.
+      type: string
+      default: name
+    keep_key:
+      description:
+        - Whether or not the common key should be kept as part of the new dictionaries key value pairs.
+      type: bool
+      default: true
+
+EXAMPLES: |
+  # my_dict:
+  #   Test1:
+  #     name: Test1
+  #     param1: some
+  #     param2: value
+  #   Test2:
+  #     name: Test2
+  #     param1: more
+  #     param2: values
+  my_dict: "{{ [{'name': 'Test1', 'param1': 'some', 'param2': 'value'}, {'name': 'Test2', 'param1': 'more', 'param2': 'values'}] | netways.icinga.items2dict() }}"
+
+  # my_dict:
+  #   Test1:
+  #     param1: some
+  #     param2: value
+  #   Test2:
+  #     param1: more
+  #     param2: values
+  my_dict: "{{ [{'name': 'Test1', 'param1': 'some', 'param2': 'value'}, {'name': 'Test2', 'param1': 'more', 'param2': 'values'}] | netways.icinga.items2dict(keep_key=false) }}"
+
+RETURN:
+  _value:
+    description: The newly created dictionary.
+    type: dict

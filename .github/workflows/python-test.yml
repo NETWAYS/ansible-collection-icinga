@@ -68,5 +68,6 @@ jobs:
         run: |
           python -m unittest -v tests.unittestpy3.test_data
           python -m unittest -v tests.unittestpy3.test_inventory
+          python -m unittest -v tests.unittestpy3.test_filter_items2dict
         env:
           MOLECULE_DISTRO: ${{ matrix.distro }}#
