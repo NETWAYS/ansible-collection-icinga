@@ -1,6 +1,6 @@
 ## Feature API
 
-The API Feature configures the API. The feature will manage
+The API feature configures the API. The feature will manage
 certificate, private key and CA certificate or will create
 a certificate signing requests. It also manages the **zones.conf**.
 
@@ -16,7 +16,7 @@ Example how to install an Agent:
 icinga2_features:
   - name: api
     force_newcert: false
-    ca_host: icinga-server.localdomain
+    parent_host: <ParentNodeFQDN/IPAddress>
     endpoints:
       - name: NodeName
       - name: <ParentNodeName>
@@ -37,7 +37,7 @@ Example how to install a master/server instance:
 icinga2_features:
   - name: api
     force_newcert: false
-    ca_host: none
+    parent_host: none
     endpoints:
       - name: NodeName
     zones:
@@ -48,56 +48,77 @@ icinga2_features:
 
 ### Instance with Certificate Authority
 
-To create an instance with a local CA, the API Feature parameter `ca_host` should be `none`.
+To create an instance with a local CA, the API feature parameter `parent_host` should be `none`.
 
 ```yaml
-ca_host: none
+parent_host: none
 ```
+
+### Agent Setup
+
+An agent (or satellite) setup can work in four different ways.
+
+In all cases of auto-signing the master instance must have a secret `TicketSalt` defined.
+
+**On-demand signing:**  
+The agent creates a CSR locally and then request signing via API.  
+Manual signing on the master instance is necessary.  
+For this, pass an empty ticket `ticket: ""`.  
+The `netways.icinga.icinga2_api` module used here will report changes with each execution until the certificate is signed.
+
+**Auto-signing with ticket:**  
+The agent can pass a ticket which the master instance can validate.  
+If the validation is successful, the agent receives its signed certificate.  
+You can use the `netways.icinga.icinga2_ticket` filter to create a valid ticket if you know the secret `TicketSalt`.  
+Example: `ticket: "{{ <common_name> | netways.icinga.icinga2_ticket(ticketsalt='<secret_ticket_salt>') }}"`
+
+**Auto-signing without ticket:**  
+Before the agent requests its certificate, the ticket is generated on the master instance.  
+For this to work `parent_host` must be the master since ticket creation is delegated to `parent_host`.  
+If the `parent_host` is not the master, `icinga2_delegate_host: <inventory_hostname of master>` can be set to delegate there instead.  
+
+**Auto-signing with reverse connection:**  
+Used in environments where the agent cannot connect to its parent but the parent can connect to the agent.  
+Here delegation to `parent_host` (or `icinga2_delegate_host`) is used to retrieve the CA certificate and generate a ticket.  
+This is used if `delegate_pki: true`.
 
 ### Generate Certificate Signing Requests
 
-Create Signing Request to get a certificate managed by the parameter `ca_host` and `ca_host_port`. If
+Create Signing Request to get a certificate managed by the parameter `parent_host` and `parent_port`. If
 set to the master/server hostname, FQDN or IP, the node setup tries to connect
-via API an retrieve the trusted certificate.
+via API and retrieve the trusted certificate.
 
 > [!INFO]
-> Ansible will delegate the ticket creation to the CA host. You can change this behaviour by setting 'icinga2_delegate_host' to match another Ansible alias.
+> Ansible will delegate the ticket creation to the `parent_host`. You can change this behaviour by setting 'icinga2_delegate_host' to match another Ansible alias.
 
 ```yaml
-ca_host: icinga-server.localdomain
-ca_host_port: 5665
+parent_host: icinga-server.localdomain
+parent_port: 5665
 ```
 
-> [!INFO]
-> In case your agent can't connect to the CA host/master, you can change ca_host to your satellite.
-> In addition you can use the variables `icinga2_delegate_host`
-> and `ticket_salt` to delegate ticket creation to one of your satellites instead.
-> But is will also work because the delegation task will be initiated by the Ansible controlhost.
-
-Example if connection and ticket creation should be on the satellite:
+Example if connection should be established to the satellite, resulting in on-demand certificate signing:
 
 ```yaml
 icinga2_features:
   - name: api
-    ca_host: icinga-satellite.localdomain
-    ticket_salt: "{{ icinga2_constants.ticket_salt }}"
+    parent_host: icinga-satellite.localdomain
+    ticket: ""
   [...]
-icinga2_delegate_host: icinga-satellite.localdomain
 ```
-Example if agent should connect to satellite and the tickets are generated on the
-master host.
+
+> In the above case, the `parent_host` is a satellite which does not have the secret `TicketSalt`, so we cannot delegate there for ticket creation.
+
+Example if agent should connect to satellite and the tickets are generated on the master host.
 
 ```yaml
 icinga2_features:
   - name: api
-    ca_host: icinga-satellite.localdomain
-    ticket_salt: "{{ icinga2_constants.ticket_salt }}"
+    parent_host: icinga-satellite.localdomain
   [...]
 icinga2_delegate_host: icinga-master.localdomain
 ```
 
-By default the FQDN is used as certificate common name, to put a name
-yourself:
+By default the FQDN is used as certificate common name, to put a name yourself:
 
 ```yaml
 cert_name: myown-commonname.fqdn
@@ -109,7 +130,7 @@ To force a new request set `force_newcert` to `true`:
 force_newcert: true
 ```
 
-To increase your security set `ca_fingerprint` to validate the certificate of the `ca_host`:
+To increase your security set `ca_fingerprint` to validate the CA certificate:
 
 ```yaml
 ca_fingerprint: "00 DE AD BE EF"
@@ -131,9 +152,9 @@ Use `delegate_pki: true` when the agent cannot initiate a connection to the CA h
 
 In this mode, the role:
 
-- fetches `ca.crt` from the `ca_host` via Ansible and copies it to the agent
+- fetches `ca.crt` from the `parent_host` via Ansible and copies it to the agent
 - generates a self-signed certificate on the agent
-- creates a ticket on the `ca_host` via `delegate_to`
+- creates a ticket on the `parent_host` via `delegate_to`
 - writes the ticket to `{{ icinga2_cert_path }}/ticket`
 
 Icinga then completes certificate signing automatically when the parent connects to the agent and the cluster handshake starts. This is not a fully offline / disconnected workflow.
@@ -141,7 +162,7 @@ Icinga then completes certificate signing automatically when the parent connects
 ```yaml
 icinga2_features:
   - name: api
-    ca_host: icinga-master.localdomain
+    parent_host: icinga-master.localdomain
     delegate_pki: true
     endpoints:
       - name: icinga-agent.localdomain
@@ -167,7 +188,7 @@ ssl_key: certificate.key
 ```
 
 > **_NOTE:_** All three parameters have to be set otherwise a signing request is built
-and `ca_host` must be defined.
+and `parent_host` must be defined.
 
 The role will copy the files from your Ansible controller node to
 **/var/lib/icinga2/certs** on the remote host. File names are
@@ -194,17 +215,26 @@ icinga2_features:
 
 ### Feature variables
 
-* `ca_host: string`
-  * Use to decide where to gather the certificates. When set to **None**, Ansible will create a local Certificate Authority on the Host. Use **hostname** or **ipaddress** as value.
+* `parent_host: string`
+  * Use to decide where to gather the certificates. When set to **none**, Ansible will create a local Certificate Authority on the Host. Use **hostname** or **ipaddress** as value.
 
 * `force_newcert: boolean`
   * Force new certificates on the destination hosts.
+
+* `force_newca: boolean`
+  * Force new CA on the destination hosts (master instance).
+
+* `ticket: string`
+  * A valid ticket for the given `cert_name`. Used for auto-signing the CSR. Can be generated using the `netways.icinga.icinga2_ticket` filter. If `ticket: ""`, on-demand signing is used.
 
 * `delegate_pki: boolean`
   * Skip outbound `pki save-cert` and `pki request` on the agent. Provision `ca.crt` and ticket through Ansible delegation and rely on Icinga CSR auto-signing when the parent connects inbound.
 
 * `cert_name: string`
   * Common name of Icinga client/server instance. Default is **ansible_facts['fqdn']**.
+
+* `ca_fingerprint: string`
+  * SHA256 fingerprint of the CA certificate. If defined, the fingerprint is validated.
 
 * `ssl_cacert: string`
   * Path to the ca file when using manual certificates
