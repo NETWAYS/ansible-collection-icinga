@@ -1,0 +1,2 @@
+minor_changes:
+  - "Add module `Performance Data Graphs Elasticsearch <https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs-elasticsearch>`__ to Icinga Web."
