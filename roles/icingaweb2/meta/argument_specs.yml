@@ -809,6 +809,7 @@ argument_specs:
                           - influxdbv1
                           - influxdbv2
                           - prometheus
+                          - elasticsearch
                       default_timerange:
                         description:
                           - Defines the default timerange to visualize.
@@ -872,6 +873,20 @@ argument_specs:
                   - Defines the general module settings.
                   - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
                   - "Example: C(icingaweb2_modules.perfdatagraphsprometheus.config: { prometheus: { api_url: http://localhost:9090, api_auth_method: basic, api_auth_username: icinga2-user, api_auth_password: icinga2-password, api_tls_insecure: 0 } })"
+                type: dict
+                required: false
+          perfdatagraphselasticsearch:
+            description:
+              - This configures the L(NETWAYS Perfdata Graphs Elasticsearch module, https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs-elasticsearch).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              config:
+                description:
+                  - Defines the general module settings.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                  - "Example: C(icingaweb2_modules.perfdatagraphselasticsearch.config: { elasticsearch: { icinga_writer: "ElasticsearchWriter", api_index: "icinga2", api_url: "https://node1:9200,https://node2:9200", api_auth_method: "none", api_timeout: "10", api_max_data_points: "10000" } })"
                 type: dict
                 required: false
           cube:
