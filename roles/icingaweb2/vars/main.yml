@@ -18,3 +18,4 @@ icingaweb2_module_packages:
   perfdatagraphsinfluxdbv1: icingaweb2-module-perfdatagraphs-influxdbv1
   perfdatagraphsinfluxdbv2: icingaweb2-module-perfdatagraphs-influxdbv2
   perfdatagraphsprometheus: icingaweb2-module-perfdatagraphs-prometheus
+  perfdatagraphselasticsearch: icingaweb2-module-perfdatagraphs-elasticsearch
