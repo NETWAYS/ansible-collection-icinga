@@ -7,6 +7,7 @@ The role icingaweb2 installs and configures Icinga Web 2 and its modules.
 * [IcingaDB](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-icingadb.md)
 * [Monitoring](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-monitoring.md)
 * [Business Process](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-businessprocess.md)
+* [SSO](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-sso.md)
 * [x509](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-x509.md)
 * [Kubernetes](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-kubernetes.md)
 * [Graphite](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-graphite.md)

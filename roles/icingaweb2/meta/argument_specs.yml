@@ -749,6 +749,75 @@ argument_specs:
                   - "Example: C(icingaweb2_modules.kubernetes.config: { database: { resource: kubernetes_db } })"
                 type: dict
                 required: false
+          sso:
+            description:
+              - This configures the L(Icinga SSO Web module, https://icinga.com/docs/icinga-sso/latest/doc/03-Configuration/).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              providers:
+                description:
+                  - Defines the SSO module's C(providers.ini) configuration file.
+                type: list
+                elements: dict
+                options:
+                  name:
+                    description:
+                      - The name of the provider.
+                    type: str
+                  base_url:
+                    description:
+                      - The provider URL.
+                    type: str
+                  client_id:
+                    description:
+                      - The client ID.
+                    type: str
+                  client_secret:
+                    description:
+                      - The client secret.
+                    type: str
+                  scopes:
+                    description:
+                      - The OAuth scopes. This is a list of space-separated strings.
+                    type: str
+                  redirect_url:
+                    description:
+                      - The redirect URL. Should point to the Icinga Web 2 instance.
+                    type: str
+                  username_claim:
+                    description:
+                      - The name of the claim that provides the username.
+                    type: str
+                  map_groups:
+                    description:
+                      - Whether group memberships of the provider should be applied to Icinga Web 2.
+                      - O(icingaweb2_modules.sso.providers[].map_groups=y) enables this, while O(icingaweb2_modules.sso.providers[].map_groups=n) disables it.
+                    type: str
+                    choices:
+                      - y
+                      - n
+                  groups_claim:
+                    description:
+                      - The name of the claim that provides the groups.
+                    type: str
+                  username_search:
+                    description:
+                      - The regular expression to search for in usernames.
+                    type: str
+                  username_replace:
+                    description:
+                      - The regular expression to replace usernames with.
+                    type: str
+                  groupname_search:
+                    description:
+                      - The regular expression to search for in group names.
+                    type: str
+                  groupname_replace:
+                    description:
+                      - The regular expression to replace group names with.
+                    type: str
           doc:
             description:
               - This configures the L(Icinga Web Doc module, https://icinga.com/docs/icinga-web/latest/modules/doc/doc/01-About/).
