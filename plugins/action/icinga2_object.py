@@ -46,10 +46,10 @@ class ActionModule(ActionBase):
                 tmp=tmp
             )
 
-            if 'failed' in obj and obj['failed']:
-                raise AnsibleError('Call to module failed: %s' % obj['msg'])
-            if 'skipped' in obj and obj['skipped']:
-                raise AnsibleError('Call to module was skipped: %s' % obj['msg'])
+            if obj.get('failed', False):
+                raise AnsibleError('Call to module failed: %s' % obj.get('msg', obj))
+            if obj.get('skipped', False):
+                raise AnsibleError('Call to module was skipped: %s' % obj.get('msg', obj))
 
             #
             # file path handling for assemble
