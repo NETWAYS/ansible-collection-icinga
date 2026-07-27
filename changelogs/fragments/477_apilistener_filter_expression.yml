@@ -1,0 +1,2 @@
+minor_changes:
+  - "Add the :code:`enforce_filter_expression_permission` parameter to the :code:`netways.icinga.icinga2_apilistener` module to configure the :code:`ApiListener` attribute of the same name."

@@ -130,7 +130,12 @@ options:
       - Used as suffix in TLS SNI extension name; default from constant ApiEnvironment, which is empty.
     required: false
     type: str
-
+  enforce_filter_expression_permission:
+    description:
+      - Enforce the C(filter-expression) permission. Defaults to false until v2.17 for compatibility.
+      - Setting O(enforce_filter_expression_permission=true) is recommended.
+    required: false
+    type: bool
 '''
 
 EXAMPLES = r'''
@@ -199,6 +204,11 @@ args:
       returned: success
       type: str
       sample: "TLSv1.2"
+    enforce_filter_expression_permission:
+      description: Whether the C(filter-expression) permission is enforced.
+      returned: success
+      type: bool
+      sample: true
 file:
   description: Path to the file that will contain the object.
   returned: success
@@ -240,6 +250,7 @@ def main():
             tls_handshake_timeout=dict(type='int'),
             access_control_allow_origin=dict(type='list', elements='str'),
             environment=dict(type='str'),
+            enforce_filter_expression_permission=dict(type='bool'),
         )
     )
 
