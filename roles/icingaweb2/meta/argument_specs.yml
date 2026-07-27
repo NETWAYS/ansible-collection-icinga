@@ -955,7 +955,7 @@ argument_specs:
                 description:
                   - Defines the general module settings.
                   - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
-                  - "Example: C(icingaweb2_modules.perfdatagraphselasticsearch.config: { elasticsearch: { icinga_writer: "ElasticsearchWriter", api_index: "icinga2", api_url: "https://node1:9200,https://node2:9200", api_auth_method: "none", api_timeout: "10", api_max_data_points: "10000" } })"
+                  - "Example: C(icingaweb2_modules.perfdatagraphselasticsearch.config: { elasticsearch: { icinga_writer: ElasticsearchWriter, api_index: icinga2, api_url: https://node1:9200,https://node2:9200, api_auth_method: none, api_timeout: 10, api_max_data_points: 10000 } })"
                 type: dict
                 required: false
           cube:
