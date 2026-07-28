@@ -130,6 +130,21 @@ default = Icinga
 
 For more information about the general configuration have a look at the [official documentation](https://icinga.com/docs/icinga-web/latest/doc/03-Configuration/#general-configuration).
 
+### Translations
+
+Icinga Web offers translations for other languages. For them to take effect once activated locales need to be installed on the system where Icinga Web runs.  
+The following instructs the role to install locales / language packs.
+
+> The locales must be written as `<language code>.<territory>`, omitting the encoding (`.UTF-8` will be appended).
+> Locales will be installed even if Icinga Web does not offer translations for them specifically.
+
+```yaml
+icingaweb2_locales:
+  - de_DE
+  - en_US
+  - fr_FR
+```
+
 ### Authentication
 
 At least one method of user authentication needs to be configured in order to use Icinga Web 2. This is achieved by defining `icingaweb2_authentication`.<br>

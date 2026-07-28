@@ -1,5 +1,8 @@
 ---
+
 - name: Suse - Install Icinga Web 2 packages
   community.general.zypper:
     name: "{{ icingaweb2_packages + icingaweb2_packages_dependencies }}"
     state: present
+
+# No locales configuration needed on SUSE, may change

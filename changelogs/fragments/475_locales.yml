@@ -1,0 +1,2 @@
+minor_changes:
+  - "Add option to install locales for Icinga Web via :code:`icingaweb2_locales`. Country code and territory must be provided while omitting the encoding (e.g. :code:`de_DE` or `fr_FR`)."

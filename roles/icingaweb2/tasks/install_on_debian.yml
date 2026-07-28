@@ -4,3 +4,10 @@
     name: "{{ icingaweb2_packages + icingaweb2_packages_dependencies }}"
     state: present
     update_cache: true
+
+- name: Install requested locales
+  when: icingaweb2_locales | length > 0
+  community.general.locale_gen:
+    state: present
+    # append '.UTF-8' to each locale
+    name: "{{ icingaweb2_locales | map('regex_replace', '$', '.UTF-8') }}"
