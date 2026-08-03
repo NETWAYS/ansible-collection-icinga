@@ -1,0 +1,53 @@
+---
+
+name: Icinga Web 2 INI configuration test scenario
+on:
+  workflow_call:
+    inputs:
+      distro:
+        required: true
+        type: string
+      python:
+        required: true
+        type: string
+      ansible:
+        required: true
+        type: string
+      scenario:
+        required: true
+        type: string
+
+jobs:
+  test-ini-template:
+    runs-on: ubuntu-latest
+
+    env:
+      COLLECTION_NAMESPACE: netways
+      COLLECTION_NAME: icinga
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ inputs.python }}
+
+      - name: Install dependencies ansible
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r requirements-test-${{ inputs.ansible }}.txt
+
+      - name: Install collection
+        run: |
+          mkdir -p ~/.ansible/collections/ansible_collections/$COLLECTION_NAMESPACE
+          cp -a ../ansible-collection-$COLLECTION_NAME ~/.ansible/collections/ansible_collections/$COLLECTION_NAMESPACE/$COLLECTION_NAME
+
+      - name: Test with molecule
+        run: |
+          ansible --version
+          molecule --version
+          molecule test -s ${{ inputs.scenario }}
+        env:
+          MOLECULE_DISTRO: ${{ inputs.distro }}

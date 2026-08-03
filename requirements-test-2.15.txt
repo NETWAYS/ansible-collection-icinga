@@ -1,0 +1,8 @@
+ansible-core==2.15.*
+ansible==8.*
+molecule
+ansible-lint
+molecule-plugins[docker]
+pytest-testinfra
+# Requests version due to https://github.com/ansible-collections/community.docker/issues/868
+requests==2.31.*
