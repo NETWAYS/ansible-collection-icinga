@@ -1,8 +1,8 @@
 ---
 - name: Include OS specific vars
-  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', _params) }}"
   vars:
-    params:
+    _params:
       files:
         - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
         - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
@@ -14,9 +14,9 @@
         - "{{ role_path }}/vars"
 
 - name: Include OS specific vars regarding Icinga subscription
-  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', _params) }}"
   vars:
-    params:
+    _params:
       files:
         - "subscription-{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
         - "subscription-{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
@@ -31,9 +31,12 @@
 
 - name: Check OS family
   vars:
-    _paths: "{{ ansible_search_path }}"
-    _file: "{{ ansible_facts['os_family'] }}.yml"
-    _tasks_file: "{{ lookup('first_found', paths=_paths, files=_file, skip=true) }}"
+    _params:
+      paths: "{{ ansible_search_path }}"
+      files:
+        - "{{ ansible_facts['os_family'] }}.yml"
+      skip: true
+    _tasks_file: "{{ lookup('first_found', _params) }}"
   block:
     - name: Add repositories {{ ansible_facts['os_family'] }}
       when: _tasks_file | length > 0

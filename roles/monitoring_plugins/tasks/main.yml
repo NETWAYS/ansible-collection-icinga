@@ -5,9 +5,11 @@
 
 - name: Check supported operatingsystems
   vars:
-    _paths: "{{ role_path }}/vars"
-    _file: "{{ ansible_facts['os_family'] }}.yml"
-    _tasks_file: "{{ lookup('first_found', paths=_paths, files=_file, skip=true) }}"
+    _params:
+      paths: "{{ role_path }}/vars"
+      files: "{{ ansible_facts['os_family'] }}.yml"
+      skip: true
+    _tasks_file: "{{ lookup('first_found', _params) }}"
   block:
     - name: Include OS family specific vars
       when: _tasks_file | length > 0
@@ -19,9 +21,9 @@
         msg: "The OS '{{ ansible_facts['os_family'] }}' is not supported!"
 
 - name: Include OS distribution/version specific vars
-  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', _params) }}"
   vars:
-    params:
+    _params:
       files:
         - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
         - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}.yml"
