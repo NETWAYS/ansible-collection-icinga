@@ -229,7 +229,9 @@ icinga2_features:
   * Force new certificates on the destination hosts.
 
 * `force_newca: boolean`
-  * Force new CA on the destination hosts (master instance).
+  * Force new CA on the destination hosts (master instance).  
+    This of course invalidates the current certificates of all Icinga nodes in the cluster. They also need to be recreated from the new CA.  
+    Use with caution!
 
 * `ticket: string`
   * A valid ticket for the given `cert_name`. Used for auto-signing the CSR. Can be generated using the `netways.icinga.icinga2_ticket` filter. If `ticket: ""`, on-demand signing is used.
