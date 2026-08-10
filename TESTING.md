@@ -45,7 +45,7 @@ the role-<rolename> scenarios.
 molecule test -s local-default
 ```
 
-The following tests are inplemented based on docker. Per default a **ubuntu2204**
+The following tests are inplemented based on docker. Per default a **ubuntu2604**
 image from geerlingguy's container is used. Thanks [@geerlingguy Dockerhublink](https://hub.docker.com/u/geerlingguy)
 
 To test other distros use the command with the env **MOLECULE_DISTRO**.

@@ -1,8 +1,8 @@
 ---
 - name: Include OS specific vars
-  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', _params) }}"
   vars:
-    params:
+    _params:
       files:
         - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
         - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
@@ -14,9 +14,11 @@
 
 - name: Check supported operatingsystems 
   vars:
-    _paths: "{{ ansible_search_path }}"
-    _file: "install_on_{{ ansible_facts['os_family'] | lower }}.yml"
-    _tasks_file: "{{ lookup('first_found', paths=_paths, files=_file, skip=true) }}"
+    _params:
+      paths: "{{ ansible_search_path }}"
+      files: "install_on_{{ ansible_facts['os_family'] | lower }}.yml"
+      skip: true
+    _tasks_file: "{{ lookup('first_found', _params) }}"
   block:
     - name: Include OS specific installation
       when: _tasks_file | length > 0

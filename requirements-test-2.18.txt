@@ -1,4 +1,5 @@
-ansible-core>=2.18,<2.19
+ansible-core==2.18.*
+ansible==11.*
 molecule
 ansible-lint
 molecule-plugins[docker]
