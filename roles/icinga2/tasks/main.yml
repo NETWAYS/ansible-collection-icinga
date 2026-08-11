@@ -28,5 +28,3 @@
 
 - name: Manage service
   ansible.builtin.include_tasks: service.yml
-  tags:
-    - icinga2_service
