@@ -1,5 +1,6 @@
 ---
 - ansible.builtin.gather_facts:
+  tags: always
 
 - name: Include OS specific vars
   ansible.builtin.include_vars: "{{ lookup('first_found', _params) }}"
@@ -13,12 +14,19 @@
         - default.yml
       paths:
         - "{{ role_path }}/vars"
+  tags: always
 
 - name: Install
   ansible.builtin.include_tasks: install.yml
+  tags:
+    - icinga2_install
 
 - name: Configure
   ansible.builtin.include_tasks: configure.yml
+  tags:
+    - icinga2_configure
 
 - name: Manage service
   ansible.builtin.include_tasks: service.yml
+  tags:
+    - icinga2_service
