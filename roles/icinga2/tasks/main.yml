@@ -17,12 +17,20 @@
   tags: always
 
 - name: Install
-  ansible.builtin.include_tasks: install.yml
+  ansible.builtin.include_tasks:
+    file: install.yml
+    apply:
+      tags:
+        - icinga2_install
   tags:
     - icinga2_install
 
 - name: Configure
-  ansible.builtin.include_tasks: configure.yml
+  ansible.builtin.include_tasks:
+    file: configure.yml
+    apply:
+      tags:
+        - icinga2_configure
   tags:
     - icinga2_configure
 
