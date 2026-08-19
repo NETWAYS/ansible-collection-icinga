@@ -606,6 +606,23 @@ argument_specs:
                     description:
                       - The path to the file on the Ansible controller (uses Ansible's search paths).
                     required: true
+          grafana:
+            description:
+              - Configures the Grafana module for Icinga Web 2.
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              config:
+                description:
+                  - Defines the Grafana module's C(config.ini) configuration file.
+                type: dict
+                required: false
+              graphs:
+                description:
+                  - Defines the graph mappings for the Grafana module's C(graphs.ini).
+                type: dict
+                required: false
           monitoring:
             description:
               - This configures the L(monitoring module, https://icinga.com/docs/icinga-web/latest/modules/monitoring/doc/03-Configuration/).
