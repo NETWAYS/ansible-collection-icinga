@@ -159,8 +159,46 @@ argument_specs:
                   - Set this to 1 to enable strict Content Security Policy (CSP).
                 type: int
                 required: false
-                default: 0
                 choices: [ 0, 1 ]
+              csp_enable_modules:
+                description:
+                  - Set this to 1 to enable modules to define and change CSP directives.
+                type: int
+                required: false
+                choices: [ 0, 1 ]
+              csp_enable_dashboards:
+                description:
+                  - Set this to 1 to enable user defined dashboards. This table contains all dashboards for all users.
+                    The actual header that is sent to the user will only contain the subset of directives that actually matters to them.
+                type: int
+                required: false
+                choices: [ 0, 1 ]
+              csp_enable_navigation:
+                description:
+                  - Set this to 1 to enable user defined navigation items.
+                    This table contains all navigation items for all users.
+                    The actual header that is sent to the user will only contain the subset of directives that actually matters to them.
+                type: int
+                required: false
+                choices: [ 0, 1 ]
+              use_custom_csp:
+                description:
+                  - Set this to 1 to use custom CSP as defined in O(icingaweb2_config.security.custom_csp).
+                type: int
+                required: false
+                choices: [ 0, 1 ]
+              custom_csp:
+                description:
+                  - Defines custom CSP.
+                type: str
+                required: false
+              password_policy:
+                description:
+                  - Sets the global password policy of Icinga Web. The default is to have no policy at all.
+                    The other option provided by Icinga Web is C(common) which checks for password length and character classes.
+                    Additional choices are available through modules that provide password policies.
+                type: str
+                required: false
           logging:
             description:
               - Defines the logging behavior of Icinga Web 2.
