@@ -20,3 +20,4 @@ icingaweb2_module_packages:
   perfdatagraphsprometheus: icingaweb2-module-perfdatagraphs-prometheus
   perfdatagraphselasticsearch: icingaweb2-module-perfdatagraphs-elasticsearch
   sso: icinga-sso-web
+  totp: icinga-totp-web
