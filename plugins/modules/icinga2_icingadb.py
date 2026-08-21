@@ -172,7 +172,7 @@ args:
       returned: success
       type: str
       sample: /etc/pki/tls/private/local-icinga-host.key
-    password:
+    username:
       description: The specified username.
       returned: success
       type: str
