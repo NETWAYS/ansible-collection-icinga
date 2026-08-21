@@ -178,7 +178,7 @@ argument_specs:
                   - Specifies the logging level.
                 type: str
                 required: true
-                choices: [ ERROR, WARNING, INFORMATION, DEBUG ]
+                choices: [ ERROR, WARNING, INFO, DEBUG ]
               file:
                 description:
                   - Specifies the log file path if O(icingaweb2_config.logging.log=file).
