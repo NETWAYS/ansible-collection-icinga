@@ -1005,7 +1005,7 @@ argument_specs:
                   settings:
                     description:
                       - Defines the C(settings) section of the C(config.ini) configuration file.
-                      - "Example: C(icingaweb2_modules.totp.config: { settings: { issuer: icingaweb, leeway: 20 } })"
+                      - "Example: C(icingaweb2_modules.totp.config: { settings: { issuer: Icinga Web 2, leeway: 15 } })"
                     type: dict
               database:
                 description:
