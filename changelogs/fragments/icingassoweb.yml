@@ -1,3 +1,3 @@
 minor_changes:
-  - Add the `Icinga SSO Web <https://icinga.com/docs/icinga-sso/latest/>`__ module as an available module to the `icingaweb2` role.
-  - Add new filter plugin `netways.icinga.items2dict` for internal use with the SSO module.
+  - Add the `Icinga SSO Web <https://icinga.com/docs/icinga-sso/latest/>`__ module as an available module to the :code:`icingaweb2` role.
+  - Add new filter plugin :code:`netways.icinga.items2dict` for internal use with the SSO module.
