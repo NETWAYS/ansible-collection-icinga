@@ -38,3 +38,6 @@ icingaweb2_modules:
       user: totp_username
       password: totp_password
 ```
+
+> The `issuer` is what is presented to users as the name for their account within their TOTP authenticator app.
+> The `leeway` is the accepted clock drift in seconds and must be between 0 and 29.
