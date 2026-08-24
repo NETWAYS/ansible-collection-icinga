@@ -334,7 +334,7 @@
       - name: icingadb
         environment_id: "df29d078f1fdeffddf3bcce81a8194397d326e11" # just something fixed, so destroy/build work right away
       - name: api
-        ca_host: none
+        parent_host: none
         cert_name: "{{ icinga2_constants.NodeName }}"
         endpoints:
           - name: "{{ icinga2_constants.NodeName }}"

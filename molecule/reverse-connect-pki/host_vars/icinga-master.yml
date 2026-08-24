@@ -7,7 +7,7 @@ icinga2_features:
   - name: checker
   - name: mainlog
   - name: api
-    ca_host: none
+    parent_host: none
     endpoints:
       - name: icinga-master
       - name: icinga-agent
