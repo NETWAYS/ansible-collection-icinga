@@ -22,10 +22,10 @@ icingaweb2_modules:
       grafana:
         host: grafana.example.org:3000
         protocol: https
-        datasource: icinga-influxdb
         accessmode: iframe
+        defaultdashboard: icinga2-default
+        defaultdashboarduid: ad5bxjg
     graphs:
-      Load:
-        dashboarduid: icinga-load
-        panelId: "1,2,3"
+      load:
+        dashboarduid: ad5pjfp
 ```
