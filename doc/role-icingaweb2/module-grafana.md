@@ -28,4 +28,5 @@ icingaweb2_modules:
     graphs:
       load:
         dashboarduid: ad5pjfp
+        panelId: "1,2,3"
 ```

@@ -29,11 +29,13 @@
           grafana:
             host: grafana.example.org:3000
             protocol: https
-            datasource: icinga-influxdb
-            accessmode: direct
+            datasource: influxdb
+            accessmode: iframe
+            defaultdashboard: icinga2-default
+            defaultdashboarduid: ad5bxjg
         graphs:
-          Load:
-            dashboarduid: icinga-load
+          load:
+            dashboarduid: ad5pjfp
             panelId: "1,2,3"
       director:
         enabled: true
