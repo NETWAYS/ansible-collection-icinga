@@ -150,7 +150,7 @@ How the locales are provided differs per OS family:
 
 | OS family | Mechanism |
 |---|---|
-| Debian | The locales are generated via `/etc/locale.gen`. Requires `community.general` 9.3.0 or later. |
+| Debian | The locales are generated via `/etc/locale.gen`. |
 | RedHat | The matching `glibc-langpack-<language code>` packages are installed. These are split by language, not by territory, so `de_DE` and `de_AT` both resolve to `glibc-langpack-de`. |
 | SUSE | Not supported. No per-language packages exist, so nothing is installed. The role only reports which locales have to be provided manually. |
 

@@ -5,10 +5,12 @@
     state: present
     update_cache: true
 
-# 'name' accepts a list as of community.general 9.3.0.
+# One locale per call: 'name' only started accepting a list in
+# community.general 9.3.0, and the collection does not require a version
+# that new.
 - name: Debian - Install requested locales
-  when: icingaweb2_locales | length > 0
+  loop: "{{ icingaweb2_locales | unique }}"
   community.general.locale_gen:
     state: present
     # Append the encoding, e.g. 'de_DE' -> 'de_DE.UTF-8'
-    name: "{{ icingaweb2_locales | unique | map('regex_replace', '^(.+)$', '\\1.UTF-8') }}"
+    name: "{{ item }}.UTF-8"
