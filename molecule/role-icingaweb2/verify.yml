@@ -7,3 +7,18 @@
     service:
       name: icinga2
       state: started
+
+  - name: Gather available locales
+    changed_when: false
+    ansible.builtin.command: locale -a
+    register: available_locales
+
+  # 'locale -a' reports the compiled name, e.g. 'de_DE.utf8' for 'de_DE.UTF-8'
+  - name: Check that the requested locales are available
+    when: ansible_facts['os_family'] != 'Suse'
+    loop: "{{ icingaweb2_locales }}"
+    ansible.builtin.assert:
+      that:
+        - item ~ '.utf8' in available_locales.stdout_lines
+      fail_msg: "Locale '{{ item }}' was requested but is not available on the system"
+      quiet: true

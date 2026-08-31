@@ -5,9 +5,10 @@
     state: present
     update_cache: true
 
-- name: Install requested locales
+# 'name' accepts a list as of community.general 9.3.0.
+- name: Debian - Install requested locales
   when: icingaweb2_locales | length > 0
   community.general.locale_gen:
     state: present
-    # append '.UTF-8' to each locale
-    name: "{{ icingaweb2_locales | map('regex_replace', '$', '.UTF-8') }}"
+    # Append the encoding, e.g. 'de_DE' -> 'de_DE.UTF-8'
+    name: "{{ icingaweb2_locales | unique | map('regex_replace', '^(.+)$', '\\1.UTF-8') }}"

@@ -337,13 +337,19 @@ argument_specs:
       icingaweb2_locales:
         description:
           - A list of locale identifiers, without the encoding, that should be available in Icinga Web (e.g. C(de_DE)), C(.UTF-8) will be appended.
+            Each entry must be written as C(<language code>_<TERRITORY>), anything else is rejected.
             The appropriate locales will be installed,
-            using C(/etc/locale.gen) on the Debian OS family,
-            using the C(glibc-langpack-<locale_code>) packages on the RedHat OS family,
-            and using C(localedef) on the SUSE OS family.
+            using C(/etc/locale.gen) on the Debian OS family
+            and using the C(glibc-langpack-<language code>) packages on the RedHat OS family.
+          - Note that the RedHat language packs are split by language and not by territory,
+            so C(de_DE) and C(de_AT) both resolve to C(glibc-langpack-de).
+          - Installing locales is not supported on the SUSE OS family.
+            Setting this option there only reports the locales that have to be provided manually.
           - Note that locales will be installed even if Icinga Web does not offer translations for them.
         type: list
         elements: str
+        required: false
+        default: []
       icingaweb2_modules:
         description:
           - A dictionary of Icinga Web 2 modules.

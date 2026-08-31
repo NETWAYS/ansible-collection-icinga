@@ -5,4 +5,13 @@
     name: "{{ icingaweb2_packages + icingaweb2_packages_dependencies }}"
     state: present
 
-# No locales configuration needed on SUSE, may change
+# SUSE ships no per-language locale packages, so there is nothing to install.
+# Compiling the locales with 'localedef' would be possible, but is not
+# implemented, so point that out instead of doing nothing silently.
+- name: Suse - Report that locales are not managed
+  when: icingaweb2_locales | length > 0
+  ansible.builtin.debug:
+    msg: >-
+      'icingaweb2_locales' is set, but installing locales is not supported on the SUSE OS family.
+      The following locales are left untouched and have to be provided manually:
+      {{ icingaweb2_locales | unique | join(', ') }}

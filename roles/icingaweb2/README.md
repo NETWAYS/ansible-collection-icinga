@@ -135,7 +135,8 @@ For more information about the general configuration have a look at the [officia
 Icinga Web offers translations for other languages. For them to take effect once activated locales need to be installed on the system where Icinga Web runs.  
 The following instructs the role to install locales / language packs.
 
-> The locales must be written as `<language code>.<territory>`, omitting the encoding (`.UTF-8` will be appended).
+> The locales must be written as `<language code>_<TERRITORY>`, omitting the encoding (`.UTF-8` will be appended).
+> Anything else is rejected, so neither `de` nor `de_DE.UTF-8` are accepted.
 > Locales will be installed even if Icinga Web does not offer translations for them specifically.
 
 ```yaml
@@ -144,6 +145,14 @@ icingaweb2_locales:
   - en_US
   - fr_FR
 ```
+
+How the locales are provided differs per OS family:
+
+| OS family | Mechanism |
+|---|---|
+| Debian | The locales are generated via `/etc/locale.gen`. Requires `community.general` 9.3.0 or later. |
+| RedHat | The matching `glibc-langpack-<language code>` packages are installed. These are split by language, not by territory, so `de_DE` and `de_AT` both resolve to `glibc-langpack-de`. |
+| SUSE | Not supported. No per-language packages exist, so nothing is installed. The role only reports which locales have to be provided manually. |
 
 ### Authentication
 
