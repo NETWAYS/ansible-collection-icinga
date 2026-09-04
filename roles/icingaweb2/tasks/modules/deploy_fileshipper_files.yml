@@ -1,0 +1,17 @@
+---
+
+- name: Module Fileshipper | Deploy files
+  loop: "{{ _files }}"
+  loop_control:
+    loop_var: _file
+  ansible.builtin.copy:
+    src: "{{ _file }}"
+    dest: "{{ _dest }}"
+    owner: "{{ icingaweb2_httpd_user }}"
+    group: "{{ icingaweb2_group }}"
+    mode: "0660"
+  register: _fileshipper_files
+
+- name: Module Fileshipper | Collect deployed files' paths
+  ansible.builtin.set_fact:
+    _fileshipper_files_all: "{{ (_fileshipper_files_all | default([])) + (_fileshipper_files.results | map(attribute='dest')) }}"
