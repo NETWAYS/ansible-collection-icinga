@@ -1,0 +1,103 @@
+---
+
+- name: Module Fileshipper | Files
+  vars:
+    _imports_path: "{{ [icingaweb2_fragments_path, 'fileshipper', 'imports'] | path_join }}"
+    _directories_path: "{{ [icingaweb2_fragments_path, 'fileshipper', 'directories'] | path_join }}"
+  block:
+    - name: Module Fileshipper | Create directories - imports
+      loop: "{{ icingaweb2_modules.fileshipper.imports | default({}) | dict2items | map(attribute='value') | list }}"
+      loop_control:
+        loop_var: _import
+      ansible.builtin.file:
+        state: directory
+        path: "{{ [_imports_path, _import.basedir] | path_join }}"
+        owner: "{{ icingaweb2_httpd_user }}"
+        group: "{{ icingaweb2_group }}"
+        mode: "0750"
+
+    - name: Module Fileshipper | Create directories - directories
+      loop: "{{ icingaweb2_modules.fileshipper.directories | default({}) | dict2items | map(attribute='value') | list }}"
+      loop_control:
+        loop_var: _directory
+      ansible.builtin.file:
+        state: directory
+        path: "{{ [_directories_path, _directory.source] | path_join }}"
+        owner: "{{ icingaweb2_httpd_user }}"
+        group: "{{ icingaweb2_group }}"
+        mode: "0750"
+
+    - name: Module Fileshipper | Deploy files - imports
+      loop: "{{ icingaweb2_modules.fileshipper.imports | default({}) | dict2items | map(attribute='value') | list }}"
+      loop_control:
+        loop_var: _import
+      vars:
+        _dest: "{{ [_imports_path, _import.basedir] | path_join }}"
+        _files: "{{ _import.files | default([]) }}"
+      ansible.builtin.include_tasks: deploy_fileshipper_files.yml
+
+    - name: Module Fileshipper | Deploy files - directories
+      loop: "{{ icingaweb2_modules.fileshipper.directories | default({}) | dict2items | map(attribute='value') | list }}"
+      loop_control:
+        loop_var: _directory
+      vars:
+        _dest: "{{ [_directories_path, _directory.source] | path_join }}"
+        _files: "{{ _directory.files | default([]) }}"
+      ansible.builtin.include_tasks: deploy_fileshipper_files.yml
+
+    - name: Module Fileshipper | Find files
+      loop: "{{ (icingaweb2_modules.fileshipper.imports | default({}) | dict2items + icingaweb2_modules.fileshipper.directories | default({}) | dict2items) | map(attribute='value') }}"
+      loop_control:
+        loop_var: _directory
+      # Ignore directory if 'purge_files: false', not removing any files
+      when: _directory.purge_files | default(true)
+      ansible.builtin.find:
+        paths: "{{ [_imports_path if _directory.basedir is defined else _directories_path, _directory.basedir | default(_directory.source)] | path_join }}"
+        recurse: true
+      register: _fileshipper_deployed_files
+
+- name: Module Fileshipper | Remove unmanaged files
+  # Loop over each file path for all already deployed files, ignoring imports/directories with 'purge_files: false'
+  loop: "{{ _fileshipper_deployed_files.results | selectattr('files', 'defined') | selectattr('files', 'ne', []) | map(attribute='files') | flatten | map(attribute='path') | unique | list }}"
+  loop_control:
+    loop_var: _file
+  when: _file not in _fileshipper_files_all | default([])
+  ansible.builtin.file:
+    state: absent
+    path: "{{ _file }}"
+
+- name: Module Fileshipper | Remove 'files'/'purge_files' keys before writing configuration
+  vars:
+    _fileshipper: "{{
+      {
+        'fileshipper': icingaweb2_modules.fileshipper | combine(
+          {
+            'imports': (icingaweb2_modules.fileshipper.imports | default({}) | dict2items | map('combine', {'value': {'files': omit, 'purge_files': omit}}, recursive=true) | items2dict),
+            'directories': (icingaweb2_modules.fileshipper.directories | default({}) | dict2items | map('combine', {'value': {'files': omit, 'purge_files': omit}}, recursive=true) | items2dict)
+          }
+        )
+      }
+    }}"
+    _icingaweb2_modules: "{{ icingaweb2_modules | combine(_fileshipper, recursive=true) }}"
+  ansible.builtin.set_fact:
+    icingaweb2_modules: "{{ _icingaweb2_modules }}"
+
+- name: Module Fileshipper | Ensure config directory
+  ansible.builtin.file:
+    state: directory
+    dest: "{{ icingaweb2_modules_config_dir }}/fileshipper"
+    owner: "{{ icingaweb2_httpd_user }}"
+    group: "{{ icingaweb2_group }}"
+    mode: "2770"
+
+- name: Module Fileshipper | Manage config files
+  ansible.builtin.include_tasks: manage_module_config.yml
+  loop: "{{ _files }}"
+  loop_control:
+    loop_var: _file
+  when: icingaweb2_modules[_module][_file] is defined
+  vars:
+    _module: "{{ item.key }}"
+    _files:
+      - imports
+      - directories
