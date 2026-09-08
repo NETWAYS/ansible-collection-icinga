@@ -69,6 +69,37 @@
             host: 127.0.0.1
             username: root
             password: root
+      fileshipper:
+        enabled: true
+        source: package
+        imports:
+          a_bunch_of_files:
+            basedir: bunch
+            files:
+              - fileshipper/file_01.yml
+              - fileshipper/file_02.yml
+          a_bunch_of_files_no_purge:
+            basedir: bunch_no_purge
+            files:
+              - fileshipper/file_01.yml
+              - fileshipper/file_02.yml
+            purge_files: false
+        directories:
+          custom_rules:
+            source: custom_rules
+            target: zones.d/director-global/custom_rules
+            extensions: .conf
+            files:
+              - fileshipper/file_03.conf
+              - fileshipper/file_04.conf
+          custom_rules_no_purge:
+            source: custom_rules_no_purge
+            target: zones.d/director-global/custom_rules
+            extensions: .conf
+            files:
+              - fileshipper/file_03.conf
+              - fileshipper/file_04.conf
+            purge_files: false
     icingaweb2_db:
       type: mysql
       name: icingaweb

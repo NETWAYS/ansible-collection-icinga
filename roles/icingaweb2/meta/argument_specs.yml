@@ -979,3 +979,30 @@ argument_specs:
                   - "Example: C(icingaweb2_modules.vspheredb.config: { db: { resource: vspheredb_db } })"
                 type: dict
                 required: false
+          fileshipper:
+            description:
+              - This configures the L(Icinga Web Fileshipper module, https://icinga.com/docs/icinga-director/latest/fileshipper/).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              imports:
+                description:
+                  - Defines the Fileshipper imports.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                  - The special O(files) option is a list of strings with each entry pointing to a file to be deployed within O(basedir).
+                    The O(files) option will not be a part of the written configuration.
+                  - The O(basedir) option must not be an absolute path!
+                  - "Example: C(icingaweb2_modules.fileshipper.imports: { some_files: { basedir: some_files, files: [...] } })"
+                type: dict
+                required: false
+              directories:
+                description:
+                  - Defines Fileshipper directories.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                  - The special O(files) option is a list of strings with each entry pointing to a file to be deployed within O(source).
+                    The O(files) option will not be a part of the written configuration.
+                  - The O(source) option must not be an absolute path!
+                  - "Example: C(icingaweb2_modules.fileshipper.directories: { custom_config: { source: custom, target: zones.d/director-global/custom.conf, extensions: .conf .md, files: [...] } })"
+                type: dict
+                required: false
