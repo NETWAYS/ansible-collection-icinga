@@ -20,6 +20,13 @@
       - item in icingaweb2_module_packages.keys()
     fail_msg: "'{{ item }}' is an unknown module. Set 'icingaweb2_ignore_unknown_modules' to 'true' if you want to simply skip unknown modules"
 
+- name: Check each icingaweb2_locales entry for a valid identifier
+  loop: "{{ icingaweb2_locales }}"
+  ansible.builtin.assert:
+    that:
+      - item is match('^[a-z]{2,3}_[A-Z]{2}$')
+    fail_msg: "'{{ item }}' is not a valid locale. Expected '<language code>_<territory>' without the encoding, e.g. 'de_DE'"
+
 - name: Gather module packages
   no_log: true
   ansible.builtin.set_fact:
