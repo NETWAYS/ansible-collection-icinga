@@ -107,7 +107,7 @@ Within a task the YAML structure is effectively translated to INI and written to
 Explained:
 
 * `icingaweb2_config` defines the file to be written (`config.ini`)
-* `global`, `logging` and `themes` are the names of the respective sections within the INI file
+* `global`, `logging`, `themes` and `security` (not set by default) are the names of the respective sections within the INI file
 * Everything underneath each key / section is a key value pair for the given section within the INI file
 
 So the above YAML results in:

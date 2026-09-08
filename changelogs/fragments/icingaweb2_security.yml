@@ -1,0 +1,2 @@
+minor_changes:
+  - "Add Icinga Web configuration options for Content Security Policy (CSP) and password policy."
