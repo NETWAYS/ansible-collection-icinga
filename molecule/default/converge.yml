@@ -3,6 +3,7 @@
 - name: Converge
   hosts: all
   vars:
+    netways_repo_extras: true
     icingaweb2_modules:
       businessprocess:
         enabled: true
@@ -21,6 +22,21 @@
             url: 127.0.0.1:9000
           ui:
             default_time_range: 6
+      grafana:
+        enabled: true
+        source: package
+        config:
+          grafana:
+            host: grafana.example.org:3000
+            protocol: https
+            datasource: influxdb
+            accessmode: iframe
+            defaultdashboard: icinga2-default
+            defaultdashboarduid: ad5bxjg
+        graphs:
+          load:
+            dashboarduid: ad5pjfp
+            panelId: "1,2,3"
       director:
         enabled: true
         source: package
