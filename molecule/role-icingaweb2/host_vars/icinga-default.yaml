@@ -1,0 +1,7 @@
+---
+# de_DE and de_AT share a language on purpose: on the RedHat OS family both
+# resolve to the single 'glibc-langpack-de' package.
+icingaweb2_locales:
+  - de_DE
+  - de_AT
+  - fr_FR

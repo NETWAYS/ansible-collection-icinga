@@ -4,3 +4,11 @@
     name: "{{ icingaweb2_packages + icingaweb2_packages_dependencies }}"
     state: present
     update_cache: true
+
+# Passing a list of locales is only possible in Ansible community package version >=10.3.0
+- name: Debian - Install requested locales
+  loop: "{{ icingaweb2_locales | unique }}"
+  community.general.locale_gen:
+    state: present
+    # Append the encoding, e.g. 'de_DE' -> 'de_DE.UTF-8'
+    name: "{{ item }}.UTF-8"

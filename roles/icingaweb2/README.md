@@ -131,6 +131,30 @@ default = Icinga
 
 For more information about the general configuration have a look at the [official documentation](https://icinga.com/docs/icinga-web/latest/doc/03-Configuration/#general-configuration).
 
+### Translations
+
+Icinga Web offers translations for other languages. For them to take effect once activated locales need to be installed on the system where Icinga Web runs.  
+The following instructs the role to install locales / language packs.
+
+> The locales must be written as `<language code>_<territory>`, omitting the encoding (`.UTF-8` will be appended).
+> Anything else is rejected, so neither `de` nor `de_DE.UTF-8` are accepted.
+> Locales will be installed even if Icinga Web does not offer translations for them specifically.
+
+```yaml
+icingaweb2_locales:
+  - de_DE
+  - en_US
+  - fr_FR
+```
+
+How the locales are provided differs per OS family:
+
+| OS family | Mechanism |
+|---|---|
+| Debian | The locales are generated via `/etc/locale.gen`. |
+| RedHat | The matching `glibc-langpack-<language code>` packages are installed. These are split by language, not by territory, so `de_DE` and `de_AT` both resolve to `glibc-langpack-de`. |
+| SUSE | Not supported. No per-language packages exist, so nothing is installed. The role only reports which locales have to be provided manually. |
+
 ### Authentication
 
 At least one method of user authentication needs to be configured in order to use Icinga Web 2. This is achieved by defining `icingaweb2_authentication`.<br>
