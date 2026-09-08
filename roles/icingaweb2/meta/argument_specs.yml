@@ -448,7 +448,7 @@ argument_specs:
                     options: *common_redis_options
           director:
             description:
-              - This configures the L(Icinga DB Web module, https://icinga.com/docs/icinga-db-web/latest/doc/03-Configuration/).
+              - This configures the L(Icinga Director module, https://icinga.com/docs/icinga-director/).
             type: dict
             options:
               enabled: *module_enabled
@@ -608,7 +608,7 @@ argument_specs:
                     required: true
           grafana:
             description:
-              - Configures the Grafana module for Icinga Web 2.
+              - This configures the L(Grafana module, https://github.com/NETWAYS/icingaweb2-module-grafana/blob/main/doc/03-module-configuration.md).
             type: dict
             options:
               enabled: *module_enabled
