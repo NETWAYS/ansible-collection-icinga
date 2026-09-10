@@ -1,4 +1,4 @@
-# Role icinga.icinga.icingadb
+# Role netways.icinga.icingadb
 
 This role installs and configures the IcingaDB daemon. In addition it can also import the schema into the database. It is idempotent and works in HA-setups (two Icinga2 instances).
 
@@ -6,15 +6,15 @@ It serves as the official, more performant successor to Icinga IDO. More informa
 
 
 > [!TIP]
-> In many scenarios you want to install the [icingadb_redis role](../role-icingadb_redis/) together with this role. It is part of this collection, too.
+> In many scenarios you want to install the [icingadb_redis role](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icingadb_redis/) together with this role. It is part of this collection, too.
 
 ## Database
 
-IcingaDB relies on a relational database to persist received data. This database **won't** be created by this role - you need to deploy and configure one in advance. For more information, see the [Databases](../getting-started.md#databases) section in the getting started guide.
+IcingaDB relies on a relational database to persist received data. This database **won't** be created by this role - you need to deploy and configure one in advance. For more information, see the [Databases](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/getting-started.md) section in the getting started guide.
 
 ## Variables
 
-The following variables define the configuration for IcingaDB. Some variables got predefined [defaults](../../roles/icingadb/defaults/main.yml), others are purely opt-in.
+The following variables define the configuration for IcingaDB. Some variables got predefined [defaults](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/roles/icingadb/defaults/main.yml), others are purely opt-in.
 
 For more information on the respective settings please see [the official documentation](https://icinga.com/docs/icinga-db/latest/doc/03-Configuration/).
 
@@ -51,26 +51,26 @@ For more information on the respective settings please see [the official documen
 
 ### Logging configuration
 
-| Variable | Type | Description | Default |
-|----------|------|-------------|---------|
-| `icingadb_logging_level` | `fatal\|error\|warn\|info\|debug` | Defines the logging level for IcingaDB. | `info` |
+| Variable                 | Type      | Description                             | Default |
+|----------                |------     |-------------                            |---------|
+| `icingadb_logging_level` | `fatal\|error\|warn\|info\|debug` | Defines the logging level for IcingaDB. | `info`  |
 
 #### Compont based log level
 The following variables can be used to define special log levels for individual components.
 
-| Variable | Type | Description | Default |
-|----------|------|-------------|---------|
-| `icingadb_log_level_confic_sync` | `fatal\|error\|warn\|info\|debug` | log-level for component `config-sync`  | value from `icingadb_logging_level`, `info` by default   |
-| `icingadb_log_level_database` | `fatal\|error\|warn\|info\|debug` | log-level for component `database`  | value from `icingadb_logging_level`, `info` by default   |
-| `icingadb_log_level_dumps_ignals` | `fatal\|error\|warn\|info\|debug` | log-level for component `dump-signals`  | value from `icingadb_logging_level`, `info` by default   |
-| `icingadb_log_level_confic_sync` | `fatal\|error\|warn\|info\|debug` | log-level for component `heartbeat`  | value from `icingadb_logging_level`, `info` by default   |
-| `icingadb_log_level_high_availability` | `fatal\|error\|warn\|info\|debug` | log-level for component `high-availability`  | value from `icingadb_logging_level`, `info` by default   |
-| `icingadb_log_level_history_sync` | `fatal\|error\|warn\|info\|debug` | log-level for component `history-sync`  | value from `icingadb_logging_level`, `info` by default   |
-| `icingadb_log_level_overdue_sync` | `fatal\|error\|warn\|info\|debug` | log-level for component `overdue-sync`  | value from `icingadb_logging_level`, `info` by default   |
-| `icingadb_log_level_redis` | `fatal\|error\|warn\|info\|debug` | log-level for component `redis`  | value from `icingadb_logging_level`, `info` by default   |
-| `icingadb_log_level_retention` | `fatal\|error\|warn\|info\|debug` | log-level for component `retention`  | value from `icingadb_logging_level`, `info` by default   |
-| `icingadb_log_level_runtime_updates` | `fatal\|error\|warn\|info\|debug` | log-level for component `runtime-updates`  | value from `icingadb_logging_level`, `info` by default   |
-| `icingadb_log_level_telemetry` | `fatal\|error\|warn\|info\|debug` | log-level for component `telemetry`  | value from `icingadb_logging_level`, `info` by default   |
+| Variable                               | Type                              | Description                                 | Default                                                |
+| ---                                    | ---                               | ---                                         | ---                                                    |
+| `icingadb_log_level_confic_sync`       | `fatal\|error\|warn\|info\|debug` | log-level for component `config-sync`       | value from `icingadb_logging_level`, `info` by default |
+| `icingadb_log_level_database`          | `fatal\|error\|warn\|info\|debug` | log-level for component `database`          | value from `icingadb_logging_level`, `info` by default |
+| `icingadb_log_level_dumps_ignals`      | `fatal\|error\|warn\|info\|debug` | log-level for component `dump-signals`      | value from `icingadb_logging_level`, `info` by default |
+| `icingadb_log_level_confic_sync`       | `fatal\|error\|warn\|info\|debug` | log-level for component `heartbeat`         | value from `icingadb_logging_level`, `info` by default |
+| `icingadb_log_level_high_availability` | `fatal\|error\|warn\|info\|debug` | log-level for component `high-availability` | value from `icingadb_logging_level`, `info` by default |
+| `icingadb_log_level_history_sync`      | `fatal\|error\|warn\|info\|debug` | log-level for component `history-sync`      | value from `icingadb_logging_level`, `info` by default |
+| `icingadb_log_level_overdue_sync`      | `fatal\|error\|warn\|info\|debug` | log-level for component `overdue-sync`      | value from `icingadb_logging_level`, `info` by default |
+| `icingadb_log_level_redis`             | `fatal\|error\|warn\|info\|debug` | log-level for component `redis`             | value from `icingadb_logging_level`, `info` by default |
+| `icingadb_log_level_retention`         | `fatal\|error\|warn\|info\|debug` | log-level for component `retention`         | value from `icingadb_logging_level`, `info` by default |
+| `icingadb_log_level_runtime_updates`   | `fatal\|error\|warn\|info\|debug` | log-level for component `runtime-updates`   | value from `icingadb_logging_level`, `info` by default |
+| `icingadb_log_level_telemetry`         | `fatal\|error\|warn\|info\|debug` | log-level for component `telemetry`         | value from `icingadb_logging_level`, `info` by default |
 
 ### IcingaDB Retention
 
@@ -114,7 +114,7 @@ This play installs IcingaDB with on the same host as its connected MysQL databas
     icingadb_database_type: mysql  # needed by the schema import
 
   roles:
-    - role: icinga.icinga.icingadb
+    - role: netways.icinga.icingadb
 ```
 
 This more complex example installs IcingaDB and connects it to a **remote** PostgreSQL database, using client certificates and TLS. It also imports the schema into the database. Redis is installed locally.
@@ -135,5 +135,5 @@ This more complex example installs IcingaDB and connects it to a **remote** Post
     icingadb_database_import_schema: true
 
   roles:
-    - role: icinga.icinga.icingadb
+    - role: netways.icinga.icingadb
 ```
