@@ -1,0 +1,61 @@
+---
+
+- name: Module TOTP | Ensure config directory
+  ansible.builtin.file:
+    state: directory
+    dest: "{{ icingaweb2_modules_config_dir }}/totp"
+    owner: "{{ icingaweb2_httpd_user }}"
+    group: "{{ icingaweb2_group }}"
+    mode: "2770"
+
+- name: Module TOTP | Manage config files
+  ansible.builtin.include_tasks: manage_module_config.yml
+  loop: "{{ _files }}"
+  loop_control:
+    loop_var: _file
+  when: icingaweb2_modules[_module][_file] is defined
+  vars:
+    _module: "{{ item.key }}"
+    _files:
+      - config
+
+- name: Module TOTP | Manage Schema
+  when: icingaweb2_modules[_module]['database']['import_schema'] | default(false)
+  vars:
+    _module: "{{ item.key }}"
+  block:
+    - name: Module TOTP | Prepare _db information
+      ansible.builtin.set_fact:
+        _db:
+          host: "{{ icingaweb2_modules[_module]['database']['host'] | default('localhost') }}"
+          port: "{{ icingaweb2_modules[_module]['database']['port'] | default('3306') }}"
+          user: "{{ icingaweb2_modules[_module]['database']['user'] | default('totp') }}"
+          password: "{{ icingaweb2_modules[_module]['database']['password'] | default(omit) }}"
+          name: "{{ icingaweb2_modules[_module]['database']['name'] | default('totp') }}"
+          ssl_mode: "{{ icingaweb2_modules[_module]['database']['ssl_mode'] | default(omit) }}"
+          ssl_ca: "{{ icingaweb2_modules[_module]['database']['ssl_ca'] | default(omit) }}"
+          ssl_cert: "{{ icingaweb2_modules[_module]['database']['ssl_cert'] | default(omit) }}"
+          ssl_key: "{{ icingaweb2_modules[_module]['database']['ssl_key'] | default(omit) }}"
+          ssl_cipher: "{{ icingaweb2_modules[_module]['database']['ssl_cipher'] | default(omit) }}"
+          ssl_extra_options: "{{ icingaweb2_modules[_module]['database']['ssl_extra_options'] | default(omit) }}"
+          schema_path_mysql: "/usr/share/icingaweb2/modules/totp/schema/mysql/schema.sql"
+          schema_path_pgsql: "/usr/share/icingaweb2/modules/totp/schema/pgsql/schema.sql"
+          select_query: "SELECT * FROM totp_schema"
+          type: "{{ icingaweb2_modules[_module]['database']['type'] | default(omit) }}"
+
+    - name: Module TOTP | Check if database type is provided
+      when: icingaweb2_modules[_module]['database']['type'] is not defined
+      ansible.builtin.fail:
+        msg: No database type was provided
+
+    - name: Module TOTP | Import MySQL Schema
+      when: _db.type == 'mysql'
+      ansible.builtin.include_tasks: ../manage_mysql_imports.yml
+
+    - name: Module TOTP | Import PostgresQL Schema
+      when: _db.type == 'pgsql'
+      ansible.builtin.include_tasks: ../manage_pgsql_imports.yml
+
+    - name: Module TOTP | empty _db var
+      ansible.builtin.set_fact:
+        _db: {}

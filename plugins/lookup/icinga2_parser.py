@@ -4,7 +4,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from ansible.plugins.lookup import LookupBase
-from ansible_collections.icinga.icinga.plugins.module_utils.parse import (
+from ansible_collections.netways.icinga.plugins.module_utils.parse import (
     Icinga2Parser,
 )
 

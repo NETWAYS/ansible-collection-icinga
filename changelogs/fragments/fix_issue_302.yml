@@ -1,2 +1,0 @@
-bugfixes:
-  - "The Icinga DB config template used two different variables to configure (in)secure TLS communication with the database. It now uses :code:`icingadb_database_tls_insecure` for both the condition and as the actual value (#302)."

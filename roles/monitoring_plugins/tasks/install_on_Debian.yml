@@ -2,7 +2,7 @@
 
 - name: Apt - install requested packages
   become: yes
-  apt:
+  ansible.builtin.apt:
     state: present
     name: "{{ needed_packages }}"
     update_cache: true
@@ -10,14 +10,14 @@
   changed_when: apt_result.stdout is defined
   when:
     - needed_packages is defined
-    - needed_packages
+    - needed_packages | length > 0
 
 - name: Apt - remove non-requested packages
   become: yes
-  apt:
+  ansible.builtin.apt:
     state: absent
-    name: "{{ (unwanted_packages | difference(['monitoring-plugins-common', 'monitoring-plugins-basic'])) if icinga_monitoring_plugins_check_commands else unwanted_packages }}"
+    name: "{{ (unwanted_packages | difference(['monitoring-plugins-common', 'monitoring-plugins-basic'])) if icinga_monitoring_plugins_check_commands | length > 0 else unwanted_packages }}"
     autoremove: "{{ icinga_monitoring_plugins_autoremove }}"
   when:
     - icinga_monitoring_plugins_remove
-    - unwanted_packages
+    - unwanted_packages | length > 0

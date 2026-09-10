@@ -18,7 +18,7 @@ Example:
 
 ```yaml
 ---
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 user: api-user
 password: api-user-password
 ```
@@ -262,7 +262,7 @@ This inventory plugin needs
 This is a token that ensures that the plugin definitions are meant for this inventory plugin.<br>
 The form is `namespace.collection_name.plugin_name`.
 
-This must be `icinga.icinga.icinga`
+This must be `netways.icinga.icinga`
 
 Required: `true`<br>
 Type: `string`<br>
@@ -396,7 +396,7 @@ Example:
 
 ```yaml
 ---
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 user: api-user
 password: api-user-password
 
@@ -471,7 +471,7 @@ The following is an example on how to use the Ansible builtin cache plugin `json
 
 ```yaml
 ---
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 user: api-user
 password: api-user-password
 
@@ -522,7 +522,7 @@ Using the plugin:
 
 ```yaml
 ---
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 user: api-user
 password: api-user-password
 
@@ -580,7 +580,7 @@ Example:
 
 ```yaml
 ---
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 user: api-user
 password: api-user-password
 

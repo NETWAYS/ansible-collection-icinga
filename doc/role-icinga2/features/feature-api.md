@@ -10,6 +10,8 @@ All non Icinga attributes to configure the feature are explained below.
 
 Example how to install an Agent:
 
+> Replace `<PLACEHOLDERS>` according to your environment.
+
 ```yaml
 icinga2_features:
   - name: api
@@ -17,10 +19,16 @@ icinga2_features:
     ca_host: icinga-server.localdomain
     endpoints:
       - name: NodeName
+      - name: <ParentNodeName>
+        host: <ParentIPAddress>
     zones:
       - name: ZoneName
+        parent: <ParentZoneName>
         endpoints:
           - NodeName
+      - name: <ParentZoneName>
+        endpoints:
+          - <ParentNodeName>
 ```
 
 Example how to install a master/server instance:
@@ -117,6 +125,36 @@ The fingerprint can be retrieved with OpenSSL:
 openssl x509 -noout -fingerprint -sha256 -inform pem -in /path/to/ca.crt
 ```
 
+### Top-down connections
+
+Use `delegate_pki: true` when the agent cannot initiate a connection to the CA host / master, but the parent / master can connect inbound to the agent.
+
+In this mode, the role:
+
+- fetches `ca.crt` from the `ca_host` via Ansible and copies it to the agent
+- generates a self-signed certificate on the agent
+- creates a ticket on the `ca_host` via `delegate_to`
+- writes the ticket to `{{ icinga2_cert_path }}/ticket`
+
+Icinga then completes certificate signing automatically when the parent connects to the agent and the cluster handshake starts. This is not a fully offline / disconnected workflow.
+
+```yaml
+icinga2_features:
+  - name: api
+    ca_host: icinga-master.localdomain
+    delegate_pki: true
+    endpoints:
+      - name: icinga-agent.localdomain
+      - name: icinga-master.localdomain
+        # no host here: agent cannot initiate connection anyway
+    zones:
+      - name: icinga-agent.localdomain
+        endpoints:
+          - icinga-agent.localdomain
+        parent: master
+      - name: master
+        endpoints:
+          - icinga-master.localdomain
 ### Use your own ready-made certificate
 
 If you want to use certificates which aren't created by **Icinga 2 CA**, then use
@@ -135,13 +173,17 @@ The role will copy the files from your Ansible controller node to
 **/var/lib/icinga2/certs** on the remote host. File names are
 set to by the parameter `cert_name` (by default FQDN).
 
+If the certificates and the key are already present on the remote host,
+you can set `ssl_remote_source: true` to change the above behavior.
+
 ```yaml
 icinga2_features:
   - name: api
     cert_name: host.example.org
-    ssl_ca: /home/ansible/certs/ca.crt
+    ssl_cacert: /home/ansible/certs/ca.crt
     ssl_cert: /home/ansible/certs/host.crt
     ssl_key: /home/ansible/certs/host.key
+    ssl_remote_source: false
     endpoints:
       - name: NodeName
     zones:
@@ -158,10 +200,13 @@ icinga2_features:
 * `force_newcert: boolean`
   * Force new certificates on the destination hosts.
 
-* `cert_name: string`
-  * Common name of Icinga client/server instance. Default is **ansible_fqdn**.
+* `delegate_pki: boolean`
+  * Skip outbound `pki save-cert` and `pki request` on the agent. Provision `ca.crt` and ticket through Ansible delegation and rely on Icinga CSR auto-signing when the parent connects inbound.
 
-* `ssl_ca: string`
+* `cert_name: string`
+  * Common name of Icinga client/server instance. Default is **ansible_facts['fqdn']**.
+
+* `ssl_cacert: string`
   * Path to the ca file when using manual certificates
 
 * `ssl_cert: string`
@@ -169,6 +214,9 @@ icinga2_features:
 
 * `ssl_key: string`
   * Path to the certificate key file when using manual certificates.
+
+* `ssl_remote_source: boolean`
+  * Whether to copy the certificates and key from the remote host instead of from the Ansible controller.
 
 * `endpoints: list of dicts`
   * Defines endpoints in **zones.conf**, each endpoint is required to have a name and optional a host or port.<br>
@@ -181,3 +229,4 @@ icinga2_features:
     * `name: string`
     * `endpoints: list`
     * `global: boolean`
+    * `parent: string`

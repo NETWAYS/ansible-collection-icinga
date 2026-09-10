@@ -22,6 +22,7 @@ Current supported features:
 * [Feature Livestatus](features/feature-livestatus.md)
 * [Feature mainlog](features/feature-mainlog.md)
 * [Feature notification](features/feature-notification.md)
+* [Feature OTLPMetrics](features/feature-otlpmetrics.md)
 * [Feature perfdata](features/feature-perfdata.md)
 
 ```yaml

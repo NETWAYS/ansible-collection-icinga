@@ -1,0 +1,20 @@
+---
+# Database Settings
+icinga_kubernetes_database_import_schema: false
+icinga_kubernetes_database_type: mysql
+icinga_kubernetes_database_host: 127.0.0.1
+icinga_kubernetes_database_name: kubernetes
+icinga_kubernetes_database_user: kubernetes
+icinga_kubernetes_database_password: kubernetes
+# icinga_kubernetes_database_port:
+
+# Variables for kubernetes role
+icinga_kubernetes_config_dir: /etc/icinga-kubernetes
+icinga_kubernetes_service_name: icinga-kubernetes
+icinga_kubernetes_group: icinga-kubernetes
+icinga_kubernetes_user: icinga-kubernetes
+icinga_kubernetes_database_schema: "/usr/share/icinga-kubernetes/schema/{{ icinga_kubernetes_database_type }}/schema.sql"
+icinga_kubernetes_packages:
+  - icinga-kubernetes
+icinga_kubernetes_cluster_config:
+  - cluster_name: default

@@ -1,4 +1,0 @@
----
-minor_changes:
-  - "Enhance IcingaDB retention configs #200"
-  - "Added tests for retention configs"

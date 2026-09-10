@@ -1,3 +1,0 @@
-bugfixes:
-  - "Fixed incorrect failure of x509 variable sanity checks. They now fail as intended instead of due to syntax (#303)."
-  - "Fixed wrong variable being referenced to apply x509 mysql database schema. Use `schema_path_mysql` now (#303)."

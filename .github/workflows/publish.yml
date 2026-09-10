@@ -13,15 +13,15 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     env:
-      COLLECTION_NAMESPACE: icinga
+      COLLECTION_NAMESPACE: netways
       COLLECTION_NAME: icinga
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.tag }}
 
       - name: build and publish collection
-        uses: artis3n/ansible_galaxy_collection@v2
+        uses: artis3n/ansible_galaxy_collection@v3
         with:
           api_key: '${{ secrets.GALAXY_API_KEY }}'
           build: true

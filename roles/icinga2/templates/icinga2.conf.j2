@@ -38,14 +38,14 @@ include <{{ p }}>
 include "features-enabled/*.conf"
 
 
-{% if icinga2_confd == True  %}
+{% if icinga2_confd == true  %}
 /**
  * Although in theory you could define all your objects in this file
  * the preferred way is to create separate directories and files in the conf.d
  * directory. Each of these files must have the file extension ".conf".
  */
 include_recursive "conf.d"
-{% elif icinga2_confd != False %}
+{% elif icinga2_confd != false %}
 /**
  * Although in theory you could define all your objects in this file
  * the preferred way is to create separate directories and files in the conf.d

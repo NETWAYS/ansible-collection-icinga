@@ -11,7 +11,7 @@
 
    To avoid having leftover files from your local directory end up in the release, please **cleanly clone the release branch to another directory**.<br>
    ```bash
-   git clone --branch release/<VERSION> git@github.com:Icinga/ansible-collection-icinga.git release_<VERSION>
+   git clone --branch release/<VERSION> git@github.com:NETWAYS/ansible-collection-icinga.git release_<VERSION>
    cd release_<VERSION>
    ```
    You now only have files that were actually commmited.<br>
@@ -51,17 +51,17 @@
 
    Push to Ansible Galaxy:<br>
    ```bash
-   ansible-galaxy collection publish --token <TOKEN> icinga-icinga-<VERSION>.tar.gz
+   ansible-galaxy collection publish --token <TOKEN> netways-icinga-<VERSION>.tar.gz
    ```
    > This might show errors which does **not** necessarily mean that it failed.<br>
-   > Have a look at [Ansible Galaxy](https://galaxy.ansible.com/ui/repo/published/icinga/icinga/) and confirm if the release could be published.
+   > Have a look at [Ansible Galaxy](https://galaxy.ansible.com/ui/repo/published/netways/icinga/) and confirm if the release could be published.
 
 6. **Create a release on GitHub:**<br>
-   When [creating a new release](https://github.com/Icinga/ansible-collection-icinga/releases/new)<br>
+   When [creating a new release](https://github.com/NETWAYS/ansible-collection-icinga/releases/new)<br>
 
    - choose \<VERSION\> as tag
    - choose the branch "release/\<VERSION\>" as target (will be tagged)
    - choose \<VERSION\> as title
-   - copy and paste the release's changelog entry (see [prior releases](https://github.com/Icinga/ansible-collection-icinga/releases))
-   - attach the created tar ball (icinga-icinga-\<VERSION\>.tar.gz) to the release
+   - copy and paste the release's changelog entry (see [prior releases](https://github.com/NETWAYS/ansible-collection-icinga/releases))
+   - attach the created tar ball (netways-icinga-\<VERSION\>.tar.gz) to the release
    - if you feel extra nice, credit contributors by adding their names, e.g. behind the respective issue or feature (`@name`)

@@ -1,6 +1,6 @@
 ---
 - name: Yum - add Icinga repository (stable)
-  yum_repository:
+  ansible.builtin.yum_repository:
     file: /etc/yum.repos.d/ICINGA-release
     name: icinga-stable-release
     description: "{{ icinga_repo_yum_stable_description }}"
@@ -12,7 +12,7 @@
     password: "{{ icinga_repo_subscription_password | default(omit) }}"
 
 - name: Yum - add Icinga repository (testing)
-  yum_repository:
+  ansible.builtin.yum_repository:
     file: /etc/yum.repos.d/ICINGA-testing
     name: icinga-testing-builds
     description: "{{ icinga_repo_yum_testing_description }}"
@@ -24,7 +24,7 @@
     password: "{{ icinga_repo_subscription_password | default(omit) }}"
 
 - name: Yum - add Icinga repository (snapshot)
-  yum_repository:
+  ansible.builtin.yum_repository:
     file: /etc/yum.repos.d/ICINGA-snapshot
     name: icinga-snapshot-builds
     description: "{{ icinga_repo_yum_snapshot_description }}"
@@ -35,17 +35,35 @@
     username: "{{ icinga_repo_subscription_username | default(omit) }}"
     password: "{{ icinga_repo_subscription_password | default(omit) }}"
 
+- name: Yum - add NETWAYS Extras repository
+  ansible.builtin.yum_repository:
+    name: "netways-extras"
+    description: "{{ netways_repo_extras_yum_description }}"
+    baseurl: "{{ netways_repo_extras_yum_url }}"
+    gpgkey: "{{ netways_repo_extras_yum_key }}"
+    gpgcheck: true
+    enabled: "{{ netways_repo_extras }}"
+
+- name: Yum - add NETWAYS Plugins repository
+  ansible.builtin.yum_repository:
+    name: "netways-plugins"
+    description: "{{ netways_repo_plugins_yum_description }}"
+    baseurl: "{{ netways_repo_plugins_yum_url }}"
+    gpgkey: "{{ netways_repo_plugins_yum_key }}"
+    gpgcheck: true
+    enabled: "{{ netways_repo_plugins }}"
+
 - name: Yum - add EPEL repository
-  yum:
-    name: epel-release
+  ansible.builtin.dnf:
+    name: "{{ icinga_repo_epel_package_name }}"
     state: present
-  when: icinga_repo_epel|bool == true
+  when: icinga_repo_epel | bool
 
 - name: Yum - add SCL repositories
-  yum:
+  ansible.builtin.dnf:
     name: centos-release-scl
     state: present
   when:
-    - icinga_repo_scl|bool == true
-    - ansible_distribution == "CentOS"
-    - ansible_distribution_major_version < "8"
+    - icinga_repo_scl | bool
+    - ansible_facts["distribution"] == "CentOS"
+    - ansible_facts["distribution_major_version"] < "8"

@@ -1,3 +1,0 @@
----
-major_changes:
-  - Add an Ansible Inventory Plugin to fetch host information from Icinga 2's API for use as an Ansible Inventory

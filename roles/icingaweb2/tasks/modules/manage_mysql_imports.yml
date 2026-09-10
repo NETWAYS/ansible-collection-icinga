@@ -1,0 +1,35 @@
+---
+- name: Check Database Credentials
+  ansible.builtin.assert:
+    that:
+      - _db['user'] is defined
+      - _db['password'] is defined
+    fail_msg: "No database credentials defined."
+
+- name: Build mysql command
+  ansible.builtin.set_fact:
+    _tmp_mysqlcmd: >-
+      mysql {% if _db['host'] | default('localhost') != 'localhost' %} -h "{{ _db['host'] }}" {%- endif %}
+      {% if _db['port'] is defined %} -P "{{ _db['port'] }}" {%- endif %}
+      {% if _db['ssl_mode'] is defined %} --ssl-mode "{{ _db['ssl_mode'] }}" {%- endif %}
+      {% if _db['ssl_ca'] is defined %} --ssl-ca "{{ _db['ssl_ca'] }}" {%- endif %}
+      {% if _db['ssl_cert'] is defined %} --ssl-cert "{{ _db['ssl_cert'] }}" {%- endif %}
+      {% if _db['ssl_key'] is defined %} --ssl-key "{{ _db['ssl_key'] }}" {%- endif %}
+      {% if _db['ssl_cipher'] is defined %} --ssl-cipher "{{ _db['ssl_cipher'] }}" {%- endif %}
+      {% if _db['ssl_extra_options'] is defined %} {{ _db['ssl_extra_options'] }} {%- endif %}
+      -u "{{ _db['user'] }}"
+      -p{{ _db['password'] | quote }}
+      "{{ _db['name'] }}"
+
+- name: MySQL import db schema
+  ansible.builtin.shell: >
+    {{ _tmp_mysqlcmd }}
+    -Ns -e "{{ _db['select_query'] }}" ||
+    (
+      {{ _tmp_mysqlcmd }} < {{ _db['schema_path_mysql'] }} &&
+      echo "Schema imported"
+    )
+  register: _icingaweb2_schema
+  changed_when:
+    - '"Schema imported" in _icingaweb2_schema.stdout_lines'
+  throttle: 1

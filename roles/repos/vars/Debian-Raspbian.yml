@@ -1,7 +1,7 @@
 ---
 icinga_repo_apt_stable_deb: # noqa var-naming
-  "deb [signed-by={{ icinga_repo_apt_keyring }}] http://packages.icinga.com/{{ ansible_lsb.id | lower }} icinga-{{ ansible_distribution_release | lower }} main"
+  "deb [signed-by={{ icinga_repo_apt_keyring }}] http://packages.icinga.com/{{ ansible_lsb.id | lower }} icinga-{{ ansible_facts['distribution_release'] | lower }} main"
 icinga_repo_apt_testing_deb: # noqa var-naming
-  "deb [signed-by={{ icinga_repo_apt_keyring }}] http://packages.icinga.com/{{ ansible_lsb.id | lower }} icinga-{{ ansible_distribution_release | lower }}-testing main"
+  "deb [signed-by={{ icinga_repo_apt_keyring }}] http://packages.icinga.com/{{ ansible_lsb.id | lower }} icinga-{{ ansible_facts['distribution_release'] | lower }}-testing main"
 icinga_repo_apt_snapshot_deb: # noqa var-naming
-  "deb [signed-by={{ icinga_repo_apt_keyring }}] http://packages.icinga.com/{{ ansible_lsb.id | lower }} icinga-{{ ansible_distribution_release | lower }}-snapshots main"
+  "deb [signed-by={{ icinga_repo_apt_keyring }}] http://packages.icinga.com/{{ ansible_lsb.id | lower }} icinga-{{ ansible_facts['distribution_release'] | lower }}-snapshots main"

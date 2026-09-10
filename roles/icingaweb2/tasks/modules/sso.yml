@@ -1,0 +1,35 @@
+---
+
+- name: Module SSO | Ensure config directory
+  ansible.builtin.file:
+    state: directory
+    dest: "{{ icingaweb2_modules_config_dir }}/sso"
+    owner: "{{ icingaweb2_httpd_user }}"
+    group: "{{ icingaweb2_group }}"
+    mode: "2770"
+
+- name: Convert providers list to a dictionary
+  when: icingaweb2_modules.sso.providers is defined
+  vars:
+    _sso: "{{
+      {
+        'sso': icingaweb2_modules.sso | combine(
+          {
+            'providers': icingaweb2_modules.sso.providers | netways.icinga.items2dict
+          }
+        )
+      }
+    }}"
+    _icingaweb2_modules: "{{ icingaweb2_modules | combine(_sso) }}"
+  ansible.builtin.set_fact:
+    icingaweb2_modules: "{{ _icingaweb2_modules }}"
+
+- name: Module SSO | Manage config files
+  ansible.builtin.include_tasks: manage_module_config.yml
+  loop: "{{ _files }}"
+  loop_control:
+    loop_var: _file
+  vars:
+    _module: "{{ item.key }}"
+    _files:
+      - providers

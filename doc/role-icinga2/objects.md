@@ -22,6 +22,8 @@ The `type` will be the original Icinga 2 object types, a list of all can be foun
 When defining `icinga2_objects` as a host specific variable (hostvars/groupvars) you can define the variable as a dictionary. Each dictionary key represents the host on which the key's value will be deployed as configuration.<br>
 Alternatively you can define `icinga2_objects` as a list which results in the configuration being deployed on just the host for which the variable is defined.
 
+Because it's easily overlooked, here are few more words of clarification: The first example shows variables of the host `webserver.example.org` but the `icinga2_objects` variable includes `host.example.org` and an extra level of indentation. This means that the following configuration will not be deployed on `webserver.example.org` but on `host.example.org`. This is especially useful when defining host objects on agents but "sending" them to the central nodes.
+
 Example defining the variable within hostvars as a dictionary (inventory entry):
 
 ```yaml
@@ -31,7 +33,7 @@ webserver.example.org:
     host.example.org:
       - name: "{{ inventory_hostname }}"
         type: Host
-        file: "{{ 'conf.d/' + ansible_hostname + '.conf' }}"
+        file: "{{ 'conf.d/' + ansible_facts['hostname'] + '.conf' }}"
         address: "{{ ansible_host }}"
         check_command: hostalive
         check_interval: 3m
@@ -40,6 +42,45 @@ webserver.example.org:
 
 This way you can use some host's variables (like `ansible_host`) to deploy configuration on another host (in this case `host.example.org`).
 
+You can use this variant within a playbook where `host.example.org` is your central Icinga 2 instance. Run it on all agents. They will collect their local facts and the central system `host.example.org` will receive host objects for each agent. This approach will only work if you run the play simultanously on your agents and on your central system.
+
+```
+- hosts: icinga2_main:icinga2_agents
+  collections:
+    - netways.icinga
+  pre_tasks:
+    # This assumes that agents don't have 'icinga2_objects' defined at hostvars level
+    # 'set_fact' will override them!
+    - name: Add agent hosts to Icinga 2 objects
+      when: inventory_hostname in groups["icinga2_agents"]
+      set_fact:
+        icinga2_objects:
+          # Name of the central system on which to deploy the given objects
+          host.example.org:
+            - name: "{{ inventory_hostname }}"
+              type: Zone
+              file: "zones.d/{{ monitoring_zone }}/hosts/{{ inventory_hostname }}.conf"
+              endpoints:
+                - "{{ inventory_hostname }}"
+              parent: "{{ monitoring_zone }}"
+            - name: "{{ inventory_hostname }}"
+              type: Endpoint
+              file: "zones.d/{{ monitoring_zone }}/hosts/{{ inventory_hostname }}.conf"
+            - name: "{{ inventory_hostname }}"
+              type: Host
+              file: "zones.d/{{ monitoring_zone }}/hosts/{{ inventory_hostname }}.conf"
+              imports:
+                - linux-host
+              vars:
+                distro: "{{ ansible_facts['distribution'] }}"
+                distroversion: "{{ ansible_facts['distribution_version'] }}"
+                arch: "{{ ansible_facts['architecture'] }}"
+              address: "{{ ansible_facts['default_ipv4']['address'] }}"
+  roles:
+    - netways.icinga.icinga2
+```
+
+> You could also add `icinga2_objects` to your agents's host variables within your inventory instead.
 Example defining the variable within hostvars as a list (inventory entry):
 
 ```yaml
@@ -48,7 +89,7 @@ webserver.example.org:
   icinga2_objects:
     - name: "web-api-user"
       type: ApiUser
-      file: "{{ 'conf.d/' + ansible_hostname + '.conf' }}"
+      file: "{{ 'conf.d/' + ansible_facts['hostname'] + '.conf' }}"
       password: "somepassword"
       permissions:
         - "objects/query/Host"

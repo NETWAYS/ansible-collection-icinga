@@ -1,0 +1,23 @@
+---
+icinga2_confd: false
+icinga2_delegate_host: icinga-master
+icinga2_constants:
+  TicketSalt: "molecule-reverse-connect-pki"
+icinga2_features:
+  - name: notification
+  - name: checker
+  - name: mainlog
+  - name: api
+    ca_host: icinga-master
+    delegate_pki: true
+    endpoints:
+      - name: icinga-master
+      - name: icinga-agent
+    zones:
+      - name: master
+        endpoints:
+          - icinga-master
+      - name: agent
+        endpoints:
+          - icinga-agent
+        parent: master

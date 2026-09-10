@@ -1,0 +1,39 @@
+- name: Module Graphite | Ensure config directory
+  ansible.builtin.file:
+    state: directory
+    dest: "{{ icingaweb2_modules_config_dir }}/{{ item.key }}"
+    owner: "{{ icingaweb2_httpd_user }}"
+    group: "{{ icingaweb2_group }}"
+    mode: "2770"
+
+- name: Module Graphite | Ensure templates directory
+  ansible.builtin.file:
+    state: directory
+    dest: "{{ icingaweb2_modules_config_dir }}/{{ item.key }}/templates"
+    owner: "{{ icingaweb2_httpd_user }}"
+    group: "{{ icingaweb2_group }}"
+    mode: "2770"
+
+- name: Module Graphite | Manage config files
+  ansible.builtin.include_tasks: manage_module_config.yml
+  loop: "{{ _files }}"
+  loop_control:
+    loop_var: _file
+  when: icingaweb2_modules[_module][_file] is defined
+  vars:
+    _module: "{{ item.key }}"
+    _files:
+      - config
+
+- name: Module Graphite | Copy custom templates
+  ansible.builtin.copy:
+    owner: "{{ icingaweb2_httpd_user }}"
+    group: "{{ icingaweb2_group }}"
+    src: "files/{{ _file.src_path }}"
+    dest: "{{ icingaweb2_modules_config_dir }}/{{ item.key }}/templates/{{ _file.name }}"
+  when: icingaweb2_modules[_module].custom_template_files is defined
+  loop: "{{ icingaweb2_modules[_module].custom_template_files }}"
+  loop_control:
+    loop_var: _file
+  vars:
+    _module: "{{ item.key }}"

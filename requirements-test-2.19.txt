@@ -1,0 +1,6 @@
+ansible-core==2.19.*
+ansible==12.*
+molecule
+ansible-lint
+molecule-plugins[docker]
+pytest-testinfra

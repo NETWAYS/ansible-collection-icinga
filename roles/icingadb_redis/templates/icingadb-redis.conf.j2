@@ -6,9 +6,11 @@ bind {% for host in icingadb_redis_binds %}
 {% endfor %}
 
 protected-mode {{ icingadb_redis_protected_mode | string }}
+{% if icingadb_redis_tls | default(false) %}
+port 0
+tls-port {{ icingadb_redis_tls_port | default(icingadb_redis_port) }}
+{% else %}
 port {{ icingadb_redis_port }}
-{% if icingadb_redis_tls_port is defined %}
-tls-port {{ icingadb_redis_tls_port }}
 {% endif %}
 tcp-backlog {{ icingadb_redis_tcp_backlog }}
 timeout {{ icingadb_redis_timeout }}
@@ -227,4 +229,5 @@ rdb-save-incremental-fsync {{ icingadb_redis_rdb_save_incremental_fsync }}
 tls-cert-file {{ icingadb_redis_tls_cert }}
 tls-key-file {{ icingadb_redis_tls_key }}
 tls-ca-cert-file {{ icingadb_redis_tls_ca }}
+tls-auth-clients {{ icingadb_redis_client_certificate }}
 {% endif %}

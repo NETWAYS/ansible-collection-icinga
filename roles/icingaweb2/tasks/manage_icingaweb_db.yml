@@ -8,8 +8,9 @@
   when: icingaweb2_db_import_schema | default(false)
 
 - name: Add admin to users list
+  no_log: "{{ icingaweb2_no_log | default(icinga_no_log) | default(true) }}"
   ansible.builtin.set_fact:
-    icingaweb2_users: "{{ icingaweb2_users + [_current_user]}}"
+    icingaweb2_users: "{{ icingaweb2_users + [_current_user] }}"
   vars:
     _current_user:
       username: "{{ icingaweb2_admin_username }}"
@@ -24,4 +25,5 @@
   loop: "{{ icingaweb2_users }}"
   loop_control:
     loop_var: _current_user
+    label: "{{ _current_user.username }}"
   when: icingaweb2_users | length > 0

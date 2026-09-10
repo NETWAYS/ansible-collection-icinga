@@ -35,7 +35,7 @@
 
 
   collections:
-    - icinga.icinga
+    - netways.icinga
   tasks:
     - ansible.builtin.pip:
         name: pyinilint

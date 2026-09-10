@@ -1,0 +1,18 @@
+- name: Module Icinga Kubernetes | Ensure config directory
+  ansible.builtin.file:
+    state: directory
+    dest: "{{ icingaweb2_modules_config_dir }}/{{ item.key }}"
+    owner: "{{ icingaweb2_httpd_user }}"
+    group: "{{ icingaweb2_group }}"
+    mode: "2770"
+
+- name: Module Icinga Kubernetes | Manage config files
+  ansible.builtin.include_tasks: manage_module_config.yml
+  loop: "{{ _files }}"
+  loop_control:
+    loop_var: _file
+  when: vars['icingaweb2_modules'][_module][_file] is defined
+  vars:
+    _module: "{{ item.key }}"
+    _files:
+      - config

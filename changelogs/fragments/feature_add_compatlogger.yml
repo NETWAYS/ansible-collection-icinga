@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Add object :code:`CompatLogger` and feature :code:`compatlog`.

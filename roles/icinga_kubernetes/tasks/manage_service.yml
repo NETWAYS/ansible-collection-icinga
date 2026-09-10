@@ -1,0 +1,27 @@
+---
+- name: Configure Icinga Kubernetes clusters via env files
+  when:
+    - icinga_kubernetes_cluster_config is defined
+    - icinga_kubernetes_cluster_config | length > 0
+  ansible.builtin.template:
+    src: cluster-config.env.j2
+    dest: "{{ icinga_kubernetes_config_dir }}/{{ l_cluster_config.cluster_name }}.env"
+    owner: "{{ icinga_kubernetes_user }}"
+    group: "{{ icinga_kubernetes_group }}"
+    mode: '0640'
+  vars:
+    icinga_for_kubernetes_cluster_name: "{{ l_cluster_config.cluster_name }}"
+    kubeconfig: "{{ l_cluster_config.kubeconfig | d('') }}"
+  loop: "{{ icinga_kubernetes_cluster_config }}"
+  loop_control:
+    loop_var: l_cluster_config
+    label: "{{ l_cluster_config.cluster_name }}"
+  notify:
+    - Systemd reload
+    - Icinga Kubernetes restart
+
+- name: Ensure Kubernetes Service is running
+  ansible.builtin.service:
+    state: started
+    enabled: yes
+    name: "{{ icinga_kubernetes_service_name }}"

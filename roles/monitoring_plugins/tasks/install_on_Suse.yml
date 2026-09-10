@@ -10,14 +10,14 @@
   changed_when: zypper_result.stdout is defined
   when:
     - needed_packages is defined
-    - needed_packages
+    - needed_packages | length > 0
 
 - name: Zypper - remove non-requested packages
   become: yes
   community.general.zypper:
     state: absent
-    name: "{{ (unwanted_packages | difference(['monitoring-plugins-common'])) if icinga_monitoring_plugins_check_commands else unwanted_packages }}"
+    name: "{{ (unwanted_packages | difference(['monitoring-plugins-common'])) if icinga_monitoring_plugins_check_commands | length > 0 else unwanted_packages }}"
     clean_deps: "{{ icinga_monitoring_plugins_autoremove }}"
   when:
     - icinga_monitoring_plugins_remove
-    - unwanted_packages
+    - unwanted_packages | length > 0

@@ -1,2 +1,0 @@
-bugfixes:
-  - "The type of :code:`vars['icinga2_objects']` was wrongly tested for. This should be a list. The type is now `properly checked <https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_tests.html#type-tests>`_ for (#308)."

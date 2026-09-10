@@ -3,6 +3,88 @@
 - name: Converge
   hosts: all
   vars:
+    netways_repo_extras: true
+    icingaweb2_modules:
+      businessprocess:
+        enabled: true
+        source: package
+        custom_process_files:
+          - name: test.conf
+            src_path: test.conf
+      graphite:
+        enabled: true
+        source: package
+        custom_template_files:
+          - name: test.ini
+            src_path: graphite_templates/test.ini
+        config:
+          graphite:
+            url: 127.0.0.1:9000
+          ui:
+            default_time_range: 6
+      grafana:
+        enabled: true
+        source: package
+        config:
+          grafana:
+            host: grafana.example.org:3000
+            protocol: https
+            datasource: influxdb
+            accessmode: iframe
+            defaultdashboard: icinga2-default
+            defaultdashboarduid: ad5bxjg
+        graphs:
+          load:
+            dashboarduid: ad5pjfp
+            panelId: "1,2,3"
+      director:
+        enabled: true
+        source: package
+        import_schema: false
+        run_kickstart: false
+        kickstart:
+          config:
+            endpoint: icinga-default
+            host: 127.0.0.1
+            username: root
+            password: root
+        config:
+          db:
+            resource: director_db
+      icingadb:
+        enabled: true
+        source: package
+        commandtransports:
+          instance01:
+            transport: api
+            host: 127.0.0.1
+            username: root
+            password: root
+        config:
+          icingadb:
+            resource: icingadb
+          redis:
+            tls: '0'
+          settings:
+            acknowledge_expire: "1"
+            acknowledge_expire_time: P1D
+            hostdowntime_all_services: "1"
+        redis:
+          redis1:
+            host: "127.0.0.1"
+      monitoring:
+        enabled: false
+        source: package
+        backends:
+          icinga2_ido_mysql:
+            type: ido
+            resource: icinga_ido
+        commandtransports:
+          icinga2-api:
+            transport: api
+            host: 127.0.0.1
+            username: root
+            password: root
     icingaweb2_db:
       type: mysql
       name: icingaweb
@@ -62,24 +144,17 @@
       - name: api
         ca_host: none
         endpoints:
-          - name: "{{ ansible_fqdn }}"
+          - name: "{{ ansible_facts['fqdn'] }}"
         zones:
           - name: "main"
             endpoints:
-              - "{{ ansible_fqdn }}"
+              - "{{ ansible_facts['fqdn'] }}"
     icinga2_config_directories:
       - zones.d/main/commands
       - zones.d/main/hosts
       - zones.d/main/services
-    icingaweb2_modules:
-      businessprocess:
-        enabled: true
-        source: package
-        custom_process_files:
-          - name: test.conf
-            src_path: test.conf
   collections:
-    - icinga.icinga
+    - netways.icinga
   pre_tasks:
     - ansible.builtin.include_role:
         name: repos

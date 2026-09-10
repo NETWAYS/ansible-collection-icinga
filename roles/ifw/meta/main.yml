@@ -1,0 +1,17 @@
+galaxy_info:
+  namespace: netways
+  role_name: ifw
+  author: |
+    - Matthias Döhler <matthias.doehler@netways.de>
+  description: Role to install the Icinga PowerShell Framework and manage its components
+  license: Apache-2.0
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Windows
+  galaxy_tags:
+    - icinga
+    - monitoring
+    - icingaforwindows
+    - ifw
+    - windows
+dependencies: []

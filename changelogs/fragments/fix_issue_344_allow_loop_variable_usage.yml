@@ -1,2 +1,0 @@
-minor_changes:
-  - Allow for usage of loop variables from :code:`apply_for` within object - Thanks @lucagubler (#344)

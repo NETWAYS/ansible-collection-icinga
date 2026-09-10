@@ -1,2 +1,0 @@
-minor_changes:
-  - Add variable `icinga_monitoring_plugins_dependency_repos` to allow for later modification by the user if specific other repositories need to be activated instead of `powertools` / `crb`

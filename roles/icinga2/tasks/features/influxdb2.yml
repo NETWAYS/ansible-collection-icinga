@@ -1,12 +1,12 @@
 ---
 
-- name: feature influxdb2 Influxdb2Writer object
-  icinga2_object:
-    name: influxdb2
-    type: Influxdb2Writer
-    file: features-available/influxdb2.conf
-    args: "{{ icinga2_dict_features.influxdb2 }}"
-  register: result
-
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: Feature influxdb2 Influxdb2Writer object
+  no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
+  ansible.builtin.set_fact:
+    tmp_objects: "{{ tmp_objects | default([]) + objects }}"
+  vars:
+    objects:
+      - name: influxdb2
+        type: Influxdb2Writer
+        file: features-available/influxdb2.conf
+        args: "{{ icinga2_dict_features.influxdb2 }}"

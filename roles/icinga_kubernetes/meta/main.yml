@@ -1,0 +1,27 @@
+galaxy_info:
+  author: |
+    - Gianmarco Mameli <gianmarco.mameli@gmail.com>
+  description: Role to install, configure or manage Icinga Kubernetes.
+  license: Apache-2.0
+  min_ansible_version: '2.9'
+  platforms:
+    - name: opensuse
+      versions: ['15.5']
+    - name: SLES
+      versions: ['15']
+    - name: EL
+      versions: ['7']
+    - name: Debian
+      versions: ['buster','bullseye','bookworm']
+    - name: Ubuntu
+      versions: ['jammy']
+  galaxy_tags:
+    - icinga
+    - monitoring
+    - satellite
+    - agent
+    - server
+    - master
+    - icinga2
+    - kubernetes
+dependencies: []

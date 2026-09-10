@@ -1,0 +1,3 @@
+---
+
+icinga_repo_epel_package_name: "oracle-epel-release-el{{ ansible_facts['distribution_major_version'] }}"

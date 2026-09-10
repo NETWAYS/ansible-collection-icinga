@@ -1,2 +1,0 @@
-bugfixes:
-  - Changed variable lookups in the form of `vars['variablename']` to `variablename` to avoid explicitly looking up the `vars` key of a play.

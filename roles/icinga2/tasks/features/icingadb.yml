@@ -1,12 +1,23 @@
 ---
 
-- name: feature icingadb IcingaDB object
-  icinga2_object:
-    name: icingadb
-    type: IcingaDB
-    file: features-available/icingadb.conf
-    args: "{{ icinga2_dict_features.icingadb }}"
+- name: Feature icingadb IcingaDB object
+  no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
+  ansible.builtin.set_fact:
+    tmp_objects: "{{ tmp_objects | default([]) + objects }}"
+  vars:
+    objects:
+      - name: icingadb
+        type: IcingaDB
+        file: features-available/icingadb.conf
+        args: "{{ icinga2_dict_features.icingadb | combine({'environment_id': omit}) }}"
   register: result
 
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: Set Icinga DB environment ID
+  when: icinga2_dict_features.icingadb.environment_id is defined
+  ansible.builtin.copy:
+    dest: "{{ icinga2_data_path }}/icingadb.env"
+    content: "\"{{ icinga2_dict_features.icingadb.environment_id }}\""
+    owner: "{{ icinga2_user }}"
+    group: "{{ icinga2_group }}"
+    mode: "0600"
+  notify: check-and-reload-icinga2-service

@@ -99,6 +99,7 @@ icinga2_object_types:
   - NotificationComponent
   - LivestatusListener
   - OpenTsdbWriter
+  - OTLPMetricsWriter
   - PerfdataWriter
   - ScheduledDowntime
   - Service

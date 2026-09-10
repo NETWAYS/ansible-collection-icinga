@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=consider-using-f-string,super-with-arguments,attribute-defined-outside-init,too-many-instance-attributes
 
-
 from urllib.parse import urlparse
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import SSLError, RequestException
@@ -29,7 +28,7 @@ DOCUMENTATION = '''
       plugin:
         description: Token that ensures this is a source file for the C(icinga) plugin.
         required: true
-        choices: ['icinga.icinga.icinga']
+        choices: ['netways.icinga.icinga']
       url:
         description:
           - URL of the Icinga 2 server.
@@ -82,6 +81,8 @@ DOCUMENTATION = '''
         type: bool
         default: false
       filters:
+        description:
+          - Add filters to limit the resulting inventory to certain hosts.
         suboptions:
           name:
             description:
@@ -108,13 +109,13 @@ DOCUMENTATION = '''
 
 EXAMPLES = '''
 # inventory-icinga.yml
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 url: https://icinga.example.com
 user: ansibleinventory
 password: changeme
 
 # icinga.yaml
-plugin: icinga.icinga.icinga
+plugin: netways.icinga.icinga
 url: https://icinga.example.com
 user: ansibleinventory
 password: changeme
@@ -146,8 +147,8 @@ keyed_groups:
 
 
 
-#class InventoryModule(BaseInventoryPlugin):
 class InventoryModule(BaseInventoryPlugin, Cacheable, Constructable):
+    # pylint: disable=too-many-ancestors
     NAME = 'icinga'
 
     def verify_file(self, path):
@@ -329,9 +330,9 @@ class InventoryModule(BaseInventoryPlugin, Cacheable, Constructable):
                 continue
 
             # Make sure every key within filters is considered a list, cast string to single entry list
-            if isinstance(value, AnsibleMapping):
+            if isinstance(value, (AnsibleMapping, dict)):
                 value = dict(value)
-            elif isinstance(value, AnsibleSequence):
+            elif isinstance(value, (AnsibleSequence, list)):
                 value = [to_text(val) for val in value]
             else:
                 value = [to_text(value)]
@@ -358,12 +359,13 @@ class InventoryModule(BaseInventoryPlugin, Cacheable, Constructable):
                             continue
 
                         # Make sure 'attribute_values' is considered a list, cast string to single entry list
-                        if isinstance(attribute_values, AnsibleSequence):
+                        if isinstance(attribute_values, (AnsibleSequence, list)):
                             attribute_values = [to_text(val) for val in attribute_values]
                         else:
                             attribute_values = [to_text(attribute_values)]
 
                         # Choose correct filter
+                        tmp_string = ''
                         if sub_key == 'match':
                             tmp_string = self._create_match_filter(f'vars.{attribute_key}', attribute_values)
                         elif sub_key == 'in':
@@ -497,7 +499,7 @@ class InventoryModule(BaseInventoryPlugin, Cacheable, Constructable):
         self._read_config_data(path)
 
         # Set attributes based on parsed file
-        self.icinga_url      = self.get_option('url').strip('/')
+        self.icinga_url      = self.get_option('url')
         self.icinga_port     = self.get_option('port')
         self.icinga_user     = self.get_option('user')
         self.icinga_password = self.get_option('password')
@@ -515,7 +517,16 @@ class InventoryModule(BaseInventoryPlugin, Cacheable, Constructable):
         self.keyed_groups    = self.get_option('keyed_groups')
         self.strict          = self.get_option('strict')
 
+        # Jinja2 templating for url, user and password
+        if self.templar.is_template(self.icinga_url):
+            self.icinga_url = self.templar.template(variable=self.icinga_url)
+        if self.templar.is_template(self.icinga_user):
+            self.icinga_user = self.templar.template(variable=self.icinga_user)
+        if self.templar.is_template(self.icinga_password):
+            self.icinga_password = self.templar.template(variable=self.icinga_password)
+
         # Build API URL and validate
+        self.icinga_url      = self.icinga_url.rstrip('/')
         self.api_url         = f'{self.icinga_url}:{self.icinga_port}/v1'
         if not self._validate_url(self.api_url):
             raise ValueError(f'\'{self.api_url}\' is not a valid URL.')

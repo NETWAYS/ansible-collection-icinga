@@ -1,0 +1,4 @@
+- name: Debian - Install Kubernetes packages
+  ansible.builtin.apt:
+    name: "{{ icinga_kubernetes_packages }}"
+    state: present

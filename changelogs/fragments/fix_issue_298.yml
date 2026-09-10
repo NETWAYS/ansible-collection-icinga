@@ -1,3 +1,0 @@
----
-bugfixes:
-  - Icinga's packages no longer create '/var/log/icingadb-redis/'. Added tasks that create a log directory based on `icingadb_redis_logfile` (#298).

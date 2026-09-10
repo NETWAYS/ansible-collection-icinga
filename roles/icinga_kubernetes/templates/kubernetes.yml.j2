@@ -1,0 +1,25 @@
+# {{ ansible_managed | comment }}
+
+database:
+{% if icinga_kubernetes_database_type is defined %}
+  type: {{ icinga_kubernetes_database_type }}
+{% endif %}
+  host: {{ icinga_kubernetes_database_host | default('localhost') }}
+{% if icinga_kubernetes_database_port is defined %}
+  port: {{ icinga_kubernetes_database_port }}
+{% endif %}
+  database: {{ icinga_kubernetes_database_name | default('kubernetes') }}
+  user: {{ icinga_kubernetes_database_user | default('kubernetes') }}
+  password: {{ icinga_kubernetes_database_password | default('kubernetes') }}
+
+prometheus:
+{% if icinga_kubernetes_prometheus_url is defined %}
+  url: {{ icinga_kubernetes_prometheus_url }}
+  insecure: {{ icinga_kubernetes_prometheus_insecure | default(false) }}
+{% if icinga_kubernetes_prometheus_username is defined %}
+  username: {{ icinga_kubernetes_prometheus_username }}
+{% endif %}
+{% if icinga_kubernetes_prometheus_password is defined %}
+  password: {{ icinga_kubernetes_prometheus_password }}
+{% endif %}
+{% endif %}

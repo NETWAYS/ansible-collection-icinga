@@ -1,3 +1,0 @@
----
-bugfixes:
-  - "fixed libboost_regex1_54_0 missing for Suse 12. thanks @dh-roland"

@@ -1,22 +1,21 @@
 # ansible-collection-icinga
 
-[![CI](https://github.com/Icinga/ansible-collection-icinga/workflows/Build/badge.svg?event=push)](https://github.com/Icinga/ansible-collection-icinga/actions/workflows/build.yml/badge.svg)
-[![PythonUnit](https://github.com/Icinga/ansible-collection-icinga/workflows/Python%20Unittest/badge.svg?event=push)](https://github.com/Icinga/ansible-collection-icinga/actions/workflows/python-test.yml/badge.svg)
-
 Collection to setup and manage components of the Icinga software stack.
 
 ## Documentation and Roles
-* [Getting Started](doc/getting-started.md)
-* [Role: icinga.icinga.repos](doc/role-repos/role-repos.md)
-* [Role: icinga.icinga.icinga2](doc/role-icinga2/role-icinga2.md)
-  * [Parser and Monitoring Objects](doc/role-icinga2/objects.md)
-  * [Features](doc/role-icinga2/features.md)
-* [Role: icinga.icinga.icingadb](doc/role-icingadb/role-icingadb.md)
-* [Role: icinga.icinga.icingadb_redis](doc/role-icingadb_redis/role-icingadb_redis.md)
-* [Role: icinga.icinga.icingaweb2](doc/role-icingaweb2/role-icingaweb2.md)
-* [Role: icinga.icinga.monitoring_plugins](doc/role-monitoring_plugins/role-monitoring_plugins.md)
-  * [List of Available Check Commands](doc/role-monitoring_plugins/check_command_list.md)
-* [Inventory Plugin: icinga.icinga.icinga](doc/plugins/inventory/icinga-inventory-plugin.md)
+* [Getting Started](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/getting-started.md)
+* [Role: netways.icinga.repos](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-repos/)
+* [Role: netways.icinga.icinga2](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icinga2/)
+  * [Parser and Monitoring Objects](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icinga2/objects.md)
+  * [Features](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icinga2/features.md)
+* [Role: netways.icinga.ifw](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-ifw/)
+* [Role: netways.icinga.icingadb](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icingadb/)
+* [Role: netways.icinga.icingadb_redis](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icingadb_redis/)
+* [Role: netways.icinga.icingaweb2](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icingaweb2/)
+* [Role: netways.icinga.monitoring_plugins](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-monitoring_plugins/)
+  * [List of Available Check Commands](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-monitoring_plugins/check_command_list.md)
+* [Role: netways.icinga.icinga_kubernetes](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/role-icinga_kubernetes/)
+* [Inventory Plugin: netways.icinga.icinga](https://github.com/NETWAYS/ansible-collection-icinga/tree/main/doc/plugins/inventory/icinga-inventory-plugin.md)
 
 
 ## Installation
@@ -24,14 +23,14 @@ Collection to setup and manage components of the Icinga software stack.
 You can easily install the collection with the `ansible-galaxy` command.
 
 ```bash
-ansible-galaxy collection install icinga.icinga
+ansible-galaxy collection install netways.icinga
 ```
 
-Or if you are using Tower or AWX add the collection to your requirements file.
+Or if you are using Tower or AWX, add the collection to your requirements file.
 
 ```yaml
 collections:
-  - name: icinga.icinga
+  - name: netways.icinga
 ```
 
 ## Usage
@@ -41,25 +40,36 @@ To use the collection in your playbooks, add the collection and then use the rol
 ```yaml
 - hosts: icinga-server
   roles:
-    - icinga.icinga.repos
-    - icinga.icinga.icinga2
-    - icinga.icinga.icingadb
-    - icinga.icinga.icingadb_redis
-    - icinga.icinga.monitoring_plugins
+    - netways.icinga.repos
+    - netways.icinga.icinga2
+    - netways.icinga.icingadb
+    - netways.icinga.icingadb_redis
+    - netways.icinga.monitoring_plugins
 ```
 
-## License
+## Dependencies
 
-Copyright 2023 Icinga GmbH
+None of the roles handle creating databases.
+If you need to create databases using Ansible, the roles
+[geerlingguy.mysql](https://github.com/geerlingguy/ansible-role-mysql)
+and [geerlingguy.postgresql](https://github.com/geerlingguy/ansible-role-postgresql)
+are great choices.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Further, the `icingaweb2` role does not handle configuration of web servers.
+For this you can try using
+[geerlingguy.apache](https://github.com/geerlingguy/ansible-role-apache)
+or [geerlingguy.nginx](https://github.com/geerlingguy/ansible-role-nginx).
 
-http://www.apache.org/licenses/LICENSE-2.0
+## Secrets and no_log
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Some tasks in these roles make use of sensitive information (e.g. passwords).
+To avoid leaking this information the tasks in question use Ansible's `no_log: true` option.<br>
+This however can make troubleshooting cumbersome.
+**If** you need to and you are fine with secrets being present in Ansible's logs, you can turn logging back on.
+Be sure though to [**deactivate logging to syslog**](https://docs.ansible.com/projects/ansible/latest/reference_appendices/config.html#default-no-target-syslog) to avoid leaking secrets on your target hosts.
+
+Example to turn on logging for the `icinga2` role while not logging to syslog:
+
+```
+ANSIBLE_NO_TARGET_SYSLOG=True ansible-playbook </path/to/playbook> -e '{ "icinga2_no_log": false }'
+```

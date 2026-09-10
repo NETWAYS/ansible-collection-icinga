@@ -1,2 +1,0 @@
-bugfixes:
-  - Allow multiline string as ansible_managed

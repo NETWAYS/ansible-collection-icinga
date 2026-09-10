@@ -1,2 +1,0 @@
-bugfixes:
-  - "When using :code:`icinga2_custom_config` sub directories within the found :code:`files/` directory can now be used to deploy Icinga 2 configuration. This allows users to freely structure their :code:`files/` directory (nested directories) (#309)."

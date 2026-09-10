@@ -51,3 +51,9 @@ icinga2_features:
 
 * `connect_timeout: int`
   * Timeout for establishing new connections. Within this time, the TCP, TLS (if enabled) and Redis handshakes must complete. Defaults to 15s.
+
+* `environment_id: string`
+  * The environment ID for IcingaDB.
+    If set, this will be written to `/var/lib/icinga2/icingadb.env`.
+    This must be a 40 character long hexadecimal number (`[0-9a-f]`).<br>
+    Be cautious about using this argument and read up on the [documentation](https://icinga.com/docs/icinga-db/latest/doc/05-Distributed-Setups/#environment-id) beforehand.

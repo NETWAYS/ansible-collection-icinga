@@ -1,0 +1,32 @@
+---
+
+- name: Converge (common prerequisites)
+  hosts: all
+  collections:
+    - netways.icinga
+  tasks:
+    - name: Ensure python3-debian is installed (required by apt_repository)
+      ansible.builtin.apt:
+        name: python3-debian
+        state: present
+        update_cache: true
+      when: ansible_facts.os_family == "Debian"
+
+    - ansible.builtin.include_role:
+        name: repos
+
+- name: Converge (master first)
+  hosts: icinga-master
+  collections:
+    - netways.icinga
+  tasks:
+    - ansible.builtin.include_role:
+        name: icinga2
+
+- name: Converge (agent second)
+  hosts: icinga-agent
+  collections:
+    - netways.icinga
+  tasks:
+    - ansible.builtin.include_role:
+        name: icinga2

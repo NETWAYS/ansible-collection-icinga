@@ -1,0 +1,12 @@
+---
+
+- name: Feature otlpmetrics OTLPMetricsWriter object
+  no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
+  ansible.builtin.set_fact:
+    tmp_objects: "{{ tmp_objects | default([]) + objects }}"
+  vars:
+    objects:
+      - name: otlpmetrics
+        type: OTLPMetricsWriter
+        file: features-available/otlpmetrics.conf
+        args: "{{ icinga2_dict_features.otlpmetrics }}"

@@ -1,12 +1,11 @@
 ---
 
-- name: feature graphite GraphiteWriter object
-  icinga2_object:
-    name: graphite
-    type: GraphiteWriter
-    file: features-available/graphite.conf
-    args: "{{ icinga2_dict_features.graphite }}"
-  register: result
-
-- set_fact:
-    icinga2_local_objects: "{{ icinga2_local_objects|default([]) + [result.dest] }}"
+- name: Feature graphite GraphiteWriter object
+  ansible.builtin.set_fact:
+    tmp_objects: "{{ tmp_objects | default([]) + objects }}"
+  vars:
+    objects:
+      - name: graphite
+        type: GraphiteWriter
+        file: features-available/graphite.conf
+        args: "{{ icinga2_dict_features.graphite }}"

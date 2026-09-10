@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Add support for Suse in the :code:`monitoring_plugins` role.

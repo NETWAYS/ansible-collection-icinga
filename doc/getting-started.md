@@ -3,23 +3,23 @@
 The collection includes six roles in the current version.
 
 * icinga.repos: Role to manage repositories
-  * [Documentation: doc/role-repos](role-repos/role-repos.md)
-* icinga.icinga2: Role to install and manage Icinga 2 instances.
-  * [Documentation: doc/role-icinga2](role-icinga2/role-icinga2.md)
-* icinga.icingadb: Role to install and manage IcingaDB, Icinga2's new data backend.
-  * [Documentation: doc/role-icingadb](role-icingadb/role-icingadb.md)
-* icinga.icingadb_redis: Role to install and manage Redis, IcingaDB's cache backend.
-  * [Documentation: doc/role-icingadb_redis](role-icingadb_redis/role-icingadb_redis.md)
-* icinga.icingaweb2: Role to install and manage Icinga Web 2.
-  * [Documentation: doc/role-icingaweb2](role-icingaweb2/role-icingaweb2.md)
+  * [Documentation: doc/role-repos](role-repos/)
+* netways.icinga2: Role to install and manage Icinga 2 instances.
+  * [Documentation: doc/role-icinga2](role-icinga2/)
+* netways.icingadb: Role to install and manage IcingaDB, Icinga2's new data backend.
+  * [Documentation: doc/role-icingadb](role-icingadb/)
+* netways.icingadb_redis: Role to install and manage Redis, IcingaDB's cache backend.
+  * [Documentation: doc/role-icingadb_redis](role-icingadb_redis/)
+* netways.icingaweb2: Role to install and manage Icinga Web 2.
+  * [Documentation: doc/role-icingaweb2](role-icingaweb2/)
 * icinga.monitoring_plugins: Role to install and manage Icinga2 compatible monitoring plugins.
-  * [Documentation: doc/role-monitoring_plugins](role-monitoring_plugins/role-monitoring_plugins.md)
+  * [Documentation: doc/role-monitoring_plugins](role-monitoring_plugins/)
 
 ---
 
 The collection includes a plugin that allows you to use Icinga as an inventory source for Ansible.
 
-* icinga.icinga.icinga: Ansible Inventory Plugin to fetch hosts from Icinga.
+* netways.icinga.icinga: Ansible Inventory Plugin to fetch hosts from Icinga.
   * [Documentation: doc/plugins/inventory/icinga-inventory-plugin.md](plugins/inventory/icinga-inventory-plugin.md)
 
 ---
@@ -50,7 +50,7 @@ If you need to use become for a specific role only, you can add the following st
   become: false
   hosts: all
   roles:
-    - name: icinga.icinga.icinga2
+    - name: netways.icinga.icinga2
       become: true
     - some_other_role_without_become
     - name: explicit_no_become
@@ -65,20 +65,20 @@ To start with the collection, easily install it with the **ansible-galaxy** comm
 Installation from Galaxy Server:
 
 ```bash
-ansible-galaxy collection install icinga.icinga
+ansible-galaxy collection install netways.icinga
 ```
 
 Or pull the collection from the git. (Only useable with Ansible version 2.10.9)
 ```bash
-ansible-galaxy collection install git+https://github.com/Icinga/ansible-collection-icinga.git,0.3.0
+ansible-galaxy collection install git+https://github.com/NETWAYS/ansible-collection-icinga.git,0.4.0
 ```
 
 Pre 2.10 you can also clone the repository, manually build and install the collection.
 
 ```bash
-git clone https://github.com/Icinga/ansible-collection-icinga.git
-ansible-galaxy collection build ansible-collection-icinga
-ansible-galaxy collection install icinga-icinga-0.3.0.tar.gz
+git clone https://github.com/NETWAYS/ansible-collection-icinga.git
+ansible-galaxy collection build
+ansible-galaxy collection install netways-icinga-0.4.0.tar.gz
 ```
 
 ## Databases
@@ -121,7 +121,7 @@ This is an example on how to install an Icinga 2 server/master instance.
   vars:
     icinga2_constants:  # Set default constants and TicketSalt for the CA
       TicketSalt: "{{ lookup('ansible.builtin.password', '.icinga-server-ticketsalt') }}"
-      NodeName: "{{ ansible_fqdn }}"
+      NodeName: "{{ ansible_facts['fqdn'] }}"
       ZoneName: "main"
     icinga2_confd: false # Disable example configuration
     icinga2_purge_features: yes # Ansible will manage all features
@@ -155,8 +155,8 @@ This is an example on how to install an Icinga 2 server/master instance.
         severity: information
 
   roles:
-    - icinga.icinga.repos
-    - icinga.icinga.icinga2
+    - netways.icinga.repos
+    - netways.icinga.icinga2
 ```
 
 This is an example on how to install an Icinga 2 agent instance.
@@ -183,8 +183,8 @@ This is an example on how to install an Icinga 2 agent instance.
         state: absent
 
   roles:
-    - icinga.icinga.repos
-    - icinga.icinga.icinga2
+    - netways.icinga.repos
+    - netways.icinga.icinga2
 ```
 
 This is a example on how to install Icinga 2 server with Icinga Web 2 and Icinga DB.
@@ -239,25 +239,25 @@ This is a example on how to install Icinga 2 server with Icinga Web 2 and Icinga
       - name: api
         ca_host: none
         endpoints:
-          - name: "{{ ansible_fqdn }}"
+          - name: "{{ ansible_facts['fqdn'] }}"
         zones:
           - name: "main"
             endpoints:
-              - "{{ ansible_fqdn }}"
+              - "{{ ansible_facts['fqdn'] }}"
   pre_tasks:
     - ansible.builtin.include_role:
-        name: icinga.icinga.repos
+        name: netways.icinga.repos
     # Geerlingguy mysql role to configure the databases.
     - ansible.builtin.include_role:
         name: geerlingguy.mysql
     - ansible.builtin.include_role:
-        name: icinga.icinga.icinga2
+        name: netways.icinga.icinga2
     - ansible.builtin.include_role:
-        name: icinga.icinga.icingadb
+        name: netways.icinga.icingadb
     - ansible.builtin.include_role:
-        name: icinga.icinga.icingadb_redis
+        name: netways.icinga.icingadb_redis
 
   post_tasks:
     - ansible.builtin.include_role:
-        name: icinga.icinga.icingaweb2
+        name: netways.icinga.icingaweb2
 ```

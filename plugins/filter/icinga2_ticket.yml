@@ -1,0 +1,29 @@
+DOCUMENTATION:
+  name: icinga2_ticket
+  author:
+    - Matthias Döhler <matthias.doehler@netways.de>
+  short_description: Create Icinga2 Ticket
+  description:
+    - Converts a string (C(NodeName)) to a valid ticket for Icinga2.
+    - Requires a O(ticketsalt).
+  positional: _input
+  options:
+    _input:
+      description:
+        - NodeName for which to generate a ticket.
+      type: string
+      required: true
+    ticketsalt:
+      description:
+        - The TicketSalt as present on your Icinga2 master.
+      type: string
+      required: true
+
+EXAMPLES: |
+  # ticket "8c1e210f4e533e765cb104193fa1e534b3a8fbcf"
+  ticket: "{{ 'example.com' | netways.icinga.icinga2_ticket(ticketsalt='SuperSecretTicketSalt') }}"
+
+RETURN:
+  ticket:
+    description: The generated ticket.
+    type: string

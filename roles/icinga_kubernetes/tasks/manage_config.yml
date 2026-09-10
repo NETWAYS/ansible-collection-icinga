@@ -1,0 +1,9 @@
+---
+- name: Write configuration to {{ icinga_kubernetes_config_dir }}/config.yml
+  ansible.builtin.template:
+    src: kubernetes.yml.j2
+    dest: "{{ icinga_kubernetes_config_dir }}/config.yml"
+    owner: "{{ icinga_kubernetes_user }}"
+    group: "{{ icinga_kubernetes_group }}"
+    mode: 0640
+  notify: Icinga Kubernetes restart

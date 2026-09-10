@@ -1,27 +1,27 @@
 ---
 - name: Include OS specific vars
-  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', _params) }}"
   vars:
-    params:
+    _params:
       files:
-        - "{{ ansible_os_family }}-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-        - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
-        - "{{ ansible_os_family }}-{{ ansible_distribution }}.yml"
-        - "{{ ansible_os_family }}-{{ ansible_lsb.id if ansible_lsb.id is defined else ansible_distribution }}.yml"
-        - "{{ ansible_os_family }}.yml"
+        - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}-{{ ansible_facts['lsb']['id'] if ansible_facts['lsb']['id'] is defined else ansible_facts['distribution'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}.yml"
         - default.yml
       paths:
         - "{{ role_path }}/vars"
 
 - name: Include OS specific vars regarding Icinga subscription
-  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', _params) }}"
   vars:
-    params:
+    _params:
       files:
-        - "subscription-{{ ansible_os_family }}-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-        - "subscription-{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
-        - "subscription-{{ ansible_os_family }}-{{ ansible_distribution }}.yml"
-        - "subscription-{{ ansible_os_family }}.yml"
+        - "subscription-{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "subscription-{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "subscription-{{ ansible_facts['os_family'] }}-{{ ansible_facts['distribution'] }}.yml"
+        - "subscription-{{ ansible_facts['os_family'] }}.yml"
         - default.yml
       paths:
         - "{{ role_path }}/vars"
@@ -30,10 +30,19 @@
     - icinga_repo_subscription_password is defined
 
 - name: Check OS family
+  vars:
+    _params:
+      paths: "{{ ansible_search_path }}"
+      files:
+        - "{{ ansible_facts['os_family'] }}.yml"
+      skip: true
+    _tasks_file: "{{ lookup('first_found', _params) }}"
   block:
-    - name: Add repositories {{ ansible_os_family }}
-      ansible.builtin.include_tasks: "{{ ansible_os_family }}.yml"
-  rescue:
+    - name: Add repositories {{ ansible_facts['os_family'] }}
+      when: _tasks_file | length > 0
+      ansible.builtin.include_tasks: "{{ ansible_facts['os_family'] }}.yml"
+
     - name: "OS family not supported!"
+      when: _tasks_file | length == 0
       ansible.builtin.fail:
-        msg: "The OS '{{ ansible_os_family }}' isn't currently supported!"
+        msg: "The OS '{{ ansible_facts['os_family'] }}' is not supported!"
