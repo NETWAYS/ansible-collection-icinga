@@ -4,6 +4,26 @@ Icinga.Icinga Release Notes
 
 .. contents:: Topics
 
+v0.4.10
+=======
+
+Release Summary
+---------------
+
+This release mostly includes fixes, but also contains some new Icinga Web modules.
+
+Minor Changes
+-------------
+
+- Add Icinga Web configuration options for Content Security Policy (CSP) and password policy.
+- Add module `Grafana <https://github.com/NETWAYS/icingaweb2-module-grafana>`__ to Icinga Web. Thanks @0uLoL.
+- Add module `Icinga TOTP Web <https://icinga.com/docs/icinga-totp/latest/>`__ to Icinga Web.
+- Add module `Performance Data Graphs Elasticsearch <https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs-elasticsearch>`__ to Icinga Web.
+- Add new filter plugin :code:`netways.icinga.items2dict` for internal use with the SSO module.
+- Add option to install locales for Icinga Web via :code:`icingaweb2_locales`. Language code and territory must be provided while omitting the encoding (e.g. :code:`de_DE` or :code:`fr_FR`). Thanks to @chrnie for bringing this up and assisting with the implementation.
+- Add the :code:`enforce_filter_expression_permission` parameter to the :code:`netways.icinga.icinga2_apilistener` module to configure the :code:`ApiListener` attribute of the same name.
+- Add the `Icinga SSO Web <https://icinga.com/docs/icinga-sso/latest/>`__ module as an available module to the :code:`icingaweb2` role.
+
 v0.4.9
 ======
 

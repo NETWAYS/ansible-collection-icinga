@@ -300,6 +300,41 @@ releases:
     - feature_kubernetes.yml
     - release_summary.yml
     release_date: '2025-06-23'
+  0.4.10:
+    changes:
+      minor_changes:
+      - Add Icinga Web configuration options for Content Security Policy (CSP) and
+        password policy.
+      - Add module `Grafana <https://github.com/NETWAYS/icingaweb2-module-grafana>`__
+        to Icinga Web. Thanks @0uLoL.
+      - Add module `Icinga TOTP Web <https://icinga.com/docs/icinga-totp/latest/>`__
+        to Icinga Web.
+      - Add module `Performance Data Graphs Elasticsearch <https://github.com/NETWAYS/icingaweb2-module-perfdatagraphs-elasticsearch>`__
+        to Icinga Web.
+      - Add new filter plugin :code:`netways.icinga.items2dict` for internal use with
+        the SSO module.
+      - Add option to install locales for Icinga Web via :code:`icingaweb2_locales`.
+        Language code and territory must be provided while omitting the encoding (e.g.
+        :code:`de_DE` or :code:`fr_FR`). Thanks to @chrnie for bringing this up and
+        assisting with the implementation.
+      - Add the :code:`enforce_filter_expression_permission` parameter to the :code:`netways.icinga.icinga2_apilistener`
+        module to configure the :code:`ApiListener` attribute of the same name.
+      - Add the `Icinga SSO Web <https://icinga.com/docs/icinga-sso/latest/>`__ module
+        as an available module to the :code:`icingaweb2` role.
+      release_summary: 'This release mostly includes fixes, but also contains some
+        new Icinga Web modules.
+
+        '
+    fragments:
+    - 475_locales.yml
+    - 477_apilistener_filter_expression.yml
+    - icingassoweb.yml
+    - icingaweb2_grafana.yml
+    - icingaweb2_module_perfdatagraphs_elasticsearch.yml
+    - icingaweb2_module_totp.yml
+    - icingaweb2_security.yml
+    - release_summary.yml
+    release_date: '2026-09-14'
   0.4.2:
     changes:
       bugfixes:
