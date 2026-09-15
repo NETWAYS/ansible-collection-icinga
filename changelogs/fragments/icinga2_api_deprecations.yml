@@ -1,0 +1,15 @@
+deprecated_features:
+  - The use of :code:`ca_host` inside the Icinga 2 API feature is deprecated.
+    Use :code:`parent_host` instead.
+  - The use of :code:`ca_host_port` inside the Icinga 2 API feature is deprecated.
+    Use :code:`parent_port` instead.
+  - |
+    The use of :code:`ticket_salt` inside the Icinga 2 API feature is deprecated.
+    Use :code:`ticket` instead.
+    Such a ticket can be created from the actual secret :code:`TicketSalt` passing it to the :code:`netways.icinga.icinga2_ticket` filter.
+    Example: :code:`ticket: "{{ <common_name> | netways.icinga.icinga2_ticket(ticketsalt='<secret_ticket_salt>') }}"`.
+
+minor_changes:
+  - Add new module :code:`netways.icinga.icinga2_api` to handle setting up the node as a master / agent instance.
+    The module handles the constant :code:`NodeName` as well as writing :code:`zones.conf`,
+    and makes certificate requests to the parent node (if :code:`mode=agent`).

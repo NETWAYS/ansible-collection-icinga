@@ -55,7 +55,7 @@
     icinga2_features:
       - name: mainlog
       - name: api
-        ca_host: none
+        parent_host: none
         endpoints:
           - name: "{{ ansible_facts['fqdn'] }}"
         zones:

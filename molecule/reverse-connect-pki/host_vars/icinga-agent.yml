@@ -8,7 +8,7 @@ icinga2_features:
   - name: checker
   - name: mainlog
   - name: api
-    ca_host: icinga-master
+    parent_host: icinga-master
     delegate_pki: true
     endpoints:
       - name: icinga-master
