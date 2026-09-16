@@ -415,6 +415,8 @@ icinga2_objects:
 
 #### ApiUser
 
+With simple permissions:
+
 ```yaml
 icinga2_objects:
 [...]
@@ -427,6 +429,19 @@ icinga2_objects:
       - "objects/query/Service"
 ```
 
+With permissions and filters set:
+
+```yaml
+icinga2_objects:
+[...]
+  - name: icinga-api-filter
+    type: ApiUser
+    file: "local.d/apiuser.conf"
+    password: supersecrectpassword123
+    permissions:
+      - permission: "objects/query/Host"
+        filter: !unsafe'{{ hosts.vars.foo == bar }}'
+```
 #### TimePeriod
 
 ```yaml
