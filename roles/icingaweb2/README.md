@@ -20,6 +20,7 @@ The role icingaweb2 installs and configures Icinga Web 2 and its modules.
 * [Performance Data Graphs InfluxDB v2](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-perfdatagraphsinfluxdbv2.md)
 * [Performance Data Graphs Prometheus](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-perfdatagraphsprometheus.md)
 * [ServiceNow Import](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-servicenowimport.md)
+* [Jira](https://github.com/NETWAYS/ansible-collection-icinga/blob/main/doc/role-icingaweb2/module-jira.md)
 
 ## Databases
 
