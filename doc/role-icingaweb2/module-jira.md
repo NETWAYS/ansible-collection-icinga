@@ -15,7 +15,7 @@ The module uses two configuration files:
 
 * `config` writes `config.ini` with the connection to Jira and the module settings.
 * `templates` writes `templates.ini`. Each key is a template name, each subkey a Jira field.
-  For the available fields and placeholders see the [module documentation](https://github.com/Icinga/icingaweb2-module-jira/blob/main/doc/03-Configuration.md).
+  For the available fields and placeholders see the [module documentation](https://icinga.com/docs/icinga-web-jira-integration/latest/doc/03-Configuration/#fill-jira-custom-fields).
 
 ```yaml
 icingaweb2_modules:
