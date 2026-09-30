@@ -23,3 +23,4 @@ icingaweb2_module_packages:
   servicenowimport: icingaweb2-module-servicenow-import
   sso: icinga-sso-web
   totp: icinga-totp-web
+  jira: icinga-jira

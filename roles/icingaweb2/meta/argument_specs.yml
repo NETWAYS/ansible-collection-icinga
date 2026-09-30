@@ -1148,3 +1148,113 @@ argument_specs:
             options:
               enabled: *module_enabled
               source: *module_source
+          jira:
+            description:
+              - This configures the L(Icinga Jira module, https://github.com/Icinga/icingaweb2-module-jira/blob/main/doc/03-Configuration.md).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              config:
+                description:
+                  - Defines the Jira module's C(config.ini) configuration file.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                type: dict
+                required: false
+                options:
+                  api:
+                    description:
+                      - Connection to the Jira REST API.
+                    type: dict
+                    options:
+                      host:
+                        description:
+                          - Jira host name or IP address.
+                        type: str
+                        required: true
+                      port:
+                        description:
+                          - Port of the Jira API.
+                        type: int
+                      path:
+                        description:
+                          - Path to the Jira API, e.g. C(/).
+                        type: str
+                      scheme:
+                        description:
+                          - Protocol used by Jira.
+                        type: str
+                        choices: [ http, https ]
+                      proxy:
+                        description:
+                          - Proxy server used to connect to Jira, format C(<hostname or IP>:<port>).
+                        type: str
+                      username:
+                        description:
+                          - User to authenticate against the Jira API.
+                        type: str
+                        required: true
+                      password:
+                        description:
+                          - Password or API token of the user.
+                        type: str
+                        required: true
+                  deployment:
+                    description:
+                      - Where Jira has been deployed.
+                    type: dict
+                    options:
+                      type:
+                        description:
+                          - Deployment type of Jira.
+                        type: str
+                        choices: [ cloud, server ]
+                      legacy:
+                        description:
+                          - Legacy compatibility. Only used if O(icingaweb2_modules.jira.config.deployment.type=cloud).
+                        type: int
+                        choices: [ 0, 1 ]
+                  key_fields:
+                    description:
+                      - Names of the two custom fields in Jira that the module requires.
+                    type: dict
+                    options:
+                      icingaKey:
+                        description:
+                          - Custom field to figure out whether an issue for the given object already exists.
+                          - Defaults to C(icingaKey) in the module. Must differ from O(icingaweb2_modules.jira.config.key_fields.icingaStatus).
+                        type: str
+                      icingaStatus:
+                        description:
+                          - Custom field that represents the status of the Icinga object.
+                          - Defaults to C(icingaStatus) in the module.
+                        type: str
+                  ui:
+                    description:
+                      - Default project and issue type for creating Jira issues.
+                      - Values must be project and issue type keys, not display names.
+                    type: dict
+                    options:
+                      default_project:
+                        description:
+                          - Default Jira project key.
+                        type: str
+                      default_issuetype:
+                        description:
+                          - Default Jira issue type.
+                        type: str
+                  icingaweb:
+                    description:
+                      - Link from Jira issues back to Icinga Web.
+                    type: dict
+                    options:
+                      url:
+                        description:
+                          - URL of the Icinga Web installation.
+                        type: str
+              templates:
+                description:
+                  - Defines the Jira module's C(templates.ini) configuration file.
+                  - Each key is a template name, each subkey a Jira field. See the module documentation for placeholders.
+                type: dict
+                required: false
