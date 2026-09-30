@@ -38,7 +38,12 @@ icingaweb2_modules:
       my-workflow:
         duedate: 3 days
         SearchTerm: "${host}.example.com"
-```
+    templates:
+      my-workflow:
+        duedate: 3 days
+        SearchTerm: "${host}.example.com"
+        Teams.0.value: "My Team"
+        Teams.1.value: "Another Team"        
 
 The notification commands for the Director are not created by the role.
 Use "Sync to Director" in the module's Director Config tab to create them.
