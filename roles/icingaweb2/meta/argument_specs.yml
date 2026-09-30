@@ -1150,7 +1150,7 @@ argument_specs:
               source: *module_source
           jira:
             description:
-              - This configures the L(Icinga Jira module, https://github.com/Icinga/icingaweb2-module-jira/blob/main/doc/03-Configuration.md).
+              - This configures the L(Icinga Jira module, https://icinga.com/docs/icinga-web-jira-integration/latest/doc/03-Configuration/).
             type: dict
             options:
               enabled: *module_enabled
