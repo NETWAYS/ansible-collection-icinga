@@ -49,3 +49,22 @@ The role primarily delegates the ticket creation to the [Icinga ca host](https:/
 ```yaml
 icinga2_delegate_host: icinga-master
 ```
+
+### Tags
+
+The role exposes two coarse-grained tags so playbooks can re-run individual phases without rolling out the full role:
+
+| Tag                 | Effect                                              |
+|---------------------|-----------------------------------------------------|
+| `icinga2_install`   | Runs only the package installation                  |
+| `icinga2_configure` | Renders and deploys the full configuration          |
+
+```bash
+ansible-playbook site.yml --tags icinga2_configure
+```
+
+Fact gathering and loading of the OS specific variables are marked `tags: always`, so they run on every tagged invocation and provide the required context (paths, user, group, ...).
+
+Running the role without `--tags` behaves exactly as before: all phases execute in order.
+
+Handlers are triggered via `notify` as soon as a tagged task reports `changed`, so a service reload still fires on, for example, `--tags icinga2_configure`.
