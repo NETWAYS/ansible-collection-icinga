@@ -567,7 +567,7 @@ def agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint,
     #   → First connection after certificate is signed
     #
     # Could not fetch valid response. Please check the master log.
-    #   → RC 1 
+    #   → RC 1
     #   → If parent is available but does not know the own node's endpoint (child provides valid cert in this case)
     #
     # The certificates for CN '<node_name>' and its root CA are valid and uptodate. Skipping automated renewal.
@@ -740,7 +740,7 @@ def main():
 
 
     # Verify / test
-    # While 
+    # While
     # icinga2 pki verify --cert /var/lib/icinga2/certs/ansible-ubuntu24.crt  --cacert /var/lib/icinga2/certs/ca.crt → RC 2
     # still pending
 

@@ -61,7 +61,7 @@ An agent (or satellite) setup can work in four different ways.
 In all cases of auto-signing the master instance must have a secret `TicketSalt` defined.
 
 **On-demand signing:**  
-The agent creates a CSR locally and then request signing via API.  
+The agent creates a CSR locally and then requests signing via API.  
 Manual signing on the master instance is necessary.  
 For this, pass an empty ticket `ticket: ""`.  
 The `netways.icinga.icinga2_api` module used here will report changes with each execution until the certificate is signed.
