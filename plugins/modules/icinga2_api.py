@@ -1,4 +1,4 @@
-from ansible.module_utils.basic import AnsibleModule
+#!/usr/bin/python
 
 DOCUMENTATION = r'''
 module: icinga2_api
@@ -253,7 +253,7 @@ import socket
 import glob
 import os
 import re
-
+from ansible.module_utils.basic import AnsibleModule
 
 def verify_cert(module, ca_path, cert_path):
     cmd = [
@@ -551,8 +551,7 @@ def agent_setup(module, cn, host, port, ticket, fingerprint, ignore_fingerprint,
             'The \'trusted-parent.crt\' is not signed by the CA.',
             'This could be a man-in-the-middle or the CA might have been recreated.',
             'If you want to trust the certificate with fingerprint \'{}\', pass \'force_new_ca: true\' to the module call.'.format(
-                get_fingerprint(module, os.path.join(certs_directory, 'trusted-parent.crt')),
-                os.path.join(certs_directory, 'trusted-parent.crt')
+                get_fingerprint(module, os.path.join(certs_directory, 'trusted-parent.crt'))
             )
         ])
         return ret
