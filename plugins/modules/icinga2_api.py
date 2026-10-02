@@ -730,29 +730,11 @@ def main():
         mode_ret = master_setup(module, cn, ca_directory, certs_directory, force_new_ca)
 
     config_ret = configure(module, cn, zones, enable_feature, sysconf_directory)
-    module.warn("config ret " + str(config_ret))
 
     ### Collect information for return values
     ret.update(get_return_values(module, cn, ca_directory, certs_directory))
 
-    # this one actually creates / pulls ca.crt
-    #icinga2 pki request --host 192.168.122.113 --port 5665 --trustedcert /var/lib/icinga2/certs/trusted-parent.crt --ca /var/lib/icinga2/certs/ca.crt --key /var/lib/icinga2/certs/ansible-ubuntu24.key --cert /var/lib/icinga2/certs/ansible-ubuntu24.crt
-
-
-    # Verify / test
-    # While
-    # icinga2 pki verify --cert /var/lib/icinga2/certs/ansible-ubuntu24.crt  --cacert /var/lib/icinga2/certs/ca.crt → RC 2
-    # still pending
-
-    # Potential answers
-    # critical/cli: CRITICAL: Certificate with CN 'ansible-ubuntu24' is NOT signed by CA: self-signed certificate (code 18)
-    #   → RC 2
-    #   → Error until certificate is signed
-    #
-
     # Check if either setup or configuration had changes
-    module.warn("mode" + str(mode_ret))
-    module.warn("config" + str(config_ret))
     if any(r['changed'] for r in (mode_ret, config_ret) if 'changed' in r):
         ret['changed'] = True
 
