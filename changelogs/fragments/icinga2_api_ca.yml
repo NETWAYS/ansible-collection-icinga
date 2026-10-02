@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - Add :code:`ca_cert` and :code:`ca_key` to the Icinga 2 API feature to use an existing CA on the master instead of creating a new one.
+    Both accept a path or the PEM content, for example from a lookup.
+  - Allow PEM content instead of a path for :code:`ssl_cacert`, :code:`ssl_cert` and :code:`ssl_key` in the Icinga 2 API feature.

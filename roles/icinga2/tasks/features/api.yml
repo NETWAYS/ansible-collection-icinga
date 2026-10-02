@@ -13,6 +13,8 @@
     icinga2_ssl_cert: "{{ icinga2_dict_features.api.ssl_cert | default(omit) }}"
     icinga2_ssl_cacert: "{{ icinga2_dict_features.api.ssl_cacert | default(omit) }}"
     icinga2_ssl_key: "{{ icinga2_dict_features.api.ssl_key | default(omit) }}"
+    icinga2_ca_cert: "{{ icinga2_dict_features.api.ca_cert | default(omit) }}"
+    icinga2_ca_key: "{{ icinga2_dict_features.api.ca_key | default(omit) }}"
     icinga2_ssl_remote_source: "{{ icinga2_dict_features.api.ssl_remote_source | default(false) }}"
     icinga2_ticket_salt: "{{ icinga2_dict_features.api.ticket_salt | default(omit) }}"
     icinga2_ticket: "{{ icinga2_dict_features.api.ticket | default(omit) }}"
@@ -24,10 +26,18 @@
     fail_msg: parent_host is mandatory or ssl_cacert/cert/key have to be set at the same time
     success_msg: API Feature is configured correctly
 
+- name: Check CA parameters
+  ansible.builtin.assert:
+    that:
+      - (icinga2_ca_cert is defined) == (icinga2_ca_key is defined)
+      - not (icinga2_ca_key is defined and icinga2_force_newca | bool)
+    fail_msg: ca_cert and ca_key have to be set together and cannot be combined with force_newca
+    quiet: true
+
 - name: Api feature cleanup arguments list
   ansible.builtin.set_fact:
     icinga2_api_listener_args: "{{ icinga2_api_listener_args | default({}) | combine({idx.key: idx.value}) }}"
-  when: idx.key not in ['ca_host', 'parent_host', 'ca_host_port', 'parent_port', 'cert_name', 'ca_fingerprint', 'force_newcert', 'zones', 'endpoints', 'ssl_cacert', 'ssl_key', 'ssl_cert', 'ssl_remote_source', 'ticket_salt', 'ticket', 'delegate_pki' ]
+  when: idx.key not in ['ca_host', 'parent_host', 'ca_host_port', 'parent_port', 'cert_name', 'ca_fingerprint', 'force_newcert', 'zones', 'endpoints', 'ssl_cacert', 'ssl_key', 'ssl_cert', 'ca_cert', 'ca_key', 'ssl_remote_source', 'ticket_salt', 'ticket', 'delegate_pki' ]
   loop: "{{ icinga2_dict_features.api | dict2items }}"
   loop_control:
     loop_var: idx
@@ -65,6 +75,44 @@
   loop_control:
     loop_var: idx
   register: result
+
+- name: Deploy the CA on the master
+  when:
+    - icinga2_ca_cert is defined
+    - icinga2_parent_host is defined
+    - icinga2_parent_host == 'none'
+  block:
+    - name: Ensure icinga2 CA directory
+      ansible.builtin.file:
+        path: "{{ icinga2_ca_path }}"
+        state: directory
+        owner: "{{ icinga2_user }}"
+        group: "{{ icinga2_group }}"
+        mode: "0700"
+
+    - name: Copy CA certificate and key to CA directory
+      no_log: "{{ icinga2_no_log | default(icinga_no_log) | default(true) }}"
+      vars:
+        _is_pem: "{{ (_ca.value | trim).startswith('-----BEGIN') }}"
+      ansible.builtin.copy:
+        src: "{{ omit if _is_pem | bool else _ca.value }}"
+        content: "{{ _ca.value if _is_pem | bool else omit }}"
+        remote_src: "{{ false if _is_pem | bool else icinga2_ssl_remote_source }}"
+        dest: "{{ _ca.dest }}"
+        owner: "{{ icinga2_user }}"
+        group: "{{ icinga2_group }}"
+        mode: "{{ _ca.mode }}"
+      notify: check-and-reload-icinga2-service
+      loop:
+        - value: "{{ icinga2_ca_cert }}"
+          dest: "{{ icinga2_ca_path }}/ca.crt"
+          mode: "0644"
+        - value: "{{ icinga2_ca_key }}"
+          dest: "{{ icinga2_ca_path }}/ca.key"
+          mode: "0600"
+      loop_control:
+        loop_var: _ca
+        label: "{{ _ca.dest }}"
 
 - name: Set up master instance
   when: icinga2_parent_host is defined and icinga2_parent_host == 'none'
@@ -200,9 +248,12 @@
         mode: "0750"
 
     - name: Copy self generated certificates to icinga2 certificate directory
+      vars:
+        _is_pem: "{{ (_crt.src | trim).startswith('-----BEGIN') }}"
       ansible.builtin.copy:
-        remote_src: "{{ icinga2_ssl_remote_source }}"
-        src: "{{ _crt.src }}"
+        remote_src: "{{ false if _is_pem | bool else icinga2_ssl_remote_source }}"
+        src: "{{ omit if _is_pem | bool else _crt.src }}"
+        content: "{{ _crt.src if _is_pem | bool else omit }}"
         dest: "{{ _crt.dest }}"
         owner: "{{ icinga2_user }}"
         group: "{{ icinga2_group }}"
@@ -211,6 +262,7 @@
       loop: "{{ _tmp_crt }}"
       loop_control:
         loop_var: _crt
+        label: "{{ _crt.dest }}"
 #  when: ( icinga2_ssl_cacert is defined and icinga2_ssl_cert is defined and icinga2_ssl_key is defined )
   when:
     - icinga2_ssl_cacert is defined
