@@ -1258,3 +1258,77 @@ argument_specs:
                   - Each key is a template name, each subkey a Jira field. See the module documentation for placeholders.
                 type: dict
                 required: false
+          map:
+            description:
+              - This configures the L(Map module, https://github.com/nbuchwitz/icingaweb2-module-map).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
+              config:
+                description:
+                  - Defines the Map module's C(config.ini) configuration file.
+                  - Each key defines a section of the INI configuration. Each subkey defines an option to that section.
+                type: dict
+                required: false
+                options:
+                  map:
+                    description:
+                      - Global settings of the map.
+                    type: dict
+                    options:
+                      default_lat:
+                        description:
+                          - Default map position (latitude, WGS84).
+                        type: float
+                      default_long:
+                        description:
+                          - Default map position (longitude, WGS84).
+                        type: float
+                      default_zoom:
+                        description:
+                          - Default zoom level of the map.
+                        type: int
+                      max_zoom:
+                        description:
+                          - Maximum zoom level of the map.
+                        type: int
+                      max_native_zoom:
+                        description:
+                          - Maximum zoom level natively supported by the map.
+                        type: int
+                      min_zoom:
+                        description:
+                          - Minimal zoom level of the map.
+                        type: int
+                      tile_url:
+                        description:
+                          - URL of the tile server for the Leaflet tile layer.
+                        type: str
+                      opencage_apikey:
+                        description:
+                          - Personal OpenCage Geocoder API key.
+                        type: str
+                      dashlet_height:
+                        description:
+                          - Height of the map dashlet.
+                        type: int
+                      stateType:
+                        description:
+                          - State type used for the status indication.
+                        type: str
+                        choices: [ soft, hard ]
+                      disable_cluster_at_zoom:
+                        description:
+                          - Don't cluster markers from this zoom level on. Use C(1) to disable clustering.
+                        type: int
+                      cluster_problem_count:
+                        description:
+                          - Show the number of problems in a cluster instead of the number of markers.
+                        type: int
+                        choices: [ 0, 1 ]
+                      popup_mouseover:
+                        description:
+                          - Show a popup when hovering over an object.
+                        type: int
+                        choices: [ 0, 1 ]
