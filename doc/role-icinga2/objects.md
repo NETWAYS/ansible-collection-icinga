@@ -440,7 +440,7 @@ icinga2_objects:
     password: supersecrectpassword123
     permissions:
       - permission: "objects/query/Host"
-        filter: !unsafe'{{ hosts.vars.foo == bar }}'
+        filter: !unsafe '{{ hosts.vars.foo == bar }}'
 ```
 #### TimePeriod
 
