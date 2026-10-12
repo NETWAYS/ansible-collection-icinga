@@ -6,7 +6,7 @@ short_description: Creates information for OTLPMetricsWriter object.
 description:
   - Returns information used to create a OTLPMetricsWriter object.
   - Requires Icinga 2 2.16 or later.
-version_added: 0.1.0
+version_added: 0.4.9
 author:
   - NETWAYS GmbH <info@netways.de>
 
@@ -109,6 +109,21 @@ options:
       - Enable the high availability functionality. Only valid in a cluster setup.
     required: false
     type: bool
+  flush_interval:
+    description:
+      - How long to buffer data points before transferring to the OTLP backend.
+    required: false
+    type: str
+  flush_threshold:
+    description:
+      - How many bytes to buffer before forcing a transfer to the OTLP backend.
+    required: false
+    type: str
+  disconnect_timeout:
+    description:
+      - Timeout to wait for any outstanding data to be flushed to the OTLP backend before disconnecting.
+    required: false
+    type: str
 '''
 
 EXAMPLES = '''
@@ -207,6 +222,21 @@ args:
       returned: success
       type: bool
       sample: true
+    flush_interval:
+      description: The specified flush_interval.
+      returned: success
+      type: str
+      sample: 60s
+    flush_threshold:
+      description: The specified flush_threshold.
+      returned: success
+      type: str
+      sample: 32MiB
+    disconnect_timeout:
+      description: The specified disconnect_timeout.
+      returned: success
+      type: str
+      sample: 30s
 file:
   description: Path to the file that will contain the object.
   returned: success
@@ -251,6 +281,9 @@ def main():
             host_resource_attributes    = dict(type='dict'),
             service_resource_attributes = dict(type='dict'),
             enable_ha                   = dict(type='bool'),
+            flush_interval              = dict(type='str'),
+            flush_threshold             = dict(type='str'),
+            disconnect_timeout          = dict(type='str'),
         )
     )
 
