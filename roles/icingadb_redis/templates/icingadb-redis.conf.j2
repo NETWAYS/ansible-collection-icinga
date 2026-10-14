@@ -26,7 +26,7 @@ databases {{ icingadb_redis_databases }}
 always-show-logo {{ icingadb_redis_always_show_logo }}
 
 {% if icingadb_redis_password is defined %}
-requirepass {{ icingadb_redis_password }}
+requirepass "{{ icingadb_redis_password | replace('"', '\\"') }}"
 {% endif %}
 
 ################################ SNAPSHOTTING  ################################
