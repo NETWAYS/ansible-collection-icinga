@@ -10,7 +10,7 @@ database:
 {% endif %}
   database: {{ icingadb_database_name | default('icingadb') }}
   user: {{ icingadb_database_user | default('icingadb') }}
-  password: {{ icingadb_database_password | default('icingadb') }}
+  password: {{ icingadb_database_password | default('icingadb') | to_yaml }}
 {% if icingadb_database_tls is defined %}
   tls: {{ icingadb_database_tls }}
 {% endif %}
@@ -36,7 +36,7 @@ redis:
   port: {{ icingadb_redis_port }}
 {% endif %}
 {% if icingadb_redis_password is defined %}
-  password: {{ icingadb_redis_password }}
+  password: {{ icingadb_redis_password | to_yaml }}
 {% endif %}
 {% if icingadb_redis_tls is defined %}
   tls: {{ icingadb_redis_tls }}
