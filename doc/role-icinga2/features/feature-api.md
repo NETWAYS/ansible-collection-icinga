@@ -54,6 +54,30 @@ To create an instance with a local CA, the API feature parameter `parent_host` s
 parent_host: none
 ```
 
+### Use a fixed CA on the master
+
+By default the master creates its own CA on first setup. To use an existing CA instead, for example to rebuild or migrate a master without re-issuing the certificates of all other nodes, pass the CA certificate and key with `ca_cert` and `ca_key`.
+
+Both parameters are paths to files on the Ansible controller, or on the remote host with `ssl_remote_source: true`.
+
+```yaml
+icinga2_features:
+  - name: api
+    parent_host: none
+    ca_cert: files/icinga/ca.crt
+    ca_key: files/icinga/ca.key
+```
+
+Keep the key encrypted with Ansible Vault, for example with `ansible-vault encrypt files/icinga/ca.key`. The role copies the files with `ansible.builtin.copy`, which decrypts vault encrypted files from the Ansible controller automatically. This does not apply to `ssl_remote_source: true`, where the files are copied on the remote host as they are.
+
+The role writes both files to `/var/lib/icinga2/ca` before the master is set up. The master then signs its own certificate and all certificate requests with this CA, and keeps `/var/lib/icinga2/certs/ca.crt` in sync with it.
+
+* The parameters only take effect with `parent_host: none`. On all other nodes, including a second master in an HA zone, they are ignored, so the CA key is never copied there.
+* The CA is enforced on every run. If you change it, the master re-signs its own certificate, but all other nodes need new certificates from the new CA.
+* `ca_cert` and `ca_key` have to be set together and cannot be combined with `force_newca`.
+* The CA certificate has to be valid for more than 397 days. Icinga renews a CA certificate that expires sooner on the master, keeping the key, and the role would replace it again on every run.
+* The Icinga DB environment ID is derived from the CA. A fixed CA therefore also keeps the environment ID stable when a master is rebuilt.
+
 ### Agent Setup
 
 An agent (or satellite) setup can work in four different ways.
@@ -244,6 +268,12 @@ icinga2_features:
 
 * `ca_fingerprint: string`
   * SHA256 fingerprint of the CA certificate. If defined, the fingerprint is validated.
+
+* `ca_cert: string`
+  * Path to the CA certificate the master should use instead of creating its own CA. Requires `ca_key`. Only effective with `parent_host: none`.
+
+* `ca_key: string`
+  * Path to the CA private key the master should use instead of creating its own CA. Requires `ca_cert`. Only effective with `parent_host: none`. Can be encrypted with Ansible Vault.
 
 * `ssl_cacert: string`
   * Path to the ca file when using manual certificates
