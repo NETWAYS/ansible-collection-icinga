@@ -4,6 +4,20 @@ Icinga.Icinga Release Notes
 
 .. contents:: Topics
 
+v0.4.11
+=======
+
+Release Summary
+---------------
+
+Small release which mostly enhances Icinga DB password quoting in files.
+
+Minor Changes
+-------------
+
+- Add missing attributes :code:`flush_interval`, :code:`flush_threshold` and :code:`disconnect_timeout` to the :code:`OTLPMetricsWriter` module.
+- Improve quoting of Icinga DB passwords in files (:code:`icingadb_database_password`, :code:`icingadb_redis_password`).
+
 v0.4.10
 =======
 

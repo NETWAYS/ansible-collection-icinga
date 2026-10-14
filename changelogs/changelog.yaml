@@ -335,6 +335,21 @@ releases:
     - icingaweb2_security.yml
     - release_summary.yml
     release_date: '2026-09-14'
+  0.4.11:
+    changes:
+      minor_changes:
+      - Add missing attributes :code:`flush_interval`, :code:`flush_threshold` and
+        :code:`disconnect_timeout` to the :code:`OTLPMetricsWriter` module.
+      - Improve quoting of Icinga DB passwords in files
+        (:code:`icingadb_database_password`, :code:`icingadb_redis_password`).
+      release_summary: 'Small release which mostly enhances Icinga DB password quoting
+        in files.
+
+        '
+    fragments:
+    - otlpmetricswriter.yml
+    - release_summary.yml
+    release_date: '2026-10-14'
   0.4.2:
     changes:
       bugfixes:
