@@ -183,6 +183,8 @@ icinga2_features:
       - name: master
         endpoints:
           - icinga-master.localdomain
+```
+
 ### Use your own ready-made certificate
 
 If you want to use certificates which aren't created by **Icinga 2 CA**, then use
