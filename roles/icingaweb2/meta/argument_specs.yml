@@ -805,6 +805,12 @@ argument_specs:
                     description:
                       - Extra options for the client authentication.
                     type: str
+              certificate_files:
+                description:
+                  - This defines a list of CA certificate files to be added to the x509 module's trust store.
+                  - Does not handle the removal of certificates.
+                type: list
+                elements: str
           kubernetes:
             description:
               - This configures the L(Icinga Web Kubernetes module, https://icinga.com/docs/icinga-for-kubernetes/latest/doc/03-Configuration/).

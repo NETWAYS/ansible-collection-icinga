@@ -1,0 +1,2 @@
+minor_changes:
+  - Add missing option :code:`certificate_files` of the Icinga Web module x509 to argument specs.
