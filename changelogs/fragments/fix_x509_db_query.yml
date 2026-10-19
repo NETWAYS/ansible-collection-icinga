@@ -1,0 +1,4 @@
+bugfixes:
+  - The SQL query that determines whether the x509 module's database schema should be applied has used an asterisk (:code:`*`) in its :code:`SELECT` statement.
+    This can lead to binary data being printed which can cause a failure in the Ansible task.
+    The query now only selects the :code:`id` field which is an integer and thus avoids the problem.

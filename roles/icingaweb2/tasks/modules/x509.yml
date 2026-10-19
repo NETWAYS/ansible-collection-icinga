@@ -41,7 +41,7 @@
           ssl_extra_options: "{{ icingaweb2_modules[_module]['database']['ssl_extra_options'] | default(omit) }}"
           schema_path_mysql: /usr/share/icingaweb2/modules/x509/schema/mysql.schema.sql
           schema_path_pgsql: /usr/share/icingaweb2/modules/x509/schema/pgsql.schema.sql
-          select_query: "select * from x509_certificate"
+          select_query: "SELECT id FROM x509_certificate"
           type: "{{ icingaweb2_modules[_module]['database']['type'] | default(omit) }}"
 
     - name: Module x509 | Check if database type is provided
