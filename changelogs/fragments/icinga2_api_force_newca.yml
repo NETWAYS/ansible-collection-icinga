@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - Fix :code:`force_newca` in the Icinga 2 API feature failing on a master without a CA, because the module tried to remove CA files that did not exist.
+  - Fix :code:`force_newca` being passed on to the :code:`ApiListener` object, which made writing the objects fail after the new CA had been created.

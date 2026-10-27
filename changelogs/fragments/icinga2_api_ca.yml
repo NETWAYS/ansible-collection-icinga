@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - Add :code:`ca_cert` and :code:`ca_key` to the Icinga 2 API feature to use an existing CA on the master instead of creating a new one.
+    The key can be encrypted with Ansible Vault.

@@ -455,9 +455,13 @@ def master_setup(module, cn, ca_directory, certs_directory, force_new_ca=False):
     ]
 
     if force_new_ca:
-        os.remove(os.path.join(ca_directory, 'ca.key'))
-        os.remove(os.path.join(ca_directory, 'ca.crt'))
-        os.remove(os.path.join(certs_directory, 'ca.crt'))
+        for path in [
+            os.path.join(ca_directory, 'ca.key'),
+            os.path.join(ca_directory, 'ca.crt'),
+            os.path.join(certs_directory, 'ca.crt'),
+        ]:
+            if os.path.isfile(path):
+                os.remove(path)
 
     if not glob.glob(os.path.join(ca_directory, 'ca.key')):
         rc, stdout, stderr = module.run_command(

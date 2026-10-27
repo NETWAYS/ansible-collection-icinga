@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - Fix the Icinga 2 API feature failing with own certificates (:code:`ssl_cacert`, :code:`ssl_cert`, :code:`ssl_key`) when :code:`parent_host` is not set.
+    Ansible resolves :code:`delegate_to` before evaluating :code:`when`, so the skipped ticket tasks failed on the undefined :code:`parent_host`.
