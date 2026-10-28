@@ -68,12 +68,14 @@
 
 - name: Module Fileshipper | Remove 'files'/'purge_files' keys before writing configuration
   vars:
+    _imports: "{{ icingaweb2_modules.fileshipper.imports | default({}) | dict2items | map('combine', {'value': {'files': omit, 'purge_files': omit}}, recursive=true) | ansible.builtin.items2dict }}"
+    _directories: "{{ icingaweb2_modules.fileshipper.directories | default({}) | dict2items | map('combine', {'value': {'files': omit, 'purge_files': omit}}, recursive=true) | ansible.builtin.items2dict }}"
     _fileshipper: "{{
       {
         'fileshipper': icingaweb2_modules.fileshipper | combine(
           {
-            'imports': (icingaweb2_modules.fileshipper.imports | default({}) | dict2items | map('combine', {'value': {'files': omit, 'purge_files': omit}}, recursive=true) | items2dict),
-            'directories': (icingaweb2_modules.fileshipper.directories | default({}) | dict2items | map('combine', {'value': {'files': omit, 'purge_files': omit}}, recursive=true) | items2dict)
+            'imports': _imports,
+            'directories': _directories
           }
         )
       }
