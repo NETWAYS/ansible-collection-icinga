@@ -14,7 +14,8 @@ If the key `purge_files` is set to `false`, the files will not be deleted. This 
 The `files` and `purge_files` keys will be removed from the dictionary before writing the configuration files (redefines `icingaweb2_modules`).
 
 The directories for the files will be created automatically, using the joined path of `{{ icingaweb2_fragments_path }}/fileshipper/<imports|directories>/` and `fileshipper.imports.<some_name>.basedir` / `fileshipper.directories.<some_name>.source` (e.g. `/var/tmp/icingaweb/fileshipper/imports/<some_name>/`).  
-The use of absolute paths within the `imports` `basedir` and the `directories` `source` is **not supported**!
+The use of absolute paths within `imports[].basedir` and `directories[].source` is **not supported**!
+
 
 ```yaml
 icingaweb2_modules:
