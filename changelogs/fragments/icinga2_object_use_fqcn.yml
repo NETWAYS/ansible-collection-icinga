@@ -1,2 +1,4 @@
 minor_changes:
-  - Update `netways.icinga.icinga2_object` action plugin to call modules by FQCN.
+  - |-
+    Update :code:`netways.icinga.icinga2_object` action plugin to call modules by FQCN.
+    In some cases, the appropriate modules were not found using their short name. Such cases should now be taken care of. Thanks @dmbuck32
