@@ -40,7 +40,8 @@ class ActionModule(ActionBase):
             #
             obj = dict()
             obj = self._execute_module(
-                module_name='icinga2_'+object_type.lower(),
+                # NOTE: Use the FQCN for the module to ensure that the module is found.
+                module_name='netways.icinga.icinga2_'+object_type.lower(),
                 module_args=args,
                 task_vars=task_vars,
                 tmp=tmp
@@ -132,7 +133,7 @@ class ActionModule(ActionBase):
             file_args['state'] = 'directory'
             file_args['path'] = '/'.join(destination.split('/')[:-1])
             file_module = self._execute_module(
-                module_name='file',
+                module_name='ansible.builtin.file',
                 module_args=file_args,
                 task_vars=task_vars,
                 tmp=tmp
