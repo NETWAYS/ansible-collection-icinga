@@ -1084,6 +1084,10 @@ argument_specs:
           totp:
             description:
               - This configures the L(Icinga TOTP Web module, https://icinga.com/docs/icinga-totp/latest/).
+            type: dict
+            options:
+              enabled: *module_enabled
+              source: *module_source
               config:
                 description:
                   - Defines the general module settings.
