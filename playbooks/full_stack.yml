@@ -1,45 +1,31 @@
 ---
 
-# Debian family
 - name: Database Setup
+  gather_facts: true
   become: true
   hosts: "{{ _target }}"
 
-  tasks:
-    - name: Import InfluxDB GPG signing key
-      ansible.builtin.get_url:
-        url: "https://repos.influxdata.com/influxdata-archive.key"
-        dest: "/etc/apt/trusted.gpg.d/influxdb.asc"
-
-    - name: Add InfluxDB repository
-      ansible.builtin.deb822_repository:
-        state: present
-        name: influxdb
-        types: deb
-        uris: "https://repos.influxdata.com/{{ ansible_facts['distribution'] | lower }}"
-        suites:
-          - "{{ ansible_facts['distribution_release'] | lower }}"
-        components:
-          - "stable"
-        signed_by: "/etc/apt/trusted.gpg.d/influxdb.asc"
-
-    - name: Install InfluxDB
-      ansible.builtin.apt:
-        state: present
-        name:
-          - "influxdb"
-          - "influxdb-client"
-          # Dependency
-          - "curl"
-
-    - name: Start InfluxDB
+  handlers:
+    - name: Restart Prometheus
+      listen: _restart_prometheus
       ansible.builtin.systemd_service:
-        state: started
-        name: "influxdb"
+        state: restarted
+        enabled: true
+        name: "prometheus"
 
-    - name: Create InfluxDB database
-      ansible.builtin.command:
-        cmd: "influx -execute 'CREATE DATABASE icinga2'"
+    - name: Restart Apache2
+      listen: _restart_apache
+      ansible.builtin.systemd_service:
+        state: restarted
+        enabled: true
+        name: "apache2"
+
+  tasks:
+    - name: Ensure Debian family
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.os_family == "Debian"
+        fail_msg: "This demo playbook only supports the Debian OS family."
 
     - name: Databases
       ansible.builtin.include_role:
@@ -68,6 +54,106 @@
       tags: icingaweb
       ansible.builtin.include_role:
         name: netways.icinga.icingaweb2
+        apply:
+          tags:
+            - icingaweb
+
+    - name: Icinga Web 2 navigation item directory
+      tags: icingaweb
+      ansible.builtin.file:
+        state: directory
+        path: "/etc/icingaweb2/preferences/{{ icingaweb2_admin_username }}/"
+        owner: "{{ 'www-data' if ansible_facts.os_family == 'Debian' else 'apache' }}"
+        group: "icingaweb2"
+        mode: "2770"
+
+    - name: Icinga Web 2 navigation item Prometheus
+      tags: icingaweb
+      ansible.builtin.copy:
+        dest: "/etc/icingaweb2/preferences/{{ icingaweb2_admin_username }}/menu.ini"
+        owner: "{{ 'www-data' if ansible_facts.os_family == 'Debian' else 'apache' }}"
+        group: "icingaweb2"
+        mode: "0660"
+        content: |
+          [Prometheus]
+          type = "menu-item"
+          target = "_blank"
+          icon = "/prometheus/favicon.svg"
+          url = "/prometheus"
+
+          [Prometheus - Icinga 2]
+          type = "menu-item"
+          target = "_blank"
+          icon = "/prometheus/favicon.svg"
+          url = "/prometheus/query?g0.expr=state_check_perfdata"
+
+          [2FA Settings]
+          type = "menu-item"
+          target = "_main"
+          icon = "attention-circled"
+          url = "two-factor/config"
+
+    - name: Prometheus
+      ansible.builtin.include_role:
+        name: prometheus.prometheus.prometheus
+
+    - name: Apache Prometheus config
+      ansible.builtin.copy:
+        dest: "/etc/apache2/conf-enabled/prometheus.conf"
+        content: |
+          RedirectMatch    301 ^/prometheus$ /prometheus/
+          ProxyPass             /prometheus/ http://127.0.0.1:9090/
+          ProxyPassReverse      /prometheus/ http://127.0.0.1:9090/
+      notify: _restart_apache
+
+    - name: Apache general redirect to /icingaweb2
+      ansible.builtin.copy:
+        dest: "/etc/apache2/conf-enabled/icingaweb2_redirect.conf"
+        content: |
+          RedirectMatch 301 ^/$ /icingaweb2/
+      notify: _restart_apache
+
+    - name: Apache modules config
+      when: ansible_facts.os_family == "Debian"
+      loop:
+        - "rewrite"
+        - "proxy"
+        - "proxy_http"
+      ansible.builtin.file:
+        state: link
+        src: "../mods-available/{{ item }}.load"
+        dest: "/etc/apache2/mods-enabled/{{ item }}.load"
+
+    - name: Add x509 job and schedule
+      ansible.builtin.shell:
+        cmd: |
+          if [ $(mysql x509 -Ns -e "SELECT COUNT(*) FROM x509_job;") -eq 0 ]; then
+            mysql x509 -e "
+              INSERT IGNORE INTO x509_job
+                (name, author, cidrs, ports, exclude_targets, ctime, mtime)
+              VALUES
+                ('Icinga2', 'admin', '127.0.0.1/32', '5665', NULL,
+                 UNIX_TIMESTAMP(NOW()) * 1000,
+                 UNIX_TIMESTAMP(NOW()) * 1000);
+
+              INSERT IGNORE INTO x509_schedule
+                (job_id, name, author, config, ctime, mtime)
+              VALUES
+                ((SELECT id FROM x509_job WHERE name = 'Icinga2'),
+                 'Icinga2', 'admin',
+                 '{\"since_last_scan\":null,\"type\":\"ipl\\\\\\\\Scheduler\\\\\\\\RRule\",\"frequency\":\"{\\\\\"rrule\\\\\":\\\\\"FREQ=HOURLY\\\\\",\\\\\"frequency\\\\\":\\\\\"HOURLY\\\\\",\\\\\"start\\\\\":\\\\\"1990-01-01T00:00:00.000000Europe\\\\\\\\/Berlin\\\\\"}\",\"full_scan\":\"n\",\"rescan\":\"n\"}',
+                 UNIX_TIMESTAMP(NOW()) * 1000,
+                 UNIX_TIMESTAMP(NOW()) * 1000);
+            "
+            echo "Job inserted"
+          fi
+      register: _x509_insert
+      changed_when: "'Job inserted' in _x509_insert.stdout_lines"
+
+    - name: Run x509 job initially
+      when: _x509_insert.changed
+      ansible.builtin.command:
+        cmd: "icingacli x509 scan --job Icinga2"
 
     - name: Flush handlers
       ansible.builtin.meta: flush_handlers
@@ -77,12 +163,14 @@
         name: netways.icinga.monitoring_plugins
 
     - name: Check for Director hosts
+      tags: icingaweb
       changed_when: false
       ansible.builtin.command:
         cmd: "icingacli director hosts list"
       register: _director_hosts
 
     - name: Add some initial demo configuration
+      tags: icingaweb
       when: _director_hosts.stdout == ""
       block:
         - name: Add templates
@@ -249,6 +337,13 @@
             cmd: "icingacli director config deploy"
 
   vars:
+    # Prometheus
+    prometheus_config_file: "full_stack/prometheus.yml.j2"
+    prometheus_web_external_url: "/prometheus/"
+    prometheus_config_flags_extra:
+      web.route-prefix: "/"
+      web.enable-otlp-receiver:
+
     # Credentials for Icinga Web 2
     icingaweb2_admin_username: "admin"
     icingaweb2_admin_password: "admin"
@@ -256,7 +351,8 @@
     ### Install MariaDB as DBMS
     mysql_daemon: "mariadb"
     mysql_packages:
-      - "mariadb-client"
+      - "{{ 'mariadb-client' if ansible_facts.os_family == 'Debian' else 'mariadb' }}"
+      - "{{ 'python3-pymysql' if ansible_facts.os_family == 'Debian' else 'python3-PyMySQL' }}"
       - "mariadb-server"
       - "python3-pymysql"
 
@@ -283,6 +379,18 @@
     #  encoding: "utf8mb4"
     #  collation: "utf8mb4_bin"
 
+    mysql_databases_totp:
+      name: "totp"
+      username: "totp_user"
+      password: "totp_password"
+      encoding: "utf8"
+
+    mysql_databases_x509:
+      name: "x509"
+      username: "x509_user"
+      password: "x509_password"
+      encoding: "utf8"
+
     mysql_databases:
       - name: "{{ mysql_databases_icingadb.name }}"
         encoding: "{{ mysql_databases_icingadb.encoding | default(omit) }}"
@@ -296,6 +404,12 @@
       #- name: "{{ mysql_databases_vspheredb.name }}"
       #  encoding: "{{ mysql_databases_vspheredb.encoding | default(omit) }}"
       #  collation: "{{ mysql_databases_vspheredb.collation | default(omit) }}"
+      - name: "{{ mysql_databases_totp.name }}"
+        encoding: "{{ mysql_databases_totp.encoding | default(omit) }}"
+        collation: "{{ mysql_databases_totp.collation | default(omit) }}"
+      - name: "{{ mysql_databases_x509.name }}"
+        encoding: "{{ mysql_databases_x509.encoding | default(omit) }}"
+        collation: "{{ mysql_databases_x509.collation | default(omit) }}"
     mysql_users:
       - name: "{{ mysql_databases_icingadb.username }}"
         host: "localhost"
@@ -313,8 +427,17 @@
       #  host: "localhost"
       #  password: "{{ mysql_databases_vspheredb.password }}"
       #  priv: "{{ mysql_databases_vspheredb.name }}.*:ALL"
+      - name: "{{ mysql_databases_totp.username }}"
+        host: "localhost"
+        password: "{{ mysql_databases_totp.password }}"
+        priv: "{{ mysql_databases_totp.name }}.*:ALL"
+      - name: "{{ mysql_databases_x509.username }}"
+        host: "localhost"
+        password: "{{ mysql_databases_x509.password }}"
+        priv: "{{ mysql_databases_x509.name }}.*:ALL"
 
-    ### Icinga2
+    ### Repos
+    icinga_repo_epel: true
     netways_repo_extras: true
     netways_repo_plugins: true
 
@@ -350,19 +473,12 @@
             global: true
           - name: "windows-agents"
             global: true
-      - name: influxdb
+      - name: otlpmetrics
         host: "127.0.0.1"
-        port: 8086
-        database: "icinga2"
-        host_template:
-          measurement: "$host.check_command$"
-          tags:
-            hostname: "$host.name$"
-        service_template:
-          measurement: "$service.check_command$"
-          tags:
-            hostname: "$host.name$"
-            service: "$service.name$"
+        port: 9090
+        metrics_endpoint: "/api/v1/otlp/v1/metrics"
+        enable_send_thresholds: true
+        disconnect_timeout: "60s"
 
     icinga2_objects:
       - name: "icingadb"
@@ -427,6 +543,20 @@
       #  password: "{{ mysql_databases_vspheredb.password }}"
       #  use_ssl: 0
       #  charset: "utf8mb4"
+      totp_db:
+        type: db
+        db: mysql
+        host: "localhost"
+        dbname: "{{ mysql_databases_totp.name }}"
+        username: "{{ mysql_databases_totp.username }}"
+        password: "{{ mysql_databases_totp.password }}"
+      x509_db:
+        type: db
+        db: mysql
+        host: "localhost"
+        dbname: "{{ mysql_databases_x509.name }}"
+        username: "{{ mysql_databases_x509.username }}"
+        password: "{{ mysql_databases_x509.password }}"
 
     icingaweb2_modules:
       icingadb:
@@ -458,21 +588,19 @@
             password: "{{ icinga2_objects[1].password }}"
         config:
           db:
-            resource: director_db
+            resource: "director_db"
       perfdatagraphs:
         enabled: true
         source: package
         config:
           perfdatagraphs:
-            default_backend: influxdbv1
-      perfdatagraphsinfluxdbv1:
+            default_backend: prometheus
+      perfdatagraphsprometheus:
         enabled: true
         source: package
         config:
-          influx:
-            api_url: "http://localhost:8086"
-            api_database: "icinga2"
-            api_tls_insecure: "0"
+          prometheus:
+            api_url: "http://localhost:9090"
       #vspheredb:
       #  enabled: true
       #  source: package
@@ -485,6 +613,40 @@
       businessprocess:
         enabled: true
         source: package
+      totp:
+        enabled: true
+        source: package
+        config:
+          database:
+            resource: "totp_db"
+          settings:
+            issuer: Icinga Web 2 Demo
+            leeway: 15
+        database:
+          import_schema: true
+          type: mysql
+          host: "localhost"
+          name: "{{ mysql_databases_totp.name }}"
+          user: "{{ mysql_databases_totp.username }}"
+          password: "{{ mysql_databases_totp.password }}"
+      doc:
+        enabled: true
+        source: package
+      x509:
+        source: package
+        enabled: true
+        config:
+          backend:
+            resource: "x509_db"
+        database:
+          import_schema: true
+          type: mysql
+          host: "localhost"
+          name: "{{ mysql_databases_x509.name }}"
+          user: "{{ mysql_databases_x509.username }}"
+          password: "{{ mysql_databases_x509.password }}"
+        certificate_files:
+          - "/etc/ssl/certs/ca-certificates.crt"
 
     ### Monitoring Plugins
     icinga_monitoring_plugins_check_commands:

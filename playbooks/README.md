@@ -7,7 +7,7 @@ It installs / prepares:
 - Databases (using `geerlingguy.mysql`)
 - Icinga repository
 - NETWAYS Extras and Plugins repositories
-- InfluxDB v1 (as an example TSDB)
+- Prometheus (as an example TSDB, using `prometheus.prometheus.prometheus`)
 - Monitoring Plugins
 - Icinga 2
 - Icinga DB Redis
