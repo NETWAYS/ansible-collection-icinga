@@ -42,6 +42,8 @@ icingaweb2_config:
     facility: user
   themes:
     default: Icinga
+    default_mode: system
+    disabled: "0"
 icingaweb2_cli: icingacli
 icingaweb2_users: []
 icingaweb2_locales: []

@@ -119,6 +119,8 @@ argument_specs:
             facility: user
           themes:
             default: Icinga
+            default_mode: system
+            disabled: "0"
         options:
           global:
             description:
@@ -236,9 +238,27 @@ argument_specs:
                 choices: [ user, local0, local1, local2, local3, local4, local5, local6, local7 ]
           themes:
             description:
-              - Specifies the default theme for Icinga Web 2.
-            type: str
+              - Defines the theme configuration for Icinga Web 2.
+            type: dict
             required: true
+            options:
+              default:
+                description:
+                  - Specifies the default theme for Icinga Web 2.
+                type: str
+                required: false
+              default_mode:
+                description:
+                  - Specifies the default mode for the theme.
+                type: str
+                required: false
+                choices: [ system, dark, light ]
+              disabled:
+                description:
+                  - Set to "1" so users can't change the theme.
+                type: str
+                required: false
+                choices: [ "0", "1" ]
       icingaweb2_authentication:
         description:
           - Specifies different authentication methods for Icinga Web 2.
