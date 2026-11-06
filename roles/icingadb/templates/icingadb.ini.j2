@@ -71,17 +71,39 @@ logging:
 
   # Map of component-logging level pairs to define a different log level than the default value for each component.
   options:
-#    config-sync:
-#    database:
-#    dump-signals:
-#    heartbeat:
-#    high-availability:
-#    history-sync:
-#    overdue-sync:
-#    redis:
-#    retention:
-#    runtime-updates:
-#    telemetry:
+{% if icingadb_log_level_confic_sync is defined and icingadb_log_level_confic_sync in ['fatal','error','warn','info','debug'] %}
+    config-sync: {{ icingadb_log_level_confic_sync }}
+{% endif %}
+{% if icingadb_log_level_database is defined and icingadb_log_level_database in ['fatal','error','warn','info','debug'] %}
+    database: {{ icingadb_log_level_database }}
+{% endif %}
+{% if icingadb_log_level_dumps_ignals is defined and icingadb_log_level_dumps_ignals in ['fatal','error','warn','info','debug'] %}
+    dump-signals: {{ icingadb_log_level_dumps_ignals }}
+{% endif %}
+{% if icingadb_log_level_heartbeat is defined and icingadb_log_level_heartbeat in ['fatal','error','warn','info','debug'] %}
+    heartbeat: {{ icingadb_log_level_heartbeat }}
+{% endif %}
+{% if icingadb_log_level_high_availability is defined and icingadb_log_level_high_availability in ['fatal','error','warn','info','debug'] %}
+    high-availability: {{ icingadb_log_level_high_availability }}
+{% endif %}
+{% if icingadb_log_level_history_sync is defined and icingadb_log_level_history_sync in ['fatal','error','warn','info','debug'] %}
+    history-sync: {{ icingadb_log_level_history_sync }}
+{% endif %}
+{% if icingadb_log_level_overdue_sync is defined and icingadb_log_level_overdue_sync in ['fatal','error','warn','info','debug'] %}
+    overdue-sync: {{ icingadb_log_level_overdue_sync }}
+{% endif %}
+{% if icingadb_log_level_redis is defined and icingadb_log_level_redis in ['fatal','error','warn','info','debug'] %}
+    redis: {{ icingadb_log_level_redis }}
+{% endif %}
+{% if icingadb_log_level_retention is defined and icingadb_log_level_retention in ['fatal','error','warn','info','debug'] %}
+    retention: {{ icingadb_log_level_retention }}
+{% endif %}
+{% if icingadb_log_level_runtime_updates is defined and icingadb_log_level_runtime_updates in ['fatal','error','warn','info','debug'] %}
+    runtime-updates: {{ icingadb_log_level_runtime_updates }}
+{% endif %}
+{% if icingadb_log_level_telemetry is defined and icingadb_log_level_telemetry in ['fatal','error','warn','info','debug'] %}
+    telemetry: {{ icingadb_log_level_telemetry }}
+{% endif %}
 
 # Retention is an optional feature to limit the number of days that historical data is available,
 # as no historical data is deleted by default.
