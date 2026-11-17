@@ -252,7 +252,7 @@ argument_specs:
                   - Specifies the default mode for the theme.
                 type: str
                 required: false
-                choices: [ system, dark, light ]
+                choices: [ "system", "none", "light" ]
               disabled:
                 description:
                   - Set to "1" so users can't change the theme.
