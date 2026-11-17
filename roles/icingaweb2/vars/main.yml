@@ -24,3 +24,4 @@ icingaweb2_module_packages:
   sso: icinga-sso-web
   totp: icinga-totp-web
   jira: icinga-jira
+  map: icingaweb2-module-map
