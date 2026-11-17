@@ -101,6 +101,8 @@ icingaweb2_config:
     facility: user
   themes:
     default: Icinga
+    default_mode: system
+    disabled: "0"
 ```
 
 Within a task the YAML structure is effectively translated to INI and written to `{{ icingaweb2_config_dir }}/config.ini`.
@@ -128,6 +130,8 @@ facility = user
 
 [themes]
 default = Icinga
+default_mode = system
+disabled = "0"
 ```
 
 For more information about the general configuration have a look at the [official documentation](https://icinga.com/docs/icinga-web/latest/doc/03-Configuration/#general-configuration).
