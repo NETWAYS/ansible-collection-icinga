@@ -255,7 +255,7 @@ argument_specs:
                 choices: [ "system", "none", "light" ]
               disabled:
                 description:
-                  - Set to "1" so users can't change the theme.
+                  - If O(icingaweb2_config.themes.disabled="1"), users cannot change the theme for themselves. They can only switch between the different modes if applicable for the given theme.
                 type: str
                 required: false
                 choices: [ "0", "1" ]
