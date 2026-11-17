@@ -1,2 +1,2 @@
 minor_changes:
-  - icingaweb2 - Add support for configuring the default theme mode and disabling theme selection.
+  - :code:`icingaweb2` - Add support for globally configuring the default theme mode, and globally disabling the theme mode selection for users. Thanks @kamois
